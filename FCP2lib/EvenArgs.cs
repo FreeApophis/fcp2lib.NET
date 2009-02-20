@@ -18,6 +18,7 @@
  */
  
 using System;
+using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     public class NodeHelloEventArgs : EventArgs {
@@ -82,6 +83,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public NodeHelloEventArgs(MessageParser parsed) {
+            FCP2.ArgsDebug(this, parsed);
             this.connectionIdentifier = parsed["ConnectionIdentifier"];
             this.fcpVersion = parsed["ConnectionIdentifier"];
             this.version =  parsed["Version"];
@@ -103,7 +105,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public CloseConnectionDuplicateClientNameEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -114,7 +116,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PeerEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -125,7 +127,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PeerNoteEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -136,7 +138,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public EndListPeersEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -147,7 +149,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public EndListPeerNotesEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -158,7 +160,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PeerRemovedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -169,7 +171,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public NodeDataEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -180,7 +182,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public ConfigDataEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -191,7 +193,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public TestDDAReplyEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -202,7 +204,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public TestDDACompleteEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -213,7 +215,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public SSKKeypairEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -224,7 +226,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PersistentGetEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -235,7 +237,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PersistentPutEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -246,7 +248,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PersistentPutDirEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -257,7 +259,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public URIGeneratedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -268,7 +270,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PutSuccessfulEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -279,7 +281,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PutFetchableEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -290,7 +292,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public DataFoundEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
    }
 
@@ -301,7 +303,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public AllDataEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -312,7 +314,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public StartedCompressionEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -323,7 +325,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public FinishedCompressionEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -334,7 +336,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public SimpleProgressEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -345,7 +347,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public EndListPersistentRequestsEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -356,7 +358,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PersistentRequestRemovedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
     
@@ -367,7 +369,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PersistentRequestModifiedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -378,7 +380,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PutFailedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -389,7 +391,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public GetFailedEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -400,7 +402,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public ProtocolErrorEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -411,7 +413,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public IdentifierCollisionEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -422,7 +424,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public UnknownNodeIdentifierEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -433,7 +435,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public UnknownPeerNoteTypeEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -444,7 +446,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public SubscribedUSKEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -455,7 +457,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public SubscribedUSKUpdateEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -466,7 +468,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public PluginInfoEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 
@@ -477,7 +479,7 @@ namespace Freenet.FCP2 {
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public FCPPluginReplyEventArgs(MessageParser parsed) {
-            
+            FCP2.ArgsDebug(this, parsed);
         }
     }
 }

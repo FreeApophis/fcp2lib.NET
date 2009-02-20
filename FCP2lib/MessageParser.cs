@@ -50,7 +50,16 @@ namespace Freenet.FCP2
                     return null;
                 }
             }
-            
         }
+        
+      public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+      {
+          foreach(KeyValuePair<string, string> kvp in parameters) {
+              yield return kvp;
+          }
+          yield break;
+      }
+
     }
+
 }

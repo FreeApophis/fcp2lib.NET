@@ -43,7 +43,16 @@ namespace Freenet.FCP2
         #endregion
         
         public const string endMessage = "EndMessage";
-
+        
+        public static void ArgsDebug(EventArgs args, MessageParser parsed) {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(args.GetType().ToString() + "()");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            foreach(KeyValuePair<string, string> kvp in parsed) {
+                Console.WriteLine(kvp.Key + "=" + kvp.Value);
+            }
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
         
         #region Event Handler
         public event EventHandler<NodeHelloEventArgs>                           NodeHelloEvent;
@@ -451,9 +460,6 @@ namespace Freenet.FCP2
         private void MessageParser() {
             string line;
             while((line = fnread.ReadLine()) != null) {
-                #if DEBUG
-                Console.WriteLine(line);
-                #endif
                 switch(line) {
                     case "NodeHello":
                         OnNodeHelloEvent(new NodeHelloEventArgs(new MessageParser(fnread)));
