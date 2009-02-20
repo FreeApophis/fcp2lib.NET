@@ -459,74 +459,109 @@ namespace Freenet.FCP2
                         OnNodeHelloEvent(new NodeHelloEventArgs(new MessageParser(fnread)));
                         break;
                     case "CloseConnectionDuplicateClientName":
+                        OnCloseConnectionDuplicateClientNameEvent(new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(fnread)));
                         break;
                     case "Peer":
+                        OnPeerEvent(new PeerEventArgs(new MessageParser(fnread)));
                         break;
                     case "PeerNote":
+                        OnPeerNoteEvent(new PeerNoteEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPeers":
+                        OnEndListPeersEvent(new EndListPeersEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPeerNotes":
+                        OnEndListPeerNotesEvent(new EndListPeerNotesEventArgs(new MessageParser(fnread)));
                         break;
                     case "PeerRemoved":
+                        OnPeerRemovedEvent(new PeerRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "NodeData":
+                        OnNodeDataEvent(new NodeDataEventArgs(new MessageParser(fnread)));
                         break;
                     case "ConfigData":
+                        OnConfigDataEvent(new ConfigDataEventArgs(new MessageParser(fnread)));
                         break;
                     case "TestDDAReply":
+                        OnTestDDAReplyEvent(new TestDDAReplyEventArgs(new MessageParser(fnread)));
                         break;
                     case "TestDDAComplete":
+                        OnTestDDACompleteEvent(new TestDDACompleteEventArgs(new MessageParser(fnread)));
                         break;
                     case "SSKKeypair":
+                        OnSSKKeypairEvent(new SSKKeypairEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentGet":
+                        OnPersistentGetEvent(new PersistentGetEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentPut":
+                        OnPersistentPutEvent(new PersistentPutEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentPutDir":
+                        OnPersistentPutDirEvent(new PersistentPutDirEventArgs(new MessageParser(fnread)));
                         break;
                     case "URIGenerated":
+                        OnURIGeneratedEvent(new URIGeneratedEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutSuccessful":
+                        OnPutSuccessfulEvent(new PutSuccessfulEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutFetchable":
+                        OnPutFetchableEvent(new PutFetchableEventArgs(new MessageParser(fnread)));
                         break;
                     case "DataFound":
+                        OnDataFoundEvent(new DataFoundEventArgs(new MessageParser(fnread)));
                         break;
                     case "AllData":
+                        OnAllDataEvent(new AllDataEventArgs(new MessageParser(fnread)));
                         break;
                     case "StartedCompression":
+                        OnStartedCompressionEvent(new StartedCompressionEventArgs(new MessageParser(fnread)));
                         break;
                     case "FinishedCompression":
+                        OnFinishedCompressionEvent(new FinishedCompressionEventArgs(new MessageParser(fnread)));
                         break;
                     case "SimpleProgress":
+                        OnSimpleProgressEvent(new SimpleProgressEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPersistentRequests":
+                        OnEndListPersistentRequestsEvent(new EndListPersistentRequestsEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentRequestRemoved":
+                        OnPersistentRequestRemovedEvent(new PersistentRequestRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentRequestModified":
+                        OnPersistentRequestModifiedEvent(new PersistentRequestModifiedEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutFailed":
+                        OnPutFailedEvent(new PutFailedEventArgs(new MessageParser(fnread)));
                         break;
                     case "GetFailed":
+                        OnGetFailedEvent(new GetFailedEventArgs(new MessageParser(fnread)));
                         break;
                     case "ProtocolError":
+                        OnProtocolErrorEvent(new ProtocolErrorEventArgs(new MessageParser(fnread)));
                         break;
                     case "IdentifierCollision":
+                        OnIdentifierCollisionEvent(new IdentifierCollisionEventArgs(new MessageParser(fnread)));
                         break;
                     case "UnknownNodeIdentifier":
+                        OnUnknownNodeIdentifierEvent(new UnknownNodeIdentifierEventArgs(new MessageParser(fnread)));
                         break;
                     case "UnknownPeerNoteType":
+                        OnUnknownPeerNoteTypeEvent(new UnknownPeerNoteTypeEventArgs(new MessageParser(fnread)));
                         break;
                     case "SubscribedUSK":
+                        OnSubscribedUSKEvent(new SubscribedUSKEventArgs(new MessageParser(fnread)));
                         break;
                     case "SubscribedUSKUpdate":
+                        OnSubscribedUSKUpdateEvent(new SubscribedUSKUpdateEventArgs(new MessageParser(fnread)));
                         break;
                     case "PluginInfo":
+                        OnPluginInfoEvent(new PluginInfoEventArgs(new MessageParser(fnread)));
                         break;
                     case "FCPPluginReply":
+                        OnFCPPluginReplyEvent(new FCPPluginReplyEventArgs(new MessageParser(fnread)));
                         break;
                     case "":
                         /* ignore empty line */
