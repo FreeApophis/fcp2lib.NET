@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Collections.Generic;
 
 namespace Freenet.FCP2
@@ -411,6 +412,7 @@ namespace Freenet.FCP2
         }
         #endregion
         
+        private Thread parserThread;
         public FCP2(IPEndPoint nodeAdress, string clientName) {
             this.ep = nodeAdress;
             this.clientName = clientName;
@@ -431,11 +433,16 @@ namespace Freenet.FCP2
             }
             
             client.Connect(ep);
-
-            fnread = new StreamReader(client.GetStream(), System.Text.ASCIIEncoding.UTF8);
-            fnwrite = new StreamWriter(client.GetStream(), System.Text.ASCIIEncoding.UTF8);
+            
+            fnread = new StreamReader(client.GetStream());
+            fnwrite = new StreamWriter(client.GetStream());
+            fnwrite.NewLine = "\n";
+            
+            parserThread = new Thread(new ThreadStart(MessageParser));
+            parserThread.Start();
             
             RealClientHello(clientName, fcpVersion);
+            
             return true;
 
         }
@@ -443,10 +450,13 @@ namespace Freenet.FCP2
         #region Parser
         private void MessageParser() {
             string line;
-            while(client.Connected) {
-                line = fnread.ReadLine();
+            while((line = fnread.ReadLine()) != null) {
+                #if DEBUG
+                Console.WriteLine(line);
+                #endif
                 switch(line) {
-                        case "NodeHello": parseNodeHello();
+                    case "NodeHello":
+                        OnNodeHelloEvent(new NodeHelloEventArgs(new MessageParser(fnread)));
                         break;
                     case "CloseConnectionDuplicateClientName":
                         break;
@@ -518,16 +528,15 @@ namespace Freenet.FCP2
                         break;
                     case "FCPPluginReply":
                         break;
+                    case "":
+                        /* ignore empty line */
+                        break;
                     default:
-                        throw new ArgumentException("unknown message from freenet node");
+                        break; throw new ArgumentException("unknown message from freenet node");
                 }
             }
         }
-        
-        public void parseNodeHello() {
-            MessageParser parsed = new MessageParser(fnread);
-            OnNodeHelloEvent(new NodeHelloEventArgs());
-        }
+
         #endregion
         
         /// <summary>
@@ -1290,7 +1299,7 @@ namespace Freenet.FCP2
             /* this appending is very experimental since there is no example in the documentation
              * I think all the data from direct files are concatenated directly in the same order
              * as in the list above. (TODO: Verfiy expected behaviour)
-             * We flush all DataItems, and ignore obviously everything else. 
+             * We flush all DataItems, and ignore obviously everything else.
              * I hope the FN node is parsing multiple files correctly.
              * * * * * * * */
             

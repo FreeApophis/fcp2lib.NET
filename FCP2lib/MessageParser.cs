@@ -24,9 +24,9 @@ namespace Freenet.FCP2
             string line;
             int pos;
             while((line = reader.ReadLine()) != FCP2.endMessage) {
-                if (line == "End") 
+                if (line == "End")
                     throw new NotImplementedException("NoEnd");
-                if (line == "Data") 
+                if (line == "Data")
                     throw new NotImplementedException("NoData");
                 if((pos = line.IndexOf('=')) == -1) {
                     throw new NotImplementedException("EmptyValue:" + line);
@@ -44,6 +44,9 @@ namespace Freenet.FCP2
                 if (parameters.ContainsKey(keyword)) {
                     return parameters[keyword];
                 } else {
+                    #if DEBUG
+                    Console.WriteLine("keyword '" + keyword + "' not found!");
+                    #endif
                     return null;
                 }
             }

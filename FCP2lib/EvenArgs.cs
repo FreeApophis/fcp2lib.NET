@@ -21,7 +21,75 @@ using System;
 
 namespace Freenet.FCP2 {
     public class NodeHelloEventArgs : EventArgs {
+        private string connectionIdentifier;
         
+        public string ConnectionIdentifier {
+            get { return connectionIdentifier; }
+        }
+        private string fcpVersion;
+        
+        public string FcpVersion {
+            get { return fcpVersion; }
+        }
+        private string version;
+        
+        public string Version {
+            get { return version; }
+        }
+        private string node;
+        
+        public string Node {
+            get { return node; }
+        }
+        private string nodeLanguage;
+        
+        public string NodeLanguage {
+            get { return nodeLanguage; }
+        }
+        private int extBuild;
+        
+        public int ExtBuild {
+            get { return extBuild; }
+        }
+        private int extRevision;
+        
+        public int ExtRevision {
+            get { return extRevision; }
+        }
+        private int build;
+        
+        public int Build {
+            get { return build; }
+        }
+        private int revision;
+        
+        public int Revision {
+            get { return revision; }
+        }
+        private bool testnet;
+        
+        public bool Testnet {
+            get { return testnet; }
+        }
+        private int compressionCodecs;
+        
+        public int CompressionCodecs {
+            get { return compressionCodecs; }
+        }
+        
+        public NodeHelloEventArgs(MessageParser parsed) {
+            this.connectionIdentifier = parsed["ConnectionIdentifier"];
+            this.fcpVersion = parsed["ConnectionIdentifier"];
+            this.version =  parsed["Version"];
+            this.node = parsed["Node"];
+            this.nodeLanguage = parsed["NodeLanguage"];
+            this.extBuild = int.Parse(parsed["ExtBuild"]);
+            this.extRevision = int.Parse(parsed["ExtRevision"]);
+            this.build = int.Parse(parsed["Build"]);
+            this.revision = int.Parse(parsed["Revision"]);
+            this.testnet = bool.Parse(parsed["Testnet"]);
+            this.compressionCodecs = int.Parse(parsed["CompressionCodecs"]);
+        }
     }
     
     public class CloseConnectionDuplicateClientNameEventArgs : EventArgs {
