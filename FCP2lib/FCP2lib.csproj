@@ -38,12 +38,50 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
+    <Compile Include="EventArgs\AllDataEventArgs.cs" />
+    <Compile Include="EventArgs\CloseConnectionDuplicateClientNameEventArgs.cs" />
+    <Compile Include="EventArgs\ConfigDataEventArgs.cs" />
+    <Compile Include="EventArgs\DataFoundEventArgs.cs" />
+    <Compile Include="EventArgs\EndListPersistentRequestsEventArgs.cs" />
+    <Compile Include="EventArgs\FCPPluginReplyEventArgs.cs" />
+    <Compile Include="EventArgs\FinishedCompressionEventArgs.cs" />
+    <Compile Include="EventArgs\GetFailedEventArgs.cs" />
+    <Compile Include="EventArgs\IdentifierCollisionEventArgs.cs" />
+    <Compile Include="EventArgs\PersistentGetEventArgs.cs" />
+    <Compile Include="EventArgs\PersistentPutDirEventArgs.cs" />
+    <Compile Include="EventArgs\PersistentPutEventArgs.cs" />
+    <Compile Include="EventArgs\PersistentRequestModifiedEventArgs.cs" />
+    <Compile Include="EventArgs\PersistentRequestRemovedEventArgs.cs" />
+    <Compile Include="EventArgs\PluginInfoEventArgs.cs" />
+    <Compile Include="EventArgs\ProtocolErrorEventArgs.cs" />
+    <Compile Include="EventArgs\PutFailedEventArgs.cs" />
+    <Compile Include="EventArgs\PutFetchableEventArgs.cs" />
+    <Compile Include="EventArgs\PutSuccessfulEventArgs.cs" />
+    <Compile Include="EventArgs\SimpleProgressEventArgs.cs" />
+    <Compile Include="EventArgs\SSKKeypairEventArgs.cs" />
+    <Compile Include="EventArgs\StartedCompressionEventArgs.cs" />
+    <Compile Include="EventArgs\SubscribedUSKEventArgs.cs" />
+    <Compile Include="EventArgs\SubscribedUSKUpdateEventArgs.cs" />
+    <Compile Include="EventArgs\TestDDACompleteEventArgs.cs" />
+    <Compile Include="EventArgs\TestDDAReplyEventArgs.cs" />
+    <Compile Include="EventArgs\EndListPeerNotesEventArgs.cs" />
+    <Compile Include="EventArgs\EndListPeersEventArgs.cs" />
+    <Compile Include="EventArgs\NodeDataEventArgs.cs" />
+    <Compile Include="EventArgs\NodeHelloEventArgs.cs" />
+    <Compile Include="EventArgs\PeerEventArgs.cs" />
+    <Compile Include="EventArgs\PeerNoteEventArgs.cs" />
+    <Compile Include="EventArgs\PeerRemovedEventArgs.cs" />
+    <Compile Include="EventArgs\UnknownNodeIdentifierEventArgs.cs" />
+    <Compile Include="EventArgs\UnknownPeerNoteTypeEventArgs.cs" />
+    <Compile Include="EventArgs\URIGeneratedEventArgs.cs" />
     <Compile Include="InsertItem.cs" />
     <Compile Include="MessageParser.cs" />
-    <Compile Include="EvenArgs.cs" />
     <Compile Include="FCP.cs" />
     <Compile Include="MixedReader.cs" />
     <Compile Include="MixedWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EventArgs" />
   </ItemGroup>
 </Project>
