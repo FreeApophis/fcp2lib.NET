@@ -25,12 +25,36 @@ namespace Freenet.FCP2 {
 
     public class FCPPluginReplyEventArgs : EventArgs {
         
+        private string pluginName;
+        
+        public string PluginName {
+            get { return pluginName; }
+        }
+        
+        private int? dataLength;
+        
+        public int? DataLength {
+            get { return dataLength; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
         /// <summary>
         /// FCPPluginReplyEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public FCPPluginReplyEventArgs(MessageParser parsed) {
             FCP2.ArgsDebug(this, parsed);
+            this.pluginName = parsed["PluginName"];
+            if(parsed["DataLength"] != null) {
+                this.dataLength = int.Parse(parsed["DataLength"]);
+                throw new NotImplementedException("Unclear format");
+            }
+            this.identifier = parsed["Identifier"];
         }
     }
 }

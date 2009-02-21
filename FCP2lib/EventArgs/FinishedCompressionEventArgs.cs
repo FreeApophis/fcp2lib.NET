@@ -25,12 +25,41 @@ namespace Freenet.FCP2 {
 
     public class FinishedCompressionEventArgs : EventArgs {
         
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private int codec;
+        
+        public int Codec {
+            get { return codec; }
+        }
+        
+        private long originalSize;
+        
+        public long OriginalSize {
+            get { return originalSize; }
+        }
+        
+        private long compressedSize;
+        
+        public long CompressedSize {
+            get { return compressedSize; }
+        }
+        
         /// <summary>
         /// FinishedCompressionEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public FinishedCompressionEventArgs(MessageParser parsed) {
             FCP2.ArgsDebug(this, parsed);
+            this.identifier = parsed["Identifier"];
+            this.codec = int.Parse(parsed["Codec"]);
+            this.originalSize = long.Parse(parsed["OriginalSize"]);
+            this.compressedSize = long.Parse(parsed["CompressedSize"]);
+
         }
     }
 }

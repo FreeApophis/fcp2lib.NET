@@ -25,12 +25,29 @@ namespace Freenet.FCP2 {
         
     public class ConfigDataEventArgs : EventArgs {
         
+        MessageParser config;
+        
+        public MessageParser Config {
+            get { return config; }
+        }     
+        
         /// <summary>
         /// ConfigDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public ConfigDataEventArgs(MessageParser parsed) {
             FCP2.ArgsDebug(this, parsed);
+            
+            this.config = parsed;
+            
+            /* Too much to parse by hand -
+             * we would duplicate most of the nodes 
+             * datastructures for configuration 
+             * Therfore we expose the MessageParser directly...
+             * 
+             * C# 4.0 - dynamic type would be the solution!
+             * * * * * */
+           
         }
     }
 }

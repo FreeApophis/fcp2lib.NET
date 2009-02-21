@@ -31,6 +31,7 @@ namespace Freenet.FCP2 {
         /// <param name="parsed">a simple MessageParse</param>
         public EndListPersistentRequestsEventArgs(MessageParser parsed) {
             FCP2.ArgsDebug(this, parsed);
+            /* no additional data */
         }
     }
 }
