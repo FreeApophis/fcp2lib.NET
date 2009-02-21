@@ -18,6 +18,7 @@
  */
  
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
@@ -287,23 +288,102 @@ namespace Freenet.FCP2 {
 
     public class DataFoundEventArgs : EventArgs {
         
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private long datalength;
+        
+        public long Datalength {
+            get { return datalength; }
+        }
+        
+        private string contentType;
+        
+        public string ContentType {
+            get { return contentType; }
+        }
+        
          /// <summary>
         /// DataFoundEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         public DataFoundEventArgs(MessageParser parsed) {
             FCP2.ArgsDebug(this, parsed);
+            this.contentType = parsed["Metadata.ContentType"];
+            this.datalength = long.Parse(parsed["DataLength"]);
+            this.global = (parsed["Global"]!= null);
+            this.identifier = parsed["Identifier"];
         }
    }
 
     public class AllDataEventArgs : EventArgs {
         
+        
+        private Stream data;
+        
+        /// <summary>
+        /// This Method only gets the Datastream once, the Datastream is cleared 
+        /// after that and the method will get null back!
+        /// To make sure only one consumer tries to read from the stream!
+        /// 
+        /// Your Handler is NOT allowed to finish before you have completly read the Data!
+        /// </summary>
+        public Stream GetStream() {
+            Stream temp = data;
+            data = null;
+            return temp;
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private long datalength;
+        
+        public long Datalength {
+            get { return datalength; }
+        }
+        
+        private DateTime startupTime;
+        
+        public DateTime StartupTime {
+            get { return startupTime; }
+        }
+        
+        private DateTime completionTime;
+        
+        public DateTime CompletionTime {
+            get { return completionTime; }
+        }
+        
+        
         /// <summary>
         /// AllDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public AllDataEventArgs(MessageParser parsed) {
+        public AllDataEventArgs(MessageParser parsed, Stream data) {
             FCP2.ArgsDebug(this, parsed);
+
+            if (!parsed.DataAvailable)
+                throw new NotSupportedException("AllDataEvent without Data");
+            
+            this.data = data;
+            this.identifier = parsed["Identifier"];
+            this.datalength = long.Parse(parsed["DataLength"]);
+            this.startupTime = FCP2.FromUnix(parsed["StartupTime"]);
+            this.completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
+            
         }
     }
 

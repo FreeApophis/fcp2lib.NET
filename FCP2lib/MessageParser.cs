@@ -19,15 +19,24 @@ namespace Freenet.FCP2
     {
         private Dictionary<string, string> parameters = new Dictionary<string, string>();
         
+        private bool dataAvailable = false;
+        
+        public bool DataAvailable {
+            get { return dataAvailable; }
+        }
+        
         public MessageParser(TextReader reader)
         {
+            
             string line;
             int pos;
             while((line = reader.ReadLine()) != FCP2.endMessage) {
                 if (line == "End")
                     throw new NotImplementedException("NoEnd");
-                if (line == "Data")
-                    throw new NotImplementedException("NoData");
+                if (line == "Data") {
+                    dataAvailable = true;
+                    break;
+                }
                 if((pos = line.IndexOf('=')) == -1) {
                     throw new NotImplementedException("EmptyValue:" + line);
                 } else {

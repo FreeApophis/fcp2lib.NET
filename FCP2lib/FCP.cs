@@ -54,6 +54,12 @@ namespace Freenet.FCP2
             Console.ForegroundColor = ConsoleColor.Gray;
         }
         
+        public static DateTime FromUnix(string unix) {
+            System.DateTime epoch = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
+            double secounds = long.Parse(unix) / 1000;    
+            return epoch.AddSeconds(secounds);
+        }
+        
         #region Event Handler
         public event EventHandler<NodeHelloEventArgs>                           NodeHelloEvent;
         public event EventHandler<CloseConnectionDuplicateClientNameEventArgs>  CloseConnectionDuplicateClientNameEvent;
@@ -266,12 +272,27 @@ namespace Freenet.FCP2
             }
         }
         
+        /// <summary>
+        /// Warning, Only One consumer can read the data!!!
+        /// </summary>
+        /// <param name="e"></param>
         protected virtual void OnAllDataEvent(AllDataEventArgs e)
         {
             EventHandler<AllDataEventArgs> handler = AllDataEvent;
             if (handler != null)
             {
                 handler(this, e);
+            }
+            
+            Stream data;
+            
+            // we read the Data into oblivion if no consumer read it! (!Reason for MixedReader)
+            if((data = e.GetStream()) != null) {
+                byte[] buffer = new byte[1024];
+                long bytesToRead = e.Datalength;
+                while(bytesToRead > 0) {
+                    bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
+                }
             }
         }
 
@@ -443,10 +464,9 @@ namespace Freenet.FCP2
             
             client.Connect(ep);
             
-            fnread = new StreamReader(client.GetStream());
-            fnwrite = new StreamWriter(client.GetStream());
-            fnwrite.NewLine = "\n";
-            
+            fnread = new MixedReader(client.GetStream());
+            fnwrite = new MixedWriter(client.GetStream());
+                
             parserThread = new Thread(new ThreadStart(MessageParser));
             parserThread.Start();
             
@@ -519,7 +539,7 @@ namespace Freenet.FCP2
                         OnDataFoundEvent(new DataFoundEventArgs(new MessageParser(fnread)));
                         break;
                     case "AllData":
-                        OnAllDataEvent(new AllDataEventArgs(new MessageParser(fnread)));
+                        OnAllDataEvent(new AllDataEventArgs(new MessageParser(fnread), client.GetStream()));
                         break;
                     case "StartedCompression":
                         OnStartedCompressionEvent(new StartedCompressionEventArgs(new MessageParser(fnread)));
