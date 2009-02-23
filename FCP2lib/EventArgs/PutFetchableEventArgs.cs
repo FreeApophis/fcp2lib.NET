@@ -22,6 +22,24 @@ using System;
 namespace Freenet.FCP2 {
 
     public class PutFetchableEventArgs : EventArgs {
+
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }        
         
         /// <summary>
         /// PutFetchableEventArgs Constructor
@@ -31,6 +49,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.global = bool.Parse(parsed["Global"]);
+            this.identifier = parsed["Identifier"];
+            this.uri = parsed["URI"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

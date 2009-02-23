@@ -16,13 +16,34 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
 
 namespace Freenet.FCP2 {
 
     public class PluginInfoEventArgs : EventArgs {
         
+        private string pluginName;
+        
+        public string PluginName {
+            get { return pluginName; }
+        }
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        private string originalUri;
+        
+        public string OriginalUri {
+            get { return originalUri; }
+        }
+        private bool started;
+        
+        public bool Started {
+            get { return started; }
+        }
+
         /// <summary>
         /// PluginInfoEventArgs Constructor
         /// </summary>
@@ -31,6 +52,13 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            pluginName = parsed["PluginName"];
+            identifier = parsed["Identifier"];
+            originalUri = parsed["OriginalUri"];
+            if (parsed["Started"] != null)
+                started = bool.Parse(parsed["Started"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

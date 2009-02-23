@@ -55,10 +55,12 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.contentType = parsed["Metadata.ContentType"];
             this.datalength = long.Parse(parsed["DataLength"]);
             this.global = (parsed["Global"]!= null);
             this.identifier = parsed["Identifier"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif            

@@ -16,13 +16,37 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
 
 namespace Freenet.FCP2 {
-       
+    
     
     public class TestDDAReplyEventArgs : EventArgs {
+
+        private string directory;
+        
+        public string Directory {
+            get { return directory; }
+        }
+        
+        private string readFilename;
+        
+        public string ReadFilename {
+            get { return readFilename; }
+        }
+        
+        private string writeFilename;
+        
+        public string WriteFilename {
+            get { return writeFilename; }
+        }
+        
+        private string contentToWrite;
+        
+        public string ContentToWrite {
+            get { return contentToWrite; }
+        }
         
         /// <summary>
         /// TestDDAReplyEventArgs Constructor
@@ -32,6 +56,12 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.directory = parsed["Directory"];
+            this.readFilename = parsed["ReadFilename"];
+            this.writeFilename = parsed["WriteFilename"];
+            this.contentToWrite = parsed["ContentToWrite"];
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

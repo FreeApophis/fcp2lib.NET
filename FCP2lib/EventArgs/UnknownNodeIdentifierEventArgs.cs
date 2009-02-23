@@ -23,6 +23,12 @@ namespace Freenet.FCP2 {
 
     public class UnknownNodeIdentifierEventArgs : EventArgs {
         
+        private string nodeIdentifier;
+        
+        public string NodeIdentifier {
+            get { return nodeIdentifier; }
+        }
+        
         /// <summary>
         /// UnknownNodeIdentifierEventArgs Constructor
         /// </summary>
@@ -31,6 +37,9 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.nodeIdentifier=parsed["NodeIdentifier"];
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

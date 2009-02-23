@@ -28,41 +28,49 @@ namespace Freenet.FCP2 {
         public bool Global {
             get { return global; }
         }
+        
         private int code;
         
         public int Code {
             get { return code; }
         }
+        
         private string codeDescription;
         
         public string CodeDescription {
             get { return codeDescription; }
         }
+        
         private string extraDescription;
         
         public string ExtraDescription {
             get { return extraDescription; }
         }
+        
         private bool fatal  = false;
         
         public bool Fatal {
             get { return fatal; }
         }
+        
         private string shortCodeDescription;
         
         public string ShortCodeDescription {
             get { return shortCodeDescription; }
         }
+        
         private string identifier;
         
         public string Identifier {
             get { return identifier; }
         }
+        
         private int expectedDataLength;
         
         public int ExpectedDataLength {
             get { return expectedDataLength; }
         }
+        
         private expectedMetadataType expectedMetadata;
 
         public expectedMetadataType ExpectedMetadata {
@@ -74,6 +82,7 @@ namespace Freenet.FCP2 {
         public bool FinalizedExpected {
             get { return finalizedExpected; }
         }
+        
         private string redirectURI;
         
         public string RedirectURI {
@@ -103,6 +112,9 @@ namespace Freenet.FCP2 {
             if (parsed["FinalizedExpected"] != null)
                 this.finalizedExpected= bool.Parse(parsed["FinalizedExpected"]);
             this.redirectURI = parsed["RedirectURI"];  
+            
+            /* TODO: Complex Get Failed */
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

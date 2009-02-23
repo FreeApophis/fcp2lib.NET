@@ -49,10 +49,12 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.nodeIdentifier = parsed["NodeIdentifier"];
             System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
             this.noteText = enc.GetString(Convert.FromBase64String(parsed["NoteText"]));
             this.peerNoteType = (PeerNoteTypeEnum)int.Parse(parsed["PeerNoteType"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

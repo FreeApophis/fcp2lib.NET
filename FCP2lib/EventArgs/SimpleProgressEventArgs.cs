@@ -67,12 +67,14 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.total = int.Parse(parsed["Total"]);
             this.failed = int.Parse(parsed["Failed"]);
             this.fatallyFailed = int.Parse(parsed["FatallyFailed"]);
             this.succeeded = int.Parse(parsed["Succeeded"]);
             this.finalizedTotal = bool.Parse(parsed["FinalizedTotal"]);
             this.identifier = parsed["Identifier"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

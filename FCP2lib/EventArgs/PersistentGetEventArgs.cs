@@ -91,6 +91,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.uri = parsed["URI"];
             this.verbosity = (VerbosityEnum)(int.Parse(parsed["Verbosity"]));
             this.returnType = (ReturnTypeEnum)Enum.Parse(typeof(ReturnTypeEnum), parsed["ReturnType"]);
@@ -100,7 +101,8 @@ namespace Freenet.FCP2 {
             this.priorityClass = (PriorityClassEnum)int.Parse(parsed["PriorityClass"]);
             this.persistenceType = (PersistenceEnum)Enum.Parse(typeof(PersistenceEnum), parsed["PersistenceType"]);
             this.global = bool.Parse(parsed["Global"]);
-            this.maxRetries = int.Parse(parsed["MaxRetries"]);   
+            this.maxRetries = int.Parse(parsed["MaxRetries"]);  
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

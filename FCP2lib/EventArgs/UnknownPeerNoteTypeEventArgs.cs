@@ -23,6 +23,12 @@ namespace Freenet.FCP2 {
 
     public class UnknownPeerNoteTypeEventArgs : EventArgs {
         
+        private string peerNoteType;
+        
+        public string PeerNoteType {
+            get { return peerNoteType; }
+        }
+        
         /// <summary>
         /// UnknownPeerNoteTypeEventArgs Constructor
         /// </summary>
@@ -31,6 +37,9 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.peerNoteType = parsed["PeerNoteType"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

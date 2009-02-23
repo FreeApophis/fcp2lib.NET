@@ -58,6 +58,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.pluginName = parsed["PluginName"];
             if(parsed["DataLength"] != null) {
                 this.dataLength = int.Parse(parsed["DataLength"]);

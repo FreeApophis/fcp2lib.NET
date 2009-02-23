@@ -23,6 +23,24 @@ namespace Freenet.FCP2 {
        
     public class SSKKeypairEventArgs : EventArgs {
         
+        private string insertURI;
+        
+        public string InsertURI {
+            get { return insertURI; }
+        }
+        
+        private string requestURI;
+        
+        public string RequestURI {
+            get { return requestURI; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
         /// <summary>
         /// SSKKeypairEventArgs Constructor
         /// </summary>
@@ -31,6 +49,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.insertURI = parsed["InsertURI"];
+            this.requestURI = parsed["RequestURI"];
+            this.identifier = parsed["Identifier"];
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

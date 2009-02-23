@@ -86,6 +86,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.connectionIdentifier = parsed["ConnectionIdentifier"];
             this.fcpVersion = parsed["FCPVersion"];
             this.version =  parsed["Version"];
@@ -97,6 +98,7 @@ namespace Freenet.FCP2 {
             this.revision = int.Parse(parsed["Revision"]);
             this.testnet = bool.Parse(parsed["Testnet"]);
             this.compressionCodecs = int.Parse(parsed["CompressionCodecs"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

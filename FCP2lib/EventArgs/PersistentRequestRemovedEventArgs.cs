@@ -23,6 +23,18 @@ namespace Freenet.FCP2 {
     
     public class PersistentRequestRemovedEventArgs : EventArgs {
         
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
         /// <summary>
         /// PersistentRequestRemovedEventArgs Constructor
         /// </summary>
@@ -31,6 +43,10 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.identifier = parsed["Identifier"];
+            this.global = bool.Parse(parsed["Global"]);
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

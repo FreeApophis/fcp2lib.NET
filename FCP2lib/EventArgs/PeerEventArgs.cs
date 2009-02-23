@@ -116,6 +116,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.lastGoodVersion = parsed["lastGoodVersion"];
             this.opennet = bool.Parse(parsed["opennet"]);
             this.myName = parsed["myName"];
@@ -132,6 +133,7 @@ namespace Freenet.FCP2 {
                 @volatile = new VolatileType(parsed);
             if (parsed["metadata.routableConnectionCheckCount"]!=null)
                 metadata = new MetadataType(parsed);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

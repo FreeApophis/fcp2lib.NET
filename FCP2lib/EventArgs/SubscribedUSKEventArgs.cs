@@ -22,6 +22,24 @@ using System;
 namespace Freenet.FCP2 {
 
     public class SubscribedUSKEventArgs : EventArgs {
+
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }
+        
+        private bool dontPoll;
+        
+        public bool DontPoll {
+            get { return dontPoll; }
+        }
         
         /// <summary>
         /// SubscribedUSKEventArgs Constructor
@@ -31,6 +49,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+
+            this.identifier = parsed["Identifier"];
+            this.uri = parsed["URI"];
+            this.dontPoll = bool.Parse(parsed["DontPoll"]);
+           
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

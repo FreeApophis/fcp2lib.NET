@@ -73,6 +73,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             if (!parsed.DataAvailable)
                 throw new NotSupportedException("AllDataEvent without Data");
             
@@ -81,6 +82,7 @@ namespace Freenet.FCP2 {
             this.datalength = long.Parse(parsed["DataLength"]);
             this.startupTime = FCP2.FromUnix(parsed["StartupTime"]);
             this.completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

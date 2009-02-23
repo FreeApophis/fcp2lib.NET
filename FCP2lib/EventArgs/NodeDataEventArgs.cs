@@ -122,6 +122,7 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.lastGoodVersion = parsed["lastGoodVersion"];
             this.sig = parsed["sig"];
             this.opennet = bool.Parse(parsed["opennet"]);
@@ -140,6 +141,7 @@ namespace Freenet.FCP2 {
             
             if (parsed["volatile.startedSwaps"]!=null)
                 @volatile = new VolatileType(parsed);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

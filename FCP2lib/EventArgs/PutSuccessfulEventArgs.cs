@@ -23,6 +23,36 @@ namespace Freenet.FCP2 {
 
     public class PutSuccessfulEventArgs : EventArgs {
         
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private DateTime startupTime;
+        
+        public DateTime StartupTime {
+            get { return startupTime; }
+        }
+        
+        private DateTime completionTime;
+        
+        public DateTime CompletionTime {
+            get { return completionTime; }
+        }
+        
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }
+        
         /// <summary>
         /// PutSuccessfulEventArgs Constructor
         /// </summary>
@@ -31,6 +61,13 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.global = bool.Parse(parsed["Global"]);
+            this.identifier = parsed["Identifier"];
+            this.startupTime = FCP2.FromUnix( parsed["StartupTime"]);
+            this.completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
+            this.uri = parsed["URI"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

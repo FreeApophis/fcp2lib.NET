@@ -24,6 +24,24 @@ namespace Freenet.FCP2 {
     
     public class TestDDACompleteEventArgs : EventArgs {
         
+        private string directory;
+        
+        public string Directory {
+            get { return directory; }
+        }
+        
+        private bool readDirectoryAllowed;
+        
+        public bool ReadDirectoryAllowed {
+            get { return readDirectoryAllowed; }
+        }
+        
+        private bool writeDirectoryAllowed;
+        
+        public bool WriteDirectoryAllowed {
+            get { return writeDirectoryAllowed; }
+        }
+        
         /// <summary>
         /// TestDDACompleteEventArgs Constructor
         /// </summary>
@@ -32,6 +50,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.directory = parsed["Directory"];
+            this.readDirectoryAllowed = bool.Parse(parsed["ReadDirectoryAllowed"]);
+            this.writeDirectoryAllowed = bool.Parse(parsed["WriteDirectoryAllowed"]);
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

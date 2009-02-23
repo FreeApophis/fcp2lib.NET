@@ -23,6 +23,19 @@ namespace Freenet.FCP2 {
 
     public class StartedCompressionEventArgs : EventArgs {
         
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private int codec;
+        
+        public int Codec {
+            get { return codec; }
+        }
+        
         /// <summary>
         /// StartedCompressionEventArgs Constructor
         /// </summary>
@@ -31,6 +44,10 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.identifier = parsed["Identifier"];
+            this.codec = int.Parse(parsed["Codec"]);
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

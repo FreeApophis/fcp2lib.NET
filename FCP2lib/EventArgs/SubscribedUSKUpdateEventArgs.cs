@@ -23,6 +23,24 @@ namespace Freenet.FCP2 {
 
     public class SubscribedUSKUpdateEventArgs : EventArgs {
         
+        private int edition;
+        
+        public int Edition {
+            get { return edition; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }
+        
         /// <summary>
         /// SubscribedUSKUpdateEventArgs Constructor
         /// </summary>
@@ -31,6 +49,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+
+            this.edition = int.Parse(parsed["Edition"]);
+            this.identifier = parsed["Identifier"];
+            this.uri = parsed["URI"];
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

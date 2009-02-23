@@ -43,8 +43,10 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.identity = parsed["Identity"];
             this.nodeIdentifier = parsed["NodeIdentifier"];
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

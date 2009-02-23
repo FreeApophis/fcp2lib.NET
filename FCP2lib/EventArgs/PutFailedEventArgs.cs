@@ -22,6 +22,15 @@ using System;
 namespace Freenet.FCP2 {
     
     public class PutFailedEventArgs : EventArgs {
+
+        private int code;
+        private string identifier;
+        private bool global = false;
+        private string expectedURI;
+        private string codeDescription;
+        private string extraDescription;
+        private bool fatal  = false;
+        private string shortCodeDescription;
         
         /// <summary>
         /// PutFailedEventArgs Constructor
@@ -31,6 +40,18 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.code = int.Parse(parsed["Code"]);
+            this.identifier = parsed["identifier"];
+            this.global = bool.Parse(parsed["Global"]);
+            this.expectedURI = parsed["ExpectedURI"];
+            this.codeDescription = parsed["CodeDescription"];
+            this.extraDescription = parsed["ExtraDescription"];
+            this.fatal = bool.Parse(parsed["Fatal"]);
+            this.shortCodeDescription = parsed["ShortCodeDescription"];
+            
+            /* TODO: Complex Put Failed */
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

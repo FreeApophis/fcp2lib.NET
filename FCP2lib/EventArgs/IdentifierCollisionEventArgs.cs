@@ -43,9 +43,11 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.identifier = parsed["Identifier"];
             if(parsed["Global"] != null)
                 this.global = bool.Parse(parsed["Global"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

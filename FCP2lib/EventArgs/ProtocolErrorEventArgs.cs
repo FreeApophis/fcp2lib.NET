@@ -23,6 +23,42 @@ namespace Freenet.FCP2 {
 
     public class ProtocolErrorEventArgs : EventArgs {
         
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private int code;
+        
+        public int Code {
+            get { return code; }
+        }
+        
+        private string codeDescription;
+        
+        public string CodeDescription {
+            get { return codeDescription; }
+        }
+        
+        private string extraDescription;
+        
+        public string ExtraDescription {
+            get { return extraDescription; }
+        }
+        
+        private bool fatal;
+        
+        public bool Fatal {
+            get { return fatal; }
+        }
+        
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
         /// <summary>
         /// ProtocolErrorEventArgs Constructor
         /// </summary>
@@ -31,6 +67,14 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
+            this.global = bool.Parse(parsed["Global"]);
+            this.code = int.Parse(parsed["Code"]);
+            this.codeDescription = parsed["CodeDescription"];
+            this.extraDescription = parsed["ExtraDescription"];
+            this.fatal = bool.Parse(parsed["Fatal"]);
+            this.identifier = parsed["Identifier"];
+
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

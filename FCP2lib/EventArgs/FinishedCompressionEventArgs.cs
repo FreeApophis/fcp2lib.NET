@@ -55,10 +55,12 @@ namespace Freenet.FCP2 {
             #if DEBUG
             FCP2.ArgsDebug(this, parsed);
             #endif
+            
             this.identifier = parsed["Identifier"];
             this.codec = int.Parse(parsed["Codec"]);
             this.originalSize = long.Parse(parsed["OriginalSize"]);
             this.compressedSize = long.Parse(parsed["CompressedSize"]);
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif
