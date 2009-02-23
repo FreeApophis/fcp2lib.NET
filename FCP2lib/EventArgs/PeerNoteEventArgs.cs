@@ -18,8 +18,6 @@
  */
 
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
@@ -37,9 +35,9 @@ namespace Freenet.FCP2 {
             get { return noteText; }
         }
         
-        private PeerNoteType peerNoteType;
+        private PeerNoteTypeEnum peerNoteType;
         
-        public PeerNoteType PeerNoteTypeVal {
+        public PeerNoteTypeEnum PeerNoteType {
             get { return peerNoteType; }
         }
         
@@ -47,13 +45,18 @@ namespace Freenet.FCP2 {
         /// PeerNoteEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public PeerNoteEventArgs(MessageParser parsed) {
+        internal PeerNoteEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             this.nodeIdentifier = parsed["NodeIdentifier"];
             System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
             this.noteText = enc.GetString(Convert.FromBase64String(parsed["NoteText"]));
-            this.peerNoteType = (PeerNoteType)int.Parse(parsed["PeerNoteType"]);
-            }
+            this.peerNoteType = (PeerNoteTypeEnum)int.Parse(parsed["PeerNoteType"]);
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
+        }
     }
 }
 

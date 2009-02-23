@@ -16,21 +16,116 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
     public class PersistentPutEventArgs : EventArgs {
+
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }
+        
+        private VerbosityEnum verbosity;
+        
+        public VerbosityEnum Verbosity {
+            get { return verbosity; }
+        }
+        
+        private PriorityClassEnum priorityClass;
+        
+        public PriorityClassEnum PriorityClass {
+            get { return priorityClass; }
+        }
+        
+        private UploadFromEnum uploadFrom;
+        
+        public UploadFromEnum UploadFrom {
+            get { return uploadFrom; }
+        }
+         
+        private string filename;
+        
+        public string Filename {
+            get { return filename; }
+        }
+        
+        private string targetFilename;
+        
+        public string TargetFilename {
+            get { return targetFilename; }
+        }
+        
+        private MetadataType metadata;
+        
+        public MetadataType Metadata {
+            get { return metadata; }
+        }
+        
+        private string clientToken;
+        
+        public string ClientToken {
+            get { return clientToken; }
+        }
+
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private int dataLength;
+        
+        public int DataLength {
+            get { return dataLength; }
+        }
+
+        private int maxRetries;
+        
+        public int MaxRetries {
+            get { return maxRetries; }
+        }
         
         /// <summary>
         /// PersistentPutEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public PersistentPutEventArgs(MessageParser parsed) {
+        internal PersistentPutEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            
+            this.uri = parsed["URI"];
+            this.verbosity = (VerbosityEnum)(int.Parse(parsed["Verbosity"]));
+            this.priorityClass = (PriorityClassEnum)int.Parse(parsed["PriorityClass"]);
+            this.uploadFrom = (UploadFromEnum)Enum.Parse(typeof(UploadFromEnum), parsed["UploadFrom"]);
+            this.filename = parsed["Filename"];
+            this.targetFilename = parsed["TargetFilename"];
+            this.metadata = new MetadataType(parsed);
+            this.clientToken = parsed["ClientToken"];
+            this.global = bool.Parse(parsed["Global"]);
+            this.dataLength = int.Parse(parsed["DataLength"]);
+            this.maxRetries = int.Parse(parsed["MaxRetries"]);
+
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
+        }
+        
+        public class MetadataType{
+            
+            private string contentType;
+            
+            public string ContentType {
+                get { return contentType; }
+            }
+
+            internal MetadataType(MessageParser parsed) {
+                this.contentType = parsed["Metadata.ContentType"];
+            }
         }
     }
 }

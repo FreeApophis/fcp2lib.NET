@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
         
@@ -35,8 +33,10 @@ namespace Freenet.FCP2 {
         /// ConfigDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public ConfigDataEventArgs(MessageParser parsed) {
+        internal ConfigDataEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             
             this.config = parsed;
             
@@ -45,8 +45,11 @@ namespace Freenet.FCP2 {
              * datastructures for configuration 
              * Therfore we expose the MessageParser directly...
              * 
-             * C# 4.0 - dynamic type would be the solution!
+             * C# 4.0 - dynamic type could be the solution!
              * * * * * */
+            #if DEBUG            
+            parsed.PrintAccessCount();
+            #endif
            
         }
     }

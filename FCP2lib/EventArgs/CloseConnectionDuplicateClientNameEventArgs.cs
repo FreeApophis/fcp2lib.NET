@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
 
 namespace Freenet.FCP2 {
@@ -27,9 +27,13 @@ namespace Freenet.FCP2 {
         /// CloseConnectionDuplicateClientNameEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public CloseConnectionDuplicateClientNameEventArgs(MessageParser parsed) {
+        internal CloseConnectionDuplicateClientNameEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
-            /* no additional data */
+            #endif
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

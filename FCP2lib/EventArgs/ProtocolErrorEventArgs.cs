@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
@@ -29,8 +27,13 @@ namespace Freenet.FCP2 {
         /// ProtocolErrorEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public ProtocolErrorEventArgs(MessageParser parsed) {
+        internal ProtocolErrorEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

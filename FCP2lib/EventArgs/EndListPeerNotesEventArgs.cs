@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
        
@@ -29,9 +27,13 @@ namespace Freenet.FCP2 {
         /// EndListPeerNotesEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public EndListPeerNotesEventArgs(MessageParser parsed) {
+        internal EndListPeerNotesEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
-            /* no additional data */
+            #endif
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
@@ -53,13 +51,17 @@ namespace Freenet.FCP2 {
         /// FinishedCompressionEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public FinishedCompressionEventArgs(MessageParser parsed) {
+        internal FinishedCompressionEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             this.identifier = parsed["Identifier"];
             this.codec = int.Parse(parsed["Codec"]);
             this.originalSize = long.Parse(parsed["OriginalSize"]);
             this.compressedSize = long.Parse(parsed["CompressedSize"]);
-
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

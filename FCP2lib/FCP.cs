@@ -44,8 +44,9 @@ namespace Freenet.FCP2
         
         public const string endMessage = "EndMessage";
         
+#if DEBUG        
         public static void ArgsDebug(EventArgs args, MessageParser parsed) {
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(args.GetType().ToString() + "()");
             Console.ForegroundColor = ConsoleColor.Cyan;
             foreach(KeyValuePair<string, string> kvp in parsed) {
@@ -53,6 +54,7 @@ namespace Freenet.FCP2
             }
             Console.ForegroundColor = ConsoleColor.Gray;
         }
+#endif
         
         public static DateTime FromUnix(string unix) {
             System.DateTime epoch = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
@@ -798,7 +800,7 @@ namespace Freenet.FCP2
         /// <param name="nodeIdentifier">The node name, identity or IP:port pair of the peer to be modified.</param>
         /// <param name="noteText">String of the note text to set the specified peer note to.</param>
         /// <param name="peerNoteType">Specify the type of the peer note, by code number (currently, may change in the future). Type codes are: 1-peer private note</param>
-        public void ModifyPeerNote(string nodeIdentifier, string noteText, PeerNoteType peerNoteType) {
+        public void ModifyPeerNote(string nodeIdentifier, string noteText, PeerNoteTypeEnum peerNoteType) {
             ConnectIfNeeded();
             fnwrite.WriteLine("ModifyPeer");
             fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
@@ -832,9 +834,9 @@ namespace Freenet.FCP2
             if (giveOpennetRef!=null)
                 fnwrite.WriteLine("GiveOpennetRef=" + giveOpennetRef.Value.ToString());
             if (withPrivate!=null)
-                fnwrite.WriteLine("withPrivate=" + withPrivate.Value.ToString());
+                fnwrite.WriteLine("WithPrivate=" + withPrivate.Value.ToString());
             if (withVolatile!=null)
-                fnwrite.WriteLine("withVolatile=" + withVolatile.Value.ToString());
+                fnwrite.WriteLine("WithVolatile=" + withVolatile.Value.ToString());
             fnwrite.WriteLine(endMessage);
             fnwrite.Flush();
         }
@@ -1014,9 +1016,9 @@ namespace Freenet.FCP2
         /// <param name="filehash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="data">A stream to insert directly to freenet</param>
-        public void ClientPutDirect(string uri, string Metadata_ContentType, string identifier, Verbosity? verbosity,
-                                    int? maxRetries, PriorityClass? priorityClass, bool? getCHKOnly, bool? global,
-                                    bool? dontCompress, string clientToken, Persistence? persistence, string targetFilename,
+        public void ClientPutDirect(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
+                                    int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                    bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                     bool? earlyEncode, string fileHash, bool? binaryBlob, Stream data) {
 
             ConnectIfNeeded();
@@ -1099,9 +1101,9 @@ namespace Freenet.FCP2
         /// <param name="filehash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="file">The FileInfo for the File to be inserted</param>
-        public void ClientPutDisk(string uri, string Metadata_ContentType, string identifier, Verbosity? verbosity,
-                                  int? maxRetries, PriorityClass? priorityClass, bool? getCHKOnly, bool? global,
-                                  bool? dontCompress, string clientToken, Persistence? persistence, string targetFilename,
+        public void ClientPutDisk(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
+                                  int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                  bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                   bool? earlyEncode, string fileHash, bool? binaryBlob, FileInfo file) {
 
             ConnectIfNeeded();
@@ -1178,9 +1180,9 @@ namespace Freenet.FCP2
         /// <param name="filehash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="targetURI">This is an existing freenet URI such as KSK@sample.txt. The idea is that you insert a new key that redirects to this one</param>
-        public void ClientPutRedirect(string uri, string Metadata_ContentType, string identifier, Verbosity? verbosity,
-                                      int? maxRetries, PriorityClass? priorityClass, bool? getCHKOnly, bool? global,
-                                      bool? dontCompress, string clientToken, Persistence? persistence, string targetFilename,
+        public void ClientPutRedirect(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
+                                      int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                      bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                       bool? earlyEncode, string fileHash, bool? binaryBlob, string targetURI) {
 
             ConnectIfNeeded();
@@ -1250,9 +1252,9 @@ namespace Freenet.FCP2
         /// <param name="defaultName">The item to display when someone requests the Uri only (without the item name part)</param>
         /// <param name="filename">The filename for the File to be inserted</param>
         /// <param name="allowUnreadableFiles">unless true, any unreadable files cause the whole request to fail; optional</param>
-        public void ClientPutDiskDir(string identifier, Verbosity? verbosity, int? maxRetries, PriorityClass? priorityClass,
+        public void ClientPutDiskDir(string identifier, VerbosityEnum? verbosity, int? maxRetries, PriorityClassEnum? priorityClass,
                                      string uri, bool? getCHKOnly, bool? dontCompress, string clientToken,
-                                     Persistence? persistence, bool? global, string defaultName, string filename,
+                                     PersistenceEnum? persistence, bool? global, string defaultName, string filename,
                                      bool allowUnreadableFiles) {
             
             ConnectIfNeeded();
@@ -1298,9 +1300,9 @@ namespace Freenet.FCP2
             
         }
 
-        public void ClientPutComplexDir(string uri, string identifier, Verbosity? verbosity, int? maxRetries,
-                                        PriorityClass? priorityClass, bool? getCHKOnly, bool? global, bool? dontCompress,
-                                        string clientToken, Persistence? persistence, string targetFilename, bool? earlyEncode,
+        public void ClientPutComplexDir(string uri, string identifier, VerbosityEnum? verbosity, int? maxRetries,
+                                        PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global, bool? dontCompress,
+                                        string clientToken, PersistenceEnum? persistence, string targetFilename, bool? earlyEncode,
                                         string defaultName, List<InsertItem> filelist) {
             ConnectIfNeeded();
             fnwrite.WriteLine("ClientPutComplexDir");
@@ -1406,9 +1408,9 @@ namespace Freenet.FCP2
         /// <param name="filename">Name and path of the file where the download is to be stored.</param>
         /// <param name="tempFilename">Name and path of a temporary file where the partial download is to be stored.</param>
         public void ClientGet(bool? ignoreDS, bool? dsonly, string uri, string identifier,
-                              Verbosity? verbosity, int? maxSize, int? maxTempSize, int? maxRetries, PriorityClass? priorityClass,
-                              Persistence? persistence, string clientToken, bool? global, bool? binaryBlob,
-                              string allowedMIMETypes, ReturnType? returnType, string filename, string tempFilename) {
+                              VerbosityEnum? verbosity, int? maxSize, int? maxTempSize, int? maxRetries, PriorityClassEnum? priorityClass,
+                              PersistenceEnum? persistence, string clientToken, bool? global, bool? binaryBlob,
+                              string allowedMIMETypes, ReturnTypeEnum? returnType, string filename, string tempFilename) {
 
             ConnectIfNeeded();
             fnwrite.WriteLine("ClientGet");
@@ -1441,7 +1443,7 @@ namespace Freenet.FCP2
             
             if(returnType!=null) {
                 fnwrite.WriteLine("ReturnType=" + returnType.Value.ToString());
-                if(returnType==ReturnType.disk) {
+                if(returnType==ReturnTypeEnum.disk) {
                     fnwrite.WriteLine("Filename=" + filename);
                     if(!String.IsNullOrEmpty(tempFilename))
                         fnwrite.WriteLine("TempFileName=" + tempFilename);
@@ -1555,7 +1557,7 @@ namespace Freenet.FCP2
         /// </summary>
         /// <param name="enabled">enable Global Watch</param>
         /// <param name="verbosityMask">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
-        public void WatchGlobal(bool enabled, Verbosity verbosityMask) {
+        public void WatchGlobal(bool enabled, VerbosityEnum verbosityMask) {
             ConnectIfNeeded();
             fnwrite.WriteLine("WatchGlobal");
             fnwrite.WriteLine("Enabled=" + enabled.ToString());
@@ -1636,7 +1638,7 @@ namespace Freenet.FCP2
         /// <param name="global">The Global field specifies whether the request is on the global queue or not (Identifier namespaces are separate for the global and local queue).</param>
         /// <param name="clientToken">New Client Token</param>
         /// <param name="priorityClass">Priority of the insert</param>
-        public void ModifyPersistentRequest(string identifier, bool global, string clientToken, PriorityClass? priorityClass) {
+        public void ModifyPersistentRequest(string identifier, bool global, string clientToken, PriorityClassEnum? priorityClass) {
             ConnectIfNeeded();
             fnwrite.WriteLine("ModifyPersistentRequest");
             fnwrite.WriteLine("Identifier=" + identifier);
@@ -1673,7 +1675,7 @@ namespace Freenet.FCP2
         /// <param name="identifier">The unique identifier of the queued insert or download.</param>
         /// <param name="global">The Global field specifies whether the request is on the global queue or not (Identifier namespaces are separate for the global and local queue).</param>
         /// <param name="priorityClass">Priority of the insert (default 2: semi interactive)</param>
-        public void ModifyPersistentRequest(string identifier, bool global, PriorityClass? priorityClass) {
+        public void ModifyPersistentRequest(string identifier, bool global, PriorityClassEnum? priorityClass) {
             ModifyPersistentRequest(identifier, global, null, priorityClass);
         }
         

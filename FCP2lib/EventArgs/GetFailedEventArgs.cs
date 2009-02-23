@@ -18,19 +18,107 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
     public class GetFailedEventArgs : EventArgs {
         
+        private bool global = false;
+        
+        public bool Global {
+            get { return global; }
+        }
+        private int code;
+        
+        public int Code {
+            get { return code; }
+        }
+        private string codeDescription;
+        
+        public string CodeDescription {
+            get { return codeDescription; }
+        }
+        private string extraDescription;
+        
+        public string ExtraDescription {
+            get { return extraDescription; }
+        }
+        private bool fatal  = false;
+        
+        public bool Fatal {
+            get { return fatal; }
+        }
+        private string shortCodeDescription;
+        
+        public string ShortCodeDescription {
+            get { return shortCodeDescription; }
+        }
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        private int expectedDataLength;
+        
+        public int ExpectedDataLength {
+            get { return expectedDataLength; }
+        }
+        private expectedMetadataType expectedMetadata;
+
+        public expectedMetadataType ExpectedMetadata {
+            get { return expectedMetadata; }
+        }
+        
+        private bool finalizedExpected  = false;
+        
+        public bool FinalizedExpected {
+            get { return finalizedExpected; }
+        }
+        private string redirectURI;
+        
+        public string RedirectURI {
+            get { return redirectURI; }
+        }
+                
         /// <summary>
         /// GetFailedEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public GetFailedEventArgs(MessageParser parsed) {
+        internal GetFailedEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            if (parsed["Global"] != null)
+                this.global = bool.Parse(parsed["Global"]);
+            this.code = int.Parse(parsed["Code"]);
+            this.codeDescription = parsed["CodeDescription"];
+            this.extraDescription = parsed["ExtraDescription"];
+            if (parsed["Fatal"] != null)
+                this.fatal = bool.Parse(parsed["Fatal"]);
+            this.shortCodeDescription = parsed["ShortCodeDescription"];
+            this.identifier = parsed["Identifier"];
+            if (parsed["ExpectedDataLength"] != null)
+                this.expectedDataLength = int.Parse(parsed["ExpectedDataLength"]);
+            this.expectedMetadata = new expectedMetadataType(parsed);
+            if (parsed["FinalizedExpected"] != null)
+                this.finalizedExpected= bool.Parse(parsed["FinalizedExpected"]);
+            this.redirectURI = parsed["RedirectURI"];  
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
+        }
+        
+        public class expectedMetadataType{
+            
+            private string contentType;
+            
+            public string ContentType {
+                get { return contentType; }
+            }
+
+            internal expectedMetadataType(MessageParser parsed) {
+                this.contentType = parsed["ExpectedMetadata.ContentType"];                
+            }
         }
     }
 }

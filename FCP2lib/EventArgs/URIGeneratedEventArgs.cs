@@ -18,19 +18,36 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
     public class URIGeneratedEventArgs : EventArgs {
         
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private string uri;
+        
+        public string URI {
+            get { return uri; }
+        }
+        
         /// <summary>
         /// URIGeneratedEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public URIGeneratedEventArgs(MessageParser parsed) {
+        internal URIGeneratedEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            this.identifier = parsed["Identifier"];
+            this.uri = parsed["URI"];
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

@@ -18,19 +18,37 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
     public class IdentifierCollisionEventArgs : EventArgs {
         
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private bool global = false;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
         /// <summary>
         /// IdentifierCollisionEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public IdentifierCollisionEventArgs(MessageParser parsed) {
+        internal IdentifierCollisionEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            this.identifier = parsed["Identifier"];
+            if(parsed["Global"] != null)
+                this.global = bool.Parse(parsed["Global"]);
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

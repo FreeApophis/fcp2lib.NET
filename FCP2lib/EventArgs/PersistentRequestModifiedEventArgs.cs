@@ -18,19 +18,52 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
     public class PersistentRequestModifiedEventArgs : EventArgs {
         
+        private string identifier;
+        
+        public string Identifier {
+            get { return identifier; }
+        }
+        
+        private bool global;
+        
+        public bool Global {
+            get { return global; }
+        }
+        
+        private string clientToken;
+        
+        public string ClientToken {
+            get { return clientToken; }
+        }
+        
+        private PriorityClassEnum priorityClass;
+        
+        public PriorityClassEnum PriorityClass {
+            get { return priorityClass; }
+        }
+        
         /// <summary>
         /// PersistentRequestModifiedEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public PersistentRequestModifiedEventArgs(MessageParser parsed) {
+        internal PersistentRequestModifiedEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            
+            this.identifier = parsed["Identifier"];
+            this.global = bool.Parse(parsed["Global"]);
+            this.clientToken = parsed["ClientToken"];
+            this.priorityClass = (PriorityClassEnum)(int.Parse(parsed["PriorityClass"]));
+           
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

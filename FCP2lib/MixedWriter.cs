@@ -46,6 +46,11 @@ namespace Freenet.FCP2
         
         public override void WriteLine(string value)
         {
+            #if DEBUG
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(value);
+            Console.ForegroundColor = ConsoleColor.Gray;
+            #endif
             value = value + "\n";
             UTF8Encoding enc = new UTF8Encoding();
             int numbytes = enc.GetBytes(value, 0, value.Length, buffer, 0);

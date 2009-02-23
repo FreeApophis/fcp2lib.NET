@@ -23,23 +23,23 @@ namespace Freenet.FCP2 {
     /// Specify the type of the peer note, by code number (currently, may change in the future). 
     /// Type codes are: 1-peer private note
     /// </summary>
-    public enum  PeerNoteType {
+    public enum  PeerNoteTypeEnum {
         PeerPrivateNote=1
     }    
     
-    public enum Persistence {
+    public enum PersistenceEnum {
         connection,
         reboot,
         forever
     }
     
     [Flags]
-    public enum Verbosity{
+    public enum VerbosityEnum{
         SimpleMessages = 1,
         CompressionMessages = 512
     }
     
-    public enum PriorityClass {
+    public enum PriorityClassEnum {
         Maximum = 0,
         VeryHigh = 1,
         High = 2,
@@ -49,11 +49,17 @@ namespace Freenet.FCP2 {
         NeverFinish = 6
     }
     
-    public enum ReturnType {
+    public enum ReturnTypeEnum {
         direct, 
         disk, 
 //      chunked,
         none
+    }
+    
+    public enum UploadFromEnum {
+        direct,
+        disk,
+        redirect
     }
     
       	 

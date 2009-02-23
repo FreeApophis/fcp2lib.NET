@@ -19,7 +19,6 @@
 
 using System;
 using System.Net;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
     
@@ -67,52 +66,34 @@ namespace Freenet.FCP2 {
             get { return version; }
         }
         
-        private IPEndPoint physical_udp;
+        private PhysicalType physical;
         
-        public IPEndPoint Physical_udp {
-            get { return physical_udp; }
+        public PhysicalType Physical {
+            get { return physical; }
         }
         
-        private string ark_pubURI;
+        private ArkType ark;
         
-        public string Ark_pubURI {
-            get { return ark_pubURI; }
+        public ArkType Ark {
+            get { return ark; }
         }
         
-        private int ark_number;
+        private DsaPubKeyType dsaPubKey;
         
-        public int Ark_number {
-            get { return ark_number; }
+        public DsaPubKeyType DsaPubKey {
+            get { return dsaPubKey; }
         }
         
-        private string dsaPubKey_y;
+        private DsaGroupType dsaGroup;
         
-        public string DsaPubKey_y {
-            get { return dsaPubKey_y; }
+        public DsaGroupType DsaGroup {
+            get { return dsaGroup; }
         }
         
-        private string dsaGroup_p;
+        private AuthType auth;
         
-        public string DsaGroup_p {
-            get { return dsaGroup_p; }
-        }
-        
-        private string dsaGroup_g;
-        
-        public string DsaGroup_g {
-            get { return dsaGroup_g; }
-        }
-        
-        private string dsaGroup_q;
-        
-        public string DsaGroup_q {
-            get { return dsaGroup_q; }
-        }
-        
-        private int auth_negTypes;
-        
-        public int Auth_negTypes {
-            get { return auth_negTypes; }
+        public AuthType Auth {
+            get { return auth; }
         }
         
         private VolatileType @volatile = null;
@@ -131,8 +112,10 @@ namespace Freenet.FCP2 {
         /// PeerEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public PeerEventArgs(MessageParser parsed) {
+        internal PeerEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             this.lastGoodVersion = parsed["lastGoodVersion"];
             this.opennet = bool.Parse(parsed["opennet"]);
             this.myName = parsed["myName"];
@@ -140,20 +123,101 @@ namespace Freenet.FCP2 {
             this.location = double.Parse(parsed["location"]);
             this.testnet = bool.Parse(parsed["testnet"]);
             this.version = parsed["version"];
-            string[] ip = parsed[" physical.udp"].Split(new char[] {':'});
-            this.physical_udp =  new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
-            this.ark_pubURI = parsed["ark.pubURI"];
-            this.ark_number = int.Parse(parsed["ark.number"]);
-            this.dsaPubKey_y =parsed["dsaPubKey.y"];
-            this.dsaGroup_p =parsed["dsaGroup.p"];
-            this.dsaGroup_g =parsed["dsaGroup.g"];
-            this.dsaGroup_q =parsed["dsaGroup.q"];
-            this.auth_negTypes = int.Parse(parsed["auth.negTypes"]);
-
+            physical = new PhysicalType(parsed);
+            ark = new ArkType(parsed);
+            dsaPubKey = new DsaPubKeyType(parsed);
+            dsaGroup = new DsaGroupType(parsed);
+            auth = new AuthType(parsed);
             if (parsed["volatile.averagePingTime"]!=null)
                 @volatile = new VolatileType(parsed);
             if (parsed["metadata.routableConnectionCheckCount"]!=null)
                 metadata = new MetadataType(parsed);
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
+        }
+        
+        public class PhysicalType {
+            IPEndPoint udp;
+            
+            public IPEndPoint UDP {
+                get { return udp; }
+            }
+            
+            internal PhysicalType(MessageParser parsed) {
+                string[] ip = parsed["physical.udp"].Split(new char[] {':'});
+                this.udp = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
+            }
+        }
+
+        public class ArkType {
+            private string pubURI;
+            
+            public string PubURI {
+                get { return pubURI; }
+            }
+            
+            private int number;
+            
+            public int Number {
+                get { return number; }
+            }
+            
+            internal ArkType(MessageParser parsed) {
+                this.pubURI = parsed["ark.pubURI"];
+                this.number = int.Parse(parsed["ark.number"]);
+            }
+            
+        }
+        
+        public class DsaPubKeyType {
+            private string y;
+            
+            public string Y {
+                get { return y; }
+            }
+            
+            internal DsaPubKeyType(MessageParser parsed) {
+                this.y = parsed["dsaPubKey.y"];
+            }
+        }
+
+        public class DsaGroupType {
+            private string p;
+            
+            public string P {
+                get { return p; }
+            }
+            
+            private string g;
+            
+            public string G {
+                get { return g; }
+            }
+            
+            private string q;
+            
+            public string Q {
+                get { return q; }
+            }
+            
+            internal DsaGroupType(MessageParser parsed) {
+                this.p = parsed["dsaGroup.p"];
+                this.g = parsed["dsaGroup.g"];
+                this.q = parsed["dsaGroup.q"];
+            }
+        }
+        
+        public class AuthType {
+            private int negTypes;
+            
+            public int NegTypes {
+                get { return negTypes; }
+            }
+            
+            internal AuthType(MessageParser parsed) {
+                this.negTypes = int.Parse(parsed["auth.negTypes"]);
+            }
         }
         
         public class VolatileType {
@@ -185,7 +249,6 @@ namespace Freenet.FCP2 {
             
             public string Status {
                 get { return status; }
-                set { status = value; }
             }
             
             private int totalBytesIn;
@@ -270,10 +333,10 @@ namespace Freenet.FCP2 {
                 get { return timeLastReceivedPacket; }
             }
             
-            private IPEndPoint detected_udp;
+            private DetectedType detected;
             
-            public IPEndPoint Detected_udp {
-                get { return detected_udp; }
+            public DetectedType Detected {
+                get { return detected; }
             }
             
             internal MetadataType(MessageParser parsed) {
@@ -283,9 +346,20 @@ namespace Freenet.FCP2 {
                 this.timeLastSuccess = FCP2.FromUnix(parsed[" metadata.timeLastSuccess"]);
                 this.timeLastRoutable = FCP2.FromUnix(parsed[" metadata.timeLastRoutable"]);
                 this.timeLastReceivedPacket = FCP2.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
+                this.detected =  new DetectedType(parsed);
+            }
+            
+            public class DetectedType {
+                IPEndPoint udp;
                 
-                string[] ip = parsed[" metadata.detected.udp"].Split(new char[] {':'});
-                this.detected_udp =  new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
+                public IPEndPoint UDP {
+                    get { return udp; }
+                }
+                
+                internal DetectedType(MessageParser parsed) {
+                    string[] ip = parsed["metadata.detected.udp"].Split(new char[] {':'});
+                    this.udp = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
+                }
             }
         }
     }

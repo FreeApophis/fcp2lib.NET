@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
@@ -53,12 +51,17 @@ namespace Freenet.FCP2 {
         /// DataFoundEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public DataFoundEventArgs(MessageParser parsed) {
+        internal DataFoundEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             this.contentType = parsed["Metadata.ContentType"];
             this.datalength = long.Parse(parsed["DataLength"]);
             this.global = (parsed["Global"]!= null);
             this.identifier = parsed["Identifier"];
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif            
         }
    }
 }

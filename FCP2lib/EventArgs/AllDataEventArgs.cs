@@ -19,7 +19,6 @@
  
 using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
@@ -70,9 +69,10 @@ namespace Freenet.FCP2 {
         /// AllDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public AllDataEventArgs(MessageParser parsed, Stream data) {
+        internal AllDataEventArgs(MessageParser parsed, Stream data) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
-
+            #endif
             if (!parsed.DataAvailable)
                 throw new NotSupportedException("AllDataEvent without Data");
             
@@ -81,7 +81,9 @@ namespace Freenet.FCP2 {
             this.datalength = long.Parse(parsed["DataLength"]);
             this.startupTime = FCP2.FromUnix(parsed["StartupTime"]);
             this.completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
-            
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

@@ -18,8 +18,6 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
        
@@ -30,8 +28,13 @@ namespace Freenet.FCP2 {
         /// TestDDACompleteEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public TestDDACompleteEventArgs(MessageParser parsed) {
+        internal TestDDACompleteEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

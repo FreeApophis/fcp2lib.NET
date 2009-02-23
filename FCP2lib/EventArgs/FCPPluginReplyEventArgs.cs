@@ -19,7 +19,6 @@
  
 using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
 
@@ -43,18 +42,38 @@ namespace Freenet.FCP2 {
             get { return identifier; }
         }
         
+        private MessageParser replies;
+        
+        public MessageParser Replies {
+            get { return replies; }
+        }
+        
+        private Stream data;
+        
         /// <summary>
         /// FCPPluginReplyEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public FCPPluginReplyEventArgs(MessageParser parsed) {
+        internal FCPPluginReplyEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
             this.pluginName = parsed["PluginName"];
             if(parsed["DataLength"] != null) {
                 this.dataLength = int.Parse(parsed["DataLength"]);
+                
+                data = null; /* TODO: Similar to AllData*/
                 throw new NotImplementedException("Unclear format");
+                
+                /* TODO: Data? EndMessage? */
             }
             this.identifier = parsed["Identifier"];
+            
+            this.replies = parsed;
+            
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }

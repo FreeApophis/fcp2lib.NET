@@ -18,19 +18,36 @@
  */
  
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 namespace Freenet.FCP2 {
            
     public class PeerRemovedEventArgs : EventArgs {
         
+        private string identity;
+        
+        public string Identity {
+            get { return identity; }
+        }
+        
+        private string nodeIdentifier;
+        
+        public string NodeIdentifier {
+            get { return nodeIdentifier; }
+        }
+
         /// <summary>
         /// PeerRemovedEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        public PeerRemovedEventArgs(MessageParser parsed) {
+        internal PeerRemovedEventArgs(MessageParser parsed) {
+            #if DEBUG
             FCP2.ArgsDebug(this, parsed);
+            #endif
+            this.identity = parsed["Identity"];
+            this.nodeIdentifier = parsed["NodeIdentifier"];
+            #if DEBUG
+            parsed.PrintAccessCount();
+            #endif
         }
     }
 }
