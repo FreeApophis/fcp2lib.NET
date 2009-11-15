@@ -29,9 +29,9 @@ namespace Freenet.FCP2 {
             get { return global; }
         }
         
-        private int code;
+        private long code;
         
-        public int Code {
+        public long Code {
             get { return code; }
         }
         
@@ -65,9 +65,9 @@ namespace Freenet.FCP2 {
             get { return identifier; }
         }
         
-        private int expectedDataLength;
+        private long expectedDataLength;
         
-        public int ExpectedDataLength {
+        public long ExpectedDataLength {
             get { return expectedDataLength; }
         }
         
@@ -99,7 +99,7 @@ namespace Freenet.FCP2 {
             #endif
             if (parsed["Global"] != null)
                 this.global = bool.Parse(parsed["Global"]);
-            this.code = int.Parse(parsed["Code"]);
+            this.code = long.Parse(parsed["Code"]);
             this.codeDescription = parsed["CodeDescription"];
             this.extraDescription = parsed["ExtraDescription"];
             if (parsed["Fatal"] != null)
@@ -107,7 +107,7 @@ namespace Freenet.FCP2 {
             this.shortCodeDescription = parsed["ShortCodeDescription"];
             this.identifier = parsed["Identifier"];
             if (parsed["ExpectedDataLength"] != null)
-                this.expectedDataLength = int.Parse(parsed["ExpectedDataLength"]);
+                this.expectedDataLength = long.Parse(parsed["ExpectedDataLength"]);
             this.expectedMetadata = new expectedMetadataType(parsed);
             if (parsed["FinalizedExpected"] != null)
                 this.finalizedExpected= bool.Parse(parsed["FinalizedExpected"]);

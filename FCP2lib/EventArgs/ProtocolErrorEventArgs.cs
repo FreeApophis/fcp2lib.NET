@@ -2,6 +2,7 @@
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
 
 namespace Freenet.FCP2 {
@@ -29,9 +30,9 @@ namespace Freenet.FCP2 {
             get { return global; }
         }
         
-        private int code;
+        private long code;
         
-        public int Code {
+        public long Code {
             get { return code; }
         }
         
@@ -68,8 +69,8 @@ namespace Freenet.FCP2 {
             FCP2.ArgsDebug(this, parsed);
             #endif
             
-            this.global = bool.Parse(parsed["Global"]);
-            this.code = int.Parse(parsed["Code"]);
+            this.global = (parsed["Global"]!=null) ? bool.Parse(parsed["Global"]) : false;
+            this.code = long.Parse(parsed["Code"]);
             this.codeDescription = parsed["CodeDescription"];
             this.extraDescription = parsed["ExtraDescription"];
             this.fatal = bool.Parse(parsed["Fatal"]);

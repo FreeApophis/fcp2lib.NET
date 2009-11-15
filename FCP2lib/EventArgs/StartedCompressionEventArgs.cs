@@ -30,9 +30,9 @@ namespace Freenet.FCP2 {
             get { return identifier; }
         }
         
-        private int codec;
+        private long codec;
         
-        public int Codec {
+        public long Codec {
             get { return codec; }
         }
         
@@ -46,7 +46,7 @@ namespace Freenet.FCP2 {
             #endif
             
             this.identifier = parsed["Identifier"];
-            this.codec = int.Parse(parsed["Codec"]);
+            this.codec = long.Parse(parsed["Codec"]);
 
             #if DEBUG
             parsed.PrintAccessCount();

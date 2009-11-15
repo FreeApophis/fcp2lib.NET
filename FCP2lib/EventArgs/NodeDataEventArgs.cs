@@ -2,6 +2,7 @@
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -181,16 +182,16 @@ namespace Freenet.FCP2 {
                 get { return privURI; }
             }
             
-            private int number;
+            private long number;
             
-            public int Number {
+            public long Number {
                 get { return number; }
             }
             
             internal ArkType(MessageParser parsed) {
                 this.pubURI = parsed["ark.pubURI"];
                 this.privURI = parsed["ark.privURI"];
-                this.number = int.Parse(parsed["ark.number"]);
+                this.number = long.Parse(parsed["ark.number"]);
             }
             
         }
@@ -246,16 +247,16 @@ namespace Freenet.FCP2 {
         }
         
         public class AuthType {
-            private List<int> negTypes = new List<int>();
+            private List<long> negTypes = new List<long>();
             
-            public List<int> NegTypes {
+            public List<long> NegTypes {
                 get { return negTypes; }
             }
             
             internal AuthType(MessageParser parsed) {
                 if (parsed["auth.negTypes"]!=null) {
                     foreach(string an in parsed["auth.negTypes"].Split(new char[] {';'})) {
-                        this.negTypes.Add(int.Parse(an));
+                        this.negTypes.Add(long.Parse(an));
                     }
                 }
             }
@@ -263,15 +264,15 @@ namespace Freenet.FCP2 {
         
         public class VolatileType {
             
-            private int startedSwaps;
+            private long startedSwaps;
             
-            public int StartedSwaps {
+            public long StartedSwaps {
                 get { return startedSwaps; }
             }
             
-            private int cacheAccesses;
+            private long cacheAccesses;
             
-            public int CacheAccesses {
+            public long CacheAccesses {
                 get { return cacheAccesses; }
             }
             
@@ -281,21 +282,21 @@ namespace Freenet.FCP2 {
                 get { return totalInputBytes; }
             }
             
-            private int networkSizeEstimateSession;
+            private long networkSizeEstimateSession;
             
-            public int NetworkSizeEstimateSession {
+            public long NetworkSizeEstimateSession {
                 get { return networkSizeEstimateSession; }
             }
             
-            private int storeKeys;
+            private long storeKeys;
             
-            public int StoreKeys {
+            public long StoreKeys {
                 get { return storeKeys; }
             }
             
-            private int cachedKeys;
+            private long cachedKeys;
             
-            public int CachedKeys {
+            public long CachedKeys {
                 get { return cachedKeys; }
             }
             
@@ -305,21 +306,21 @@ namespace Freenet.FCP2 {
                 get { return locationChangePerSwap; }
             }
             
-            private int swapsRejectedNowhereToGo;
+            private long swapsRejectedNowhereToGo;
             
-            public int SwapsRejectedNowhereToGo {
+            public long SwapsRejectedNowhereToGo {
                 get { return swapsRejectedNowhereToGo; }
             }
             
-            private int numberOfNotConnected;
+            private long numberOfNotConnected;
             
-            public int NumberOfNotConnected {
+            public long NumberOfNotConnected {
                 get { return numberOfNotConnected; }
             }
             
-            private int numberOfListenOnly;
+            private long numberOfListenOnly;
             
-            public int NumberOfListenOnly {
+            public long NumberOfListenOnly {
                 get { return numberOfListenOnly; }
             }
             
@@ -335,9 +336,9 @@ namespace Freenet.FCP2 {
                 get { return swapsPerNoSwaps; }
             }
             
-            private int allocatedJavaMemory;
+            private long allocatedJavaMemory;
             
-            public int AllocatedJavaMemory {
+            public long AllocatedJavaMemory {
                 get { return allocatedJavaMemory; }
             }
             
@@ -347,15 +348,15 @@ namespace Freenet.FCP2 {
                 get { return percentStoreHitsOfAccesses; }
             }
             
-            private int networkSizeEstimate24hourRecent;
+            private long networkSizeEstimate24hourRecent;
             
-            public int NetworkSizeEstimate24hourRecent {
+            public long NetworkSizeEstimate24hourRecent {
                 get { return networkSizeEstimate24hourRecent; }
             }
             
-            private int overallAccesses;
+            private long overallAccesses;
             
-            public int OverallAccesses {
+            public long OverallAccesses {
                 get { return overallAccesses; }
             }
             
@@ -378,39 +379,39 @@ namespace Freenet.FCP2 {
                 set { noSwaps = value; }
             }
             
-            private int cachedSize;
+            private long cachedSize;
             
-            public int CachedSize {
+            public long CachedSize {
                 get { return cachedSize; }
             }
             
-            private int uptimeSeconds;
+            private long uptimeSeconds;
             
-            public int UptimeSeconds {
+            public long UptimeSeconds {
                 get { return uptimeSeconds; }
             }
             
-            private int numberOfARKFetchers;
+            private long numberOfARKFetchers;
             
-            public int NumberOfARKFetchers {
+            public long NumberOfARKFetchers {
                 get { return numberOfARKFetchers; }
             }
             
-            private int networkSizeEstimate48hourRecent;
+            private long networkSizeEstimate48hourRecent;
             
-            public int NetworkSizeEstimate48hourRecent {
+            public long NetworkSizeEstimate48hourRecent {
                 get { return networkSizeEstimate48hourRecent; }
             }
             
-            private int maxOverallKeys;
+            private long maxOverallKeys;
             
-            public int MaxOverallKeys {
+            public long MaxOverallKeys {
                 get { return maxOverallKeys; }
             }
             
-            private int numberOfDisconnected;
+            private long numberOfDisconnected;
             
-            public int NumberOfDisconnected {
+            public long NumberOfDisconnected {
                 get { return numberOfDisconnected; }
             }
             
@@ -420,9 +421,9 @@ namespace Freenet.FCP2 {
                 get { return swaps; }
             }
             
-            private int maximumJavaMemory;
+            private long maximumJavaMemory;
             
-            public int MaximumJavaMemory {
+            public long MaximumJavaMemory {
                 get { return maximumJavaMemory; }
             }
             
@@ -432,9 +433,9 @@ namespace Freenet.FCP2 {
                 get { return avgStoreAccessRate; }
             }
             
-            private int totalInputRate;
+            private long totalInputRate;
             
-            public int TotalInputRate {
+            public long TotalInputRate {
                 get { return totalInputRate; }
             }
             
@@ -444,9 +445,9 @@ namespace Freenet.FCP2 {
                 get { return recentInputRate; }
             }
             
-            private int overallKeys;
+            private long overallKeys;
             
-            public int OverallKeys {
+            public long OverallKeys {
                 get { return overallKeys; }
             }
             
@@ -456,27 +457,27 @@ namespace Freenet.FCP2 {
                 get { return backedOffPercent; }
             }
             
-            private int runningThreadCount;
+            private long runningThreadCount;
             
-            public int RunningThreadCount {
+            public long RunningThreadCount {
                 get { return runningThreadCount; }
             }
             
-            private int storeAccesses;
+            private long storeAccesses;
             
-            public int StoreAccesses {
+            public long StoreAccesses {
                 get { return storeAccesses; }
             }
             
-            private int numberOfDisabled;
+            private long numberOfDisabled;
             
-            public int NumberOfDisabled {
+            public long NumberOfDisabled {
                 get { return numberOfDisabled; }
             }
             
-            private int cachedStoreMisses;
+            private long cachedStoreMisses;
             
-            public int CachedStoreMisses {
+            public long CachedStoreMisses {
                 get { return cachedStoreMisses; }
             }
             
@@ -486,15 +487,15 @@ namespace Freenet.FCP2 {
                 get { return routingMissDistance; }
             }
             
-            private int swapsRejectedRateLimit;
+            private long swapsRejectedRateLimit;
             
-            public int SwapsRejectedRateLimit {
+            public long SwapsRejectedRateLimit {
                 get { return swapsRejectedRateLimit; }
             }
             
-            private int totalOutputRate;
+            private long totalOutputRate;
             
-            public int TotalOutputRate {
+            public long TotalOutputRate {
                 get { return totalOutputRate; }
             }
             
@@ -504,21 +505,21 @@ namespace Freenet.FCP2 {
                 get { return averagePingTime; }
             }
             
-            private int numberOfBursting;
+            private long numberOfBursting;
             
-            public int NumberOfBursting {
+            public long NumberOfBursting {
                 get { return numberOfBursting; }
             }
             
-            private int numberOfInsertSenders;
+            private long numberOfInsertSenders;
             
-            public int NumberOfInsertSenders {
+            public long NumberOfInsertSenders {
                 get { return numberOfInsertSenders; }
             }
             
-            private int usedJavaMemory;
+            private long usedJavaMemory;
             
-            public int UsedJavaMemory {
+            public long UsedJavaMemory {
                 get { return usedJavaMemory; }
             }
             
@@ -534,21 +535,21 @@ namespace Freenet.FCP2 {
                 get { return locationChangePerSession; }
             }
             
-            private int numberOfNeverConnected;
+            private long numberOfNeverConnected;
             
-            public int NumberOfNeverConnected {
+            public long NumberOfNeverConnected {
                 get { return numberOfNeverConnected; }
             }
             
-            private int freeJavaMemory;
+            private long freeJavaMemory;
             
-            public int FreeJavaMemory {
+            public long FreeJavaMemory {
                 get { return freeJavaMemory; }
             }
             
-            private int totalPayloadOutputRate;
+            private long totalPayloadOutputRate;
             
-            public int TotalPayloadOutputRate {
+            public long TotalPayloadOutputRate {
                 get { return totalPayloadOutputRate; }
             }
             
@@ -558,33 +559,33 @@ namespace Freenet.FCP2 {
                 get { return isUsingWrapper; }
             }
             
-            private int storeMisses;
+            private long storeMisses;
             
-            public int StoreMisses {
+            public long StoreMisses {
                 get { return storeMisses; }
             }
             
-            private int storeHits;
+            private long storeHits;
             
-            public int StoreHits {
+            public long StoreHits {
                 get { return storeHits; }
             }
             
-            private int totalPayloadOutputPercent;
+            private long totalPayloadOutputPercent;
             
-            public int TotalPayloadOutputPercent {
+            public long TotalPayloadOutputPercent {
                 get { return totalPayloadOutputPercent; }
             }
             
-            private int storeSize;
+            private long storeSize;
             
-            public int StoreSize {
+            public long StoreSize {
                 get { return storeSize; }
             }
             
-            private int numberOfTooOld;
+            private long numberOfTooOld;
             
-            public int NumberOfTooOld {
+            public long NumberOfTooOld {
                 get { return numberOfTooOld; }
             }
             
@@ -594,9 +595,9 @@ namespace Freenet.FCP2 {
                 get { return avgConnectedPeersPerNode; }
             }
             
-            private int availableCPUs;
+            private long availableCPUs;
             
-            public int AvailableCPUs {
+            public long AvailableCPUs {
                 get { return availableCPUs; }
             }
             
@@ -612,45 +613,45 @@ namespace Freenet.FCP2 {
                 get { return noSwapsPerMinute; }
             }
             
-            private int numberOfListening;
+            private long numberOfListening;
             
-            public int NumberOfListening {
+            public long NumberOfListening {
                 get { return numberOfListening; }
             }
             
-            private int swapsRejectedAlreadyLocked;
+            private long swapsRejectedAlreadyLocked;
             
-            public int SwapsRejectedAlreadyLocked {
+            public long SwapsRejectedAlreadyLocked {
                 get { return swapsRejectedAlreadyLocked; }
             }
             
-            private int maxOverallSize;
+            private long maxOverallSize;
             
-            public int MaxOverallSize {
+            public long MaxOverallSize {
                 get { return maxOverallSize; }
             }
             
-            private int numberOfSimpleConnected;
+            private long numberOfSimpleConnected;
             
-            public int NumberOfSimpleConnected {
+            public long NumberOfSimpleConnected {
                 get { return numberOfSimpleConnected; }
             }
             
-            private int numberOfRequestSenders;
+            private long numberOfRequestSenders;
             
-            public int NumberOfRequestSenders {
+            public long NumberOfRequestSenders {
                 get { return numberOfRequestSenders; }
             }
             
-            private int overallSize;
+            private long overallSize;
             
-            public int OverallSize {
+            public long OverallSize {
                 get { return overallSize; }
             }
             
-            private int numberOfTransferringRequestSenders;
+            private long numberOfTransferringRequestSenders;
             
-            public int NumberOfTransferringRequestSenders {
+            public long NumberOfTransferringRequestSenders {
                 get { return numberOfTransferringRequestSenders; }
             }
             
@@ -660,9 +661,9 @@ namespace Freenet.FCP2 {
                 get { return percentCachedStoreHitsOfAccesses; }
             }
             
-            private int swapsRejectedLoop;
+            private long swapsRejectedLoop;
             
-            public int SwapsRejectedLoop {
+            public long SwapsRejectedLoop {
                 get { return swapsRejectedLoop; }
             }
             
@@ -690,27 +691,27 @@ namespace Freenet.FCP2 {
                 get { return totalPayloadOutputBytes; }
             }
             
-            private int numberOfRoutingBackedOff;
+            private long numberOfRoutingBackedOff;
             
-            public int NumberOfRoutingBackedOff {
+            public long NumberOfRoutingBackedOff {
                 get { return numberOfRoutingBackedOff; }
             }
             
-            private int unclaimedFIFOSize;
+            private long unclaimedFIFOSize;
             
-            public int UnclaimedFIFOSize {
+            public long UnclaimedFIFOSize {
                 get { return unclaimedFIFOSize; }
             }
             
-            private int numberOfConnected;
+            private long numberOfConnected;
             
-            public int NumberOfConnected {
+            public long NumberOfConnected {
                 get { return numberOfConnected; }
             }
             
-            private int cachedStoreHits;
+            private long cachedStoreHits;
             
-            public int CachedStoreHits {
+            public long CachedStoreHits {
                 get { return cachedStoreHits; }
             }
             
@@ -720,45 +721,45 @@ namespace Freenet.FCP2 {
                 get { return recentOutputRate; }
             }
             
-            private int swapsRejectedRecognizedID;
+            private long swapsRejectedRecognizedID;
             
-            public int SwapsRejectedRecognizedID {
+            public long SwapsRejectedRecognizedID {
                 get { return swapsRejectedRecognizedID; }
             }
             
-            private int numberOfTooNew;
+            private long numberOfTooNew;
             
-            public int NumberOfTooNew {
+            public long NumberOfTooNew {
                 get { return numberOfTooNew; }
             }
             
-            private int numberOfSeedClients;
+            private long numberOfSeedClients;
             
-            public int NumberOfSeedClients {
+            public long NumberOfSeedClients {
                 get { return numberOfSeedClients; }
             }
             
-            private int opennetSizeEstimate48hourRecent;
+            private long opennetSizeEstimate48hourRecent;
             
-            public int OpennetSizeEstimate48hourRecent {
+            public long OpennetSizeEstimate48hourRecent {
                 get { return opennetSizeEstimate48hourRecent; }
             }
             
-            private int numberOfSeedServers;
+            private long numberOfSeedServers;
             
-            public int NumberOfSeedServers {
+            public long NumberOfSeedServers {
                 get { return numberOfSeedServers; }
             }
             
-            private int opennetSizeEstimateSession;
+            private long opennetSizeEstimateSession;
             
-            public int OpennetSizeEstimateSession {
+            public long OpennetSizeEstimateSession {
                 get { return opennetSizeEstimateSession; }
             }
             
-            private int opennetSizeEstimate24hourRecent;
+            private long opennetSizeEstimate24hourRecent;
             
-            public int OpennetSizeEstimate24hourRecent {
+            public long OpennetSizeEstimate24hourRecent {
                 get { return opennetSizeEstimate24hourRecent; }
             }
             
@@ -769,96 +770,96 @@ namespace Freenet.FCP2 {
             }
             
             /*
-            private int numberWithRoutingBackoffReasons.ForwardRejectedOverload;
-            private int numberWithRoutingBackoffReasons.ForwardRejectedOverload5;
+            private long numberWithRoutingBackoffReasons.ForwardRejectedOverload;
+            private long numberWithRoutingBackoffReasons.ForwardRejectedOverload5;
              */
             
             internal VolatileType(MessageParser parsed)  {
                 /* TODO: volatile member */
-                startedSwaps=int.Parse(parsed["volatile.startedSwaps"]);
-                cacheAccesses=int.Parse(parsed["volatile.cacheAccesses"]);
+                startedSwaps=long.Parse(parsed["volatile.startedSwaps"]);
+                cacheAccesses=long.Parse(parsed["volatile.cacheAccesses"]);
                 totalInputBytes=long.Parse(parsed["volatile.totalInputBytes"]);
-                networkSizeEstimateSession=int.Parse(parsed["volatile.networkSizeEstimateSession"]);
-                storeKeys=int.Parse(parsed["volatile.storeKeys"]);
-                cachedKeys=int.Parse(parsed["volatile.cachedKeys"]);
+                networkSizeEstimateSession=long.Parse(parsed["volatile.networkSizeEstimateSession"]);
+                storeKeys=long.Parse(parsed["volatile.storeKeys"]);
+                cachedKeys=long.Parse(parsed["volatile.cachedKeys"]);
                 locationChangePerSwap=double.Parse(parsed["volatile.locationChangePerSwap"]);
-                swapsRejectedNowhereToGo=int.Parse(parsed["volatile.swapsRejectedNowhereToGo"]);
-                numberOfNotConnected=int.Parse(parsed["volatile.numberOfNotConnected"]);
-                numberOfListenOnly=int.Parse(parsed["volatile.numberOfListenOnly"]);
+                swapsRejectedNowhereToGo=long.Parse(parsed["volatile.swapsRejectedNowhereToGo"]);
+                numberOfNotConnected=long.Parse(parsed["volatile.numberOfNotConnected"]);
+                numberOfListenOnly=long.Parse(parsed["volatile.numberOfListenOnly"]);
                 totalOutputBytes=long.Parse(parsed["volatile.totalOutputBytes"]);
                 swapsPerNoSwaps=double.Parse(parsed["volatile.swapsPerNoSwaps"]);
-                allocatedJavaMemory=int.Parse(parsed["volatile.allocatedJavaMemory"]);
+                allocatedJavaMemory=long.Parse(parsed["volatile.allocatedJavaMemory"]);
                 percentStoreHitsOfAccesses=double.Parse(parsed["volatile.percentStoreHitsOfAccesses"]);
-                networkSizeEstimate24hourRecent=int.Parse(parsed["volatile.networkSizeEstimate24hourRecent"]);
-                overallAccesses=int.Parse(parsed["volatile.overallAccesses"]);
+                networkSizeEstimate24hourRecent=long.Parse(parsed["volatile.networkSizeEstimate24hourRecent"]);
+                overallAccesses=long.Parse(parsed["volatile.overallAccesses"]);
                 percentOverallKeysOfMax=double.Parse(parsed["volatile.percentOverallKeysOfMax"]);
                 locationChangePerMinute=double.Parse(parsed["volatile.locationChangePerMinute"]);
                 noSwaps=double.Parse(parsed["volatile.noSwaps"]);
-                cachedSize=int.Parse(parsed["volatile.cachedSize"]);
-                uptimeSeconds=int.Parse(parsed["volatile.uptimeSeconds"]);
-                numberOfARKFetchers=int.Parse(parsed["volatile.numberOfARKFetchers"]);
-                networkSizeEstimate48hourRecent=int.Parse(parsed["volatile.networkSizeEstimate48hourRecent"]);
-                maxOverallKeys=int.Parse(parsed["volatile.maxOverallKeys"]);
-                numberOfDisconnected=int.Parse(parsed["volatile.numberOfDisconnected"]);
+                cachedSize=long.Parse(parsed["volatile.cachedSize"]);
+                uptimeSeconds=long.Parse(parsed["volatile.uptimeSeconds"]);
+                numberOfARKFetchers=long.Parse(parsed["volatile.numberOfARKFetchers"]);
+                networkSizeEstimate48hourRecent=long.Parse(parsed["volatile.networkSizeEstimate48hourRecent"]);
+                maxOverallKeys=long.Parse(parsed["volatile.maxOverallKeys"]);
+                numberOfDisconnected=long.Parse(parsed["volatile.numberOfDisconnected"]);
                 swaps=double.Parse(parsed["volatile.swaps"]);
-                maximumJavaMemory=int.Parse(parsed["volatile.maximumJavaMemory"]);
+                maximumJavaMemory=long.Parse(parsed["volatile.maximumJavaMemory"]);
                 avgStoreAccessRate=double.Parse(parsed["volatile.avgStoreAccessRate"]);
-                totalInputRate=int.Parse(parsed["volatile.totalInputRate"]);
+                totalInputRate=long.Parse(parsed["volatile.totalInputRate"]);
                 recentInputRate=double.Parse(parsed["volatile.recentInputRate"]);
-                overallKeys=int.Parse(parsed["volatile.overallKeys"]);
+                overallKeys=long.Parse(parsed["volatile.overallKeys"]);
                 backedOffPercent=double.Parse(parsed["volatile.backedOffPercent"]);
-                runningThreadCount=int.Parse(parsed["volatile.runningThreadCount"]);
-                storeAccesses=int.Parse(parsed["volatile.storeAccesses"]);
-                numberOfDisabled=int.Parse(parsed["volatile.numberOfDisabled"]);
-                cachedStoreMisses=int.Parse(parsed["volatile.cachedStoreMisses"]);
+                runningThreadCount=long.Parse(parsed["volatile.runningThreadCount"]);
+                storeAccesses=long.Parse(parsed["volatile.storeAccesses"]);
+                numberOfDisabled=long.Parse(parsed["volatile.numberOfDisabled"]);
+                cachedStoreMisses=long.Parse(parsed["volatile.cachedStoreMisses"]);
                 routingMissDistance=double.Parse(parsed["volatile.routingMissDistance"]);
-                swapsRejectedRateLimit=int.Parse(parsed["volatile.swapsRejectedRateLimit"]);
-                totalOutputRate=int.Parse(parsed["volatile.totalOutputRate"]);
+                swapsRejectedRateLimit=long.Parse(parsed["volatile.swapsRejectedRateLimit"]);
+                totalOutputRate=long.Parse(parsed["volatile.totalOutputRate"]);
                 averagePingTime=double.Parse(parsed["volatile.averagePingTime"]);
-                numberOfBursting=int.Parse(parsed["volatile.numberOfBursting"]);
-                numberOfInsertSenders=int.Parse(parsed["volatile.numberOfInsertSenders"]);
-                usedJavaMemory=int.Parse(parsed["volatile.usedJavaMemory"]);
+                numberOfBursting=long.Parse(parsed["volatile.numberOfBursting"]);
+                numberOfInsertSenders=long.Parse(parsed["volatile.numberOfInsertSenders"]);
+                usedJavaMemory=long.Parse(parsed["volatile.usedJavaMemory"]);
                 startupTime=FCP2.FromUnix(parsed["volatile.startupTime"]);
                 locationChangePerSession=double.Parse(parsed["volatile.locationChangePerSession"]);
-                numberOfNeverConnected=int.Parse(parsed["volatile.numberOfNeverConnected"]);
-                freeJavaMemory=int.Parse(parsed["volatile.freeJavaMemory"]);
-                totalPayloadOutputRate=int.Parse(parsed["volatile.totalPayloadOutputRate"]);
+                numberOfNeverConnected=long.Parse(parsed["volatile.numberOfNeverConnected"]);
+                freeJavaMemory=long.Parse(parsed["volatile.freeJavaMemory"]);
+                totalPayloadOutputRate=long.Parse(parsed["volatile.totalPayloadOutputRate"]);
                 isUsingWrapper=bool.Parse(parsed["volatile.isUsingWrapper"]);
-                storeMisses=int.Parse(parsed["volatile.storeMisses"]);
-                storeHits=int.Parse(parsed["volatile.storeHits"]);
-                totalPayloadOutputPercent=int.Parse(parsed["volatile.totalPayloadOutputPercent"]);
-                storeSize=int.Parse(parsed["volatile.storeSize"]);
-                numberOfTooOld=int.Parse(parsed["volatile.numberOfTooOld"]);
+                storeMisses=long.Parse(parsed["volatile.storeMisses"]);
+                storeHits=long.Parse(parsed["volatile.storeHits"]);
+                totalPayloadOutputPercent=long.Parse(parsed["volatile.totalPayloadOutputPercent"]);
+                storeSize=long.Parse(parsed["volatile.storeSize"]);
+                numberOfTooOld=long.Parse(parsed["volatile.numberOfTooOld"]);
                 avgConnectedPeersPerNode=double.Parse(parsed["volatile.avgConnectedPeersPerNode"]);
-                availableCPUs=int.Parse(parsed["volatile.availableCPUs"]);
+                availableCPUs=long.Parse(parsed["volatile.availableCPUs"]);
                 swapsPerMinute=double.Parse(parsed["volatile.swapsPerMinute"]);
                 noSwapsPerMinute=double.Parse(parsed["volatile.noSwapsPerMinute"]);
-                numberOfListening=int.Parse(parsed["volatile.numberOfListening"]);
-                swapsRejectedAlreadyLocked=int.Parse(parsed["volatile.swapsRejectedAlreadyLocked"]);
-                maxOverallSize=int.Parse(parsed["volatile.maxOverallSize"]);
-                numberOfSimpleConnected=int.Parse(parsed["volatile.numberOfSimpleConnected"]);
-                numberOfRequestSenders=int.Parse(parsed["volatile.numberOfRequestSenders"]);
-                overallSize=int.Parse(parsed["volatile.overallSize"]);
-                numberOfTransferringRequestSenders=int.Parse(parsed["volatile.numberOfTransferringRequestSenders"]);
+                numberOfListening=long.Parse(parsed["volatile.numberOfListening"]);
+                swapsRejectedAlreadyLocked=long.Parse(parsed["volatile.swapsRejectedAlreadyLocked"]);
+                maxOverallSize=long.Parse(parsed["volatile.maxOverallSize"]);
+                numberOfSimpleConnected=long.Parse(parsed["volatile.numberOfSimpleConnected"]);
+                numberOfRequestSenders=long.Parse(parsed["volatile.numberOfRequestSenders"]);
+                overallSize=long.Parse(parsed["volatile.overallSize"]);
+                numberOfTransferringRequestSenders=long.Parse(parsed["volatile.numberOfTransferringRequestSenders"]);
                 percentCachedStoreHitsOfAccesses=double.Parse(parsed["volatile.percentCachedStoreHitsOfAccesses"]);
-                swapsRejectedLoop=int.Parse(parsed["volatile.swapsRejectedLoop"]);
+                swapsRejectedLoop=long.Parse(parsed["volatile.swapsRejectedLoop"]);
                 bwlimitDelayTime=double.Parse(parsed["volatile.bwlimitDelayTime"]);
                 numberOfRemotePeerLocationsSeenInSwaps=double.Parse(parsed["volatile.numberOfRemotePeerLocationsSeenInSwaps"]);
                 pInstantReject=double.Parse(parsed["volatile.pInstantReject"]);
                 totalPayloadOutputBytes=long.Parse(parsed["volatile.totalPayloadOutputBytes"]);
-                numberOfRoutingBackedOff=int.Parse(parsed["volatile.numberOfRoutingBackedOff"]);
-                unclaimedFIFOSize=int.Parse(parsed["volatile.unclaimedFIFOSize"]);
-                numberOfConnected=int.Parse(parsed["volatile.numberOfConnected"]);
-                cachedStoreHits=int.Parse(parsed["volatile.cachedStoreHits"]);
+                numberOfRoutingBackedOff=long.Parse(parsed["volatile.numberOfRoutingBackedOff"]);
+                unclaimedFIFOSize=long.Parse(parsed["volatile.unclaimedFIFOSize"]);
+                numberOfConnected=long.Parse(parsed["volatile.numberOfConnected"]);
+                cachedStoreHits=long.Parse(parsed["volatile.cachedStoreHits"]);
                 recentOutputRate=double.Parse(parsed["volatile.recentOutputRate"]);
-                swapsRejectedRecognizedID=int.Parse(parsed["volatile.swapsRejectedRecognizedID"]);
-                numberOfTooNew=int.Parse(parsed["volatile.numberOfTooNew"]);
+                swapsRejectedRecognizedID=long.Parse(parsed["volatile.swapsRejectedRecognizedID"]);
+                numberOfTooNew=long.Parse(parsed["volatile.numberOfTooNew"]);
 
-                numberOfSeedClients = int.Parse(parsed["volatile.numberOfSeedClients"]);
-                opennetSizeEstimate48hourRecent = int.Parse(parsed["volatile.opennetSizeEstimate48hourRecent"]);
-                numberOfSeedServers = int.Parse(parsed["volatile.numberOfSeedServers"]);
-                opennetSizeEstimateSession = int.Parse(parsed["volatile.opennetSizeEstimateSession"]);
-                opennetSizeEstimate24hourRecent = int.Parse(parsed["volatile.opennetSizeEstimate24hourRecent"]);              
+                numberOfSeedClients = long.Parse(parsed["volatile.numberOfSeedClients"]);
+                opennetSizeEstimate48hourRecent = long.Parse(parsed["volatile.opennetSizeEstimate48hourRecent"]);
+                numberOfSeedServers = long.Parse(parsed["volatile.numberOfSeedServers"]);
+                opennetSizeEstimateSession = long.Parse(parsed["volatile.opennetSizeEstimateSession"]);
+                opennetSizeEstimate24hourRecent = long.Parse(parsed["volatile.opennetSizeEstimate24hourRecent"]);              
                 
                 numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(parsed);
             }

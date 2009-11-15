@@ -30,9 +30,9 @@ namespace Freenet.FCP2 {
             get { return pluginName; }
         }
         
-        private int? dataLength;
+        private long? dataLength;
         
-        public int? DataLength {
+        public long? DataLength {
             get { return dataLength; }
         }
         
@@ -61,7 +61,7 @@ namespace Freenet.FCP2 {
             
             this.pluginName = parsed["PluginName"];
             if(parsed["DataLength"] != null) {
-                this.dataLength = int.Parse(parsed["DataLength"]);
+                this.dataLength = long.Parse(parsed["DataLength"]);
                 
                 data = null; /* TODO: Similar to AllData*/
                 throw new NotImplementedException("Unclear format");

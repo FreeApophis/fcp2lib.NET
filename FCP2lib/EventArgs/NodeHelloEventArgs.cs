@@ -2,6 +2,7 @@
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -47,24 +48,24 @@ namespace Freenet.FCP2 {
         public string NodeLanguage {
             get { return nodeLanguage; }
         }
-        private int extBuild;
+        private long extBuild;
         
-        public int ExtBuild {
+        public long ExtBuild {
             get { return extBuild; }
         }
-        private int extRevision;
+        private long extRevision;
         
-        public int ExtRevision {
+        public long ExtRevision {
             get { return extRevision; }
         }
-        private int build;
+        private long build;
         
-        public int Build {
+        public long Build {
             get { return build; }
         }
-        private int revision;
+        private string revision;
         
-        public int Revision {
+        public string Revision {
             get { return revision; }
         }
         private bool testnet;
@@ -72,9 +73,9 @@ namespace Freenet.FCP2 {
         public bool Testnet {
             get { return testnet; }
         }
-        private int compressionCodecs;
+        private string compressionCodecs;
         
-        public int CompressionCodecs {
+        public string CompressionCodecs {
             get { return compressionCodecs; }
         }
         
@@ -92,12 +93,12 @@ namespace Freenet.FCP2 {
             this.version =  parsed["Version"];
             this.node = parsed["Node"];
             this.nodeLanguage = parsed["NodeLanguage"];
-            this.extBuild = int.Parse(parsed["ExtBuild"]);
-            this.extRevision = int.Parse(parsed["ExtRevision"]);
-            this.build = int.Parse(parsed["Build"]);
-            this.revision = int.Parse(parsed["Revision"]);
+            this.extBuild = long.Parse(parsed["ExtBuild"]);
+            this.extRevision = long.Parse(parsed["ExtRevision"]);
+            this.build = long.Parse(parsed["Build"]);
+            this.revision = parsed["Revision"];
             this.testnet = bool.Parse(parsed["Testnet"]);
-            this.compressionCodecs = int.Parse(parsed["CompressionCodecs"]);
+            this.compressionCodecs = parsed["CompressionCodecs"];
             
             #if DEBUG
             parsed.PrintAccessCount();

@@ -23,9 +23,9 @@ namespace Freenet.FCP2 {
 
     public class SubscribedUSKUpdateEventArgs : EventArgs {
         
-        private int edition;
+        private long edition;
         
-        public int Edition {
+        public long Edition {
             get { return edition; }
         }
         
@@ -50,7 +50,7 @@ namespace Freenet.FCP2 {
             FCP2.ArgsDebug(this, parsed);
             #endif
 
-            this.edition = int.Parse(parsed["Edition"]);
+            this.edition = long.Parse(parsed["Edition"]);
             this.identifier = parsed["Identifier"];
             this.uri = parsed["URI"];
 

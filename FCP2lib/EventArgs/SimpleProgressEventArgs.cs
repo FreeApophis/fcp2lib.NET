@@ -23,27 +23,33 @@ namespace Freenet.FCP2 {
 
     public class SimpleProgressEventArgs : EventArgs {
         
-        private int total;
+        private long total;
         
-        public int Total {
+        public long Total {
             get { return total; }
         }
         
-        private int failed;
+        private long required;
         
-        public int Failed {
+        public long Required {
+            get { return required; }
+        }
+        
+        private long failed;
+        
+        public long Failed {
             get { return failed; }
         }
         
-        private int fatallyFailed;
+        private long fatallyFailed;
         
-        public int FatallyFailed {
+        public long FatallyFailed {
             get { return fatallyFailed; }
         }
         
-        private int succeeded;
+        private long succeeded;
         
-        public int Succeeded {
+        public long Succeeded {
             get { return succeeded; }
         }
         
@@ -68,10 +74,11 @@ namespace Freenet.FCP2 {
             FCP2.ArgsDebug(this, parsed);
             #endif
             
-            this.total = int.Parse(parsed["Total"]);
-            this.failed = int.Parse(parsed["Failed"]);
-            this.fatallyFailed = int.Parse(parsed["FatallyFailed"]);
-            this.succeeded = int.Parse(parsed["Succeeded"]);
+            this.total = long.Parse(parsed["Total"]);
+            this.required = long.Parse(parsed["Required"]);
+            this.failed = long.Parse(parsed["Failed"]);
+            this.fatallyFailed = long.Parse(parsed["FatallyFailed"]);
+            this.succeeded = long.Parse(parsed["Succeeded"]);
             this.finalizedTotal = bool.Parse(parsed["FinalizedTotal"]);
             this.identifier = parsed["Identifier"];
             

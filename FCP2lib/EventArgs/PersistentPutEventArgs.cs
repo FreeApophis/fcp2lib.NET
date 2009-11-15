@@ -77,15 +77,15 @@ namespace Freenet.FCP2 {
             get { return global; }
         }
         
-        private int dataLength;
+        private long dataLength;
         
-        public int DataLength {
+        public long DataLength {
             get { return dataLength; }
         }
 
-        private int maxRetries;
+        private long maxRetries;
         
-        public int MaxRetries {
+        public long MaxRetries {
             get { return maxRetries; }
         }
         
@@ -99,16 +99,16 @@ namespace Freenet.FCP2 {
             #endif
             
             this.uri = parsed["URI"];
-            this.verbosity = (VerbosityEnum)(int.Parse(parsed["Verbosity"]));
-            this.priorityClass = (PriorityClassEnum)int.Parse(parsed["PriorityClass"]);
+            this.verbosity = (VerbosityEnum)(long.Parse(parsed["Verbosity"]));
+            this.priorityClass = (PriorityClassEnum)long.Parse(parsed["PriorityClass"]);
             this.uploadFrom = (UploadFromEnum)Enum.Parse(typeof(UploadFromEnum), parsed["UploadFrom"]);
             this.filename = parsed["Filename"];
             this.targetFilename = parsed["TargetFilename"];
             this.metadata = new MetadataType(parsed);
             this.clientToken = parsed["ClientToken"];
             this.global = bool.Parse(parsed["Global"]);
-            this.dataLength = int.Parse(parsed["DataLength"]);
-            this.maxRetries = int.Parse(parsed["MaxRetries"]);
+            this.dataLength = long.Parse(parsed["DataLength"]);
+            this.maxRetries = long.Parse(parsed["MaxRetries"]);
 
             #if DEBUG
             parsed.PrintAccessCount();

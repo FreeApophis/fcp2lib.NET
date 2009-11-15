@@ -20,7 +20,7 @@ namespace Freenet.FCP2
         private Dictionary<string, string> parameters = new Dictionary<string, string>();
         
         #if DEBUG
-        private Dictionary<string, int> debugcount = new Dictionary<string, int>();
+        private Dictionary<string, long> debugcount = new Dictionary<string, long>();
         #endif
         
         private bool dataAvailable = false;
@@ -52,7 +52,7 @@ namespace Freenet.FCP2
         }
         
         /// <summary>
-        /// Intelligent Accessor, returns null if a value does not exists!
+        /// Intelligent Accessor, returns null if a value does not exists! And does not bark out at all!
         /// </summary>
         public string this[string keyword] {
             get {
@@ -82,20 +82,20 @@ namespace Freenet.FCP2
 
         #if DEBUG
         public void PrintAccessCount() {
-            bool allaccessed = true;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            foreach(string key in debugcount.Keys) {
-                Console.WriteLine("[" + debugcount[key] + "] " + key);
-                allaccessed = allaccessed && (debugcount[key] != 0);
-            }
-            if(allaccessed) {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("All fields have been accessed");
-            } else {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Some fields have not been accessed");
-            }
-            Console.ForegroundColor = ConsoleColor.Gray;
+//            bool allaccessed = true;
+//            Console.ForegroundColor = ConsoleColor.Yellow;
+//            foreach(string key in debugcount.Keys) {
+//                Console.WriteLine("[" + debugcount[key] + "] " + key);
+//                allaccessed = allaccessed && (debugcount[key] != 0);
+//            }
+//            if(allaccessed) {
+//                Console.ForegroundColor = ConsoleColor.Green;
+//                Console.WriteLine("All fields have been accessed");
+//            } else {
+//                Console.ForegroundColor = ConsoleColor.Red;
+//                Console.WriteLine("Some fields have not been accessed");
+//            }
+//            Console.ForegroundColor = ConsoleColor.Gray;
         }
         #endif
 

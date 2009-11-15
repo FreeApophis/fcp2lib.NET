@@ -2,6 +2,7 @@
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 using System;
 
 namespace Freenet.FCP2 {
@@ -59,8 +60,9 @@ namespace Freenet.FCP2 {
             this.identifier = parsed["Identifier"];
             this.global = bool.Parse(parsed["Global"]);
             this.clientToken = parsed["ClientToken"];
-            this.priorityClass = (PriorityClassEnum)(int.Parse(parsed["PriorityClass"]));
-           
+            if (parsed["PriorityClass"] != null)
+                this.priorityClass = (PriorityClassEnum)(int.Parse(parsed["PriorityClass"]));
+            
             #if DEBUG
             parsed.PrintAccessCount();
             #endif

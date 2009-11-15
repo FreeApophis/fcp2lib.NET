@@ -2,6 +2,7 @@
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ namespace Freenet.FCP2
         
         public const string endMessage = "EndMessage";
         
-#if DEBUG        
+        #if DEBUG
         public static void ArgsDebug(EventArgs args, MessageParser parsed) {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(args.GetType().ToString() + "()");
@@ -54,12 +55,12 @@ namespace Freenet.FCP2
             }
             Console.ForegroundColor = ConsoleColor.Gray;
         }
-#endif
+        #endif
         
         public static DateTime FromUnix(string unix) {
             System.DateTime epoch = new System.DateTime(1970, 1, 1, 0, 0, 0, 0);
-            double secounds = long.Parse(unix) / 1000;    
-            return epoch.AddSeconds(secounds);
+            double seconds = long.Parse(unix) / 1000;
+            return epoch.AddSeconds(seconds);
         }
         
         #region Event Handler
@@ -468,7 +469,7 @@ namespace Freenet.FCP2
             
             fnread = new MixedReader(client.GetStream());
             fnwrite = new MixedWriter(client.GetStream());
-                
+            
             parserThread = new Thread(new ThreadStart(MessageParser));
             parserThread.Start();
             
@@ -478,6 +479,17 @@ namespace Freenet.FCP2
 
         }
 
+        /// <summary>
+        /// Cleanly Disconnects from the Freenet node
+        /// </summary>
+        public void Disconnect() {
+            if (client.Connected) {
+                client.GetStream().Close();
+                client.Close();
+            }
+        }
+        
+        
         #region Parser
         private void MessageParser() {
             string line;
@@ -634,7 +646,7 @@ namespace Freenet.FCP2
         /// used for persistence, so a client can see the same local queue if it disconnects
         /// and then reconnects. If a connection is attempted with the same name as an existing
         /// connection, you will get an error</param>
-        private void ClientHello(string name) {
+        public void ClientHello(string name) {
             clientName = name;
             if(!ConnectIfNeeded()) {
                 RealClientHello(name, fcpVersion);
@@ -645,7 +657,7 @@ namespace Freenet.FCP2
         /// This must be the first message from the client on any given connection.
         /// The node will respond with a NodeHello Event.
         /// </summary>
-        private void ClientHello() {
+        public void ClientHello() {
             ClientHello(clientName);
         }
         
@@ -805,7 +817,7 @@ namespace Freenet.FCP2
             fnwrite.WriteLine("ModifyPeer");
             fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
             fnwrite.WriteLine("NoteText=" + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(noteText)));
-            fnwrite.WriteLine("PeerNoteType=" + ((int)peerNoteType).ToString());
+            fnwrite.WriteLine("PeerNoteType=" + ((long)peerNoteType).ToString());
             fnwrite.WriteLine(endMessage);
             fnwrite.Flush();
         }
@@ -1017,7 +1029,7 @@ namespace Freenet.FCP2
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="data">A stream to insert directly to freenet</param>
         public void ClientPutDirect(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
-                                    int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                    long? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
                                     bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                     bool? earlyEncode, string fileHash, bool? binaryBlob, Stream data) {
 
@@ -1028,11 +1040,11 @@ namespace Freenet.FCP2
                 fnwrite.WriteLine("Metadata.ContentType=" + Metadata_ContentType);
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxRetries!=null)
                 fnwrite.WriteLine("maxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
             if(getCHKOnly!=null)
                 fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value.ToString());
             if(global!=null)
@@ -1102,7 +1114,7 @@ namespace Freenet.FCP2
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="file">The FileInfo for the File to be inserted</param>
         public void ClientPutDisk(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
-                                  int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                  long? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
                                   bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                   bool? earlyEncode, string fileHash, bool? binaryBlob, FileInfo file) {
 
@@ -1113,11 +1125,11 @@ namespace Freenet.FCP2
                 fnwrite.WriteLine("Metadata.ContentType=" + Metadata_ContentType);
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxRetries!=null)
                 fnwrite.WriteLine("maxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
             if(getCHKOnly!=null)
                 fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value.ToString());
             if(global!=null)
@@ -1181,7 +1193,7 @@ namespace Freenet.FCP2
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
         /// <param name="targetURI">This is an existing freenet URI such as KSK@sample.txt. The idea is that you insert a new key that redirects to this one</param>
         public void ClientPutRedirect(string uri, string Metadata_ContentType, string identifier, VerbosityEnum? verbosity,
-                                      int? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
+                                      long? maxRetries, PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global,
                                       bool? dontCompress, string clientToken, PersistenceEnum? persistence, string targetFilename,
                                       bool? earlyEncode, string fileHash, bool? binaryBlob, string targetURI) {
 
@@ -1192,11 +1204,11 @@ namespace Freenet.FCP2
                 fnwrite.WriteLine("Metadata.ContentType=" + Metadata_ContentType);
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxRetries!=null)
                 fnwrite.WriteLine("MaxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
             if(getCHKOnly!=null)
                 fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value.ToString());
             if(global!=null)
@@ -1252,7 +1264,7 @@ namespace Freenet.FCP2
         /// <param name="defaultName">The item to display when someone requests the Uri only (without the item name part)</param>
         /// <param name="filename">The filename for the File to be inserted</param>
         /// <param name="allowUnreadableFiles">unless true, any unreadable files cause the whole request to fail; optional</param>
-        public void ClientPutDiskDir(string identifier, VerbosityEnum? verbosity, int? maxRetries, PriorityClassEnum? priorityClass,
+        public void ClientPutDiskDir(string identifier, VerbosityEnum? verbosity, long? maxRetries, PriorityClassEnum? priorityClass,
                                      string uri, bool? getCHKOnly, bool? dontCompress, string clientToken,
                                      PersistenceEnum? persistence, bool? global, string defaultName, string filename,
                                      bool allowUnreadableFiles) {
@@ -1261,11 +1273,11 @@ namespace Freenet.FCP2
             fnwrite.WriteLine("ClientPutDiskDir");
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxRetries!=null)
                 fnwrite.WriteLine("MaxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
             fnwrite.WriteLine("URI=" + uri);
             if(getCHKOnly!=null)
                 fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value.ToString());
@@ -1300,7 +1312,7 @@ namespace Freenet.FCP2
             
         }
 
-        public void ClientPutComplexDir(string uri, string identifier, VerbosityEnum? verbosity, int? maxRetries,
+        public void ClientPutComplexDir(string uri, string identifier, VerbosityEnum? verbosity, long? maxRetries,
                                         PriorityClassEnum? priorityClass, bool? getCHKOnly, bool? global, bool? dontCompress,
                                         string clientToken, PersistenceEnum? persistence, string targetFilename, bool? earlyEncode,
                                         string defaultName, List<InsertItem> filelist) {
@@ -1309,11 +1321,11 @@ namespace Freenet.FCP2
             fnwrite.WriteLine("URI=" + uri);
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxRetries!=null)
                 fnwrite.WriteLine("MaxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
             if(getCHKOnly!=null)
                 fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value.ToString());
             if(global!=null)
@@ -1330,7 +1342,7 @@ namespace Freenet.FCP2
                 fnwrite.WriteLine("EarlyEncode=" + earlyEncode.Value.ToString());
             if(!String.IsNullOrEmpty(defaultName))
                 fnwrite.WriteLine("DefaultName=" + defaultName);
-            int counter = 0;
+            long counter = 0;
             foreach(InsertItem file in filelist) {
                 fnwrite.WriteLine("Files." + counter + ".Name=" + file.Name);
                 if(file is DataItem) {
@@ -1408,7 +1420,7 @@ namespace Freenet.FCP2
         /// <param name="filename">Name and path of the file where the download is to be stored.</param>
         /// <param name="tempFilename">Name and path of a temporary file where the partial download is to be stored.</param>
         public void ClientGet(bool? ignoreDS, bool? dsonly, string uri, string identifier,
-                              VerbosityEnum? verbosity, int? maxSize, int? maxTempSize, int? maxRetries, PriorityClassEnum? priorityClass,
+                              VerbosityEnum? verbosity, long? maxSize, long? maxTempSize, long? maxRetries, PriorityClassEnum? priorityClass,
                               PersistenceEnum? persistence, string clientToken, bool? global, bool? binaryBlob,
                               string allowedMIMETypes, ReturnTypeEnum? returnType, string filename, string tempFilename) {
 
@@ -1421,7 +1433,7 @@ namespace Freenet.FCP2
             fnwrite.WriteLine("URI=" + uri);
             fnwrite.WriteLine("Identifier=" + identifier);
             if(verbosity!=null)
-                fnwrite.WriteLine("Verbosity=" + ((int)verbosity.Value).ToString());
+                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value).ToString());
             if(maxSize!=null)
                 fnwrite.WriteLine("MaxSize=" + maxSize.Value.ToString());
             if(maxTempSize!=null)
@@ -1429,9 +1441,11 @@ namespace Freenet.FCP2
             if(maxRetries!=null)
                 fnwrite.WriteLine("MaxRetries=" + maxRetries.Value.ToString());
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass.Value).ToString());
-            if(persistence!=null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value.ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value).ToString());
+            // Patch FBR
+            if(global.Value==true && persistence.Value==PersistenceEnum.connection)
+                throw new FormatException("Error, global request must be persistent");
+            fnwrite.WriteLine("Persistence=" + persistence.Value.ToString());
             if(!String.IsNullOrEmpty(clientToken))
                 fnwrite.WriteLine("ClientToken=" + clientToken);
             if(global!=null)
@@ -1561,7 +1575,7 @@ namespace Freenet.FCP2
             ConnectIfNeeded();
             fnwrite.WriteLine("WatchGlobal");
             fnwrite.WriteLine("Enabled=" + enabled.ToString());
-            fnwrite.WriteLine("VerbosityMask=" + ((int)verbosityMask).ToString());
+            fnwrite.WriteLine("VerbosityMask=" + ((long)verbosityMask).ToString());
             fnwrite.WriteLine(endMessage);
             fnwrite.Flush();
         }
@@ -1646,7 +1660,7 @@ namespace Freenet.FCP2
             if(!String.IsNullOrEmpty(clientToken))
                 fnwrite.WriteLine("ClientToken=" + clientToken);
             if(priorityClass!=null)
-                fnwrite.WriteLine("PriorityClass=" + ((int)priorityClass).ToString());
+                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass).ToString());
             fnwrite.WriteLine(endMessage);
             fnwrite.Flush();
         }

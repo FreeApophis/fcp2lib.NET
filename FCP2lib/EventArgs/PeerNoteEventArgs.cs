@@ -53,7 +53,7 @@ namespace Freenet.FCP2 {
             this.nodeIdentifier = parsed["NodeIdentifier"];
             System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
             this.noteText = enc.GetString(Convert.FromBase64String(parsed["NoteText"]));
-            this.peerNoteType = (PeerNoteTypeEnum)int.Parse(parsed["PeerNoteType"]);
+            this.peerNoteType = (PeerNoteTypeEnum)long.Parse(parsed["PeerNoteType"]);
             
             #if DEBUG
             parsed.PrintAccessCount();

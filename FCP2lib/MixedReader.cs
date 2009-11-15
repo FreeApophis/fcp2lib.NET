@@ -49,7 +49,7 @@ namespace Freenet.FCP2
             // max line length in byte 1024
 
             UTF8Encoding enc = new UTF8Encoding();
-            int cur; int i = 0;
+            long cur; int i = 0;
             bool end = false;
             while(!end) {
                 cur = stream.ReadByte();

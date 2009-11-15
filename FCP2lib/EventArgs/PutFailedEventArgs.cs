@@ -23,7 +23,7 @@ namespace Freenet.FCP2 {
     
     public class PutFailedEventArgs : EventArgs {
 
-        private int code;
+        private long code;
         private string identifier;
         private bool global = false;
         private string expectedURI;
@@ -41,7 +41,7 @@ namespace Freenet.FCP2 {
             FCP2.ArgsDebug(this, parsed);
             #endif
             
-            this.code = int.Parse(parsed["Code"]);
+            this.code = long.Parse(parsed["Code"]);
             this.identifier = parsed["identifier"];
             this.global = bool.Parse(parsed["Global"]);
             this.expectedURI = parsed["ExpectedURI"];

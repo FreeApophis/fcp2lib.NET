@@ -29,9 +29,9 @@ namespace Freenet.FCP2 {
             get { return identifier; }
         }
         
-        private int codec;
+        private long codec;
         
-        public int Codec {
+        public long Codec {
             get { return codec; }
         }
         
@@ -57,7 +57,7 @@ namespace Freenet.FCP2 {
             #endif
             
             this.identifier = parsed["Identifier"];
-            this.codec = int.Parse(parsed["Codec"]);
+            this.codec = long.Parse(parsed["Codec"]);
             this.originalSize = long.Parse(parsed["OriginalSize"]);
             this.compressedSize = long.Parse(parsed["CompressedSize"]);
             

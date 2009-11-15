@@ -159,15 +159,15 @@ namespace Freenet.FCP2 {
                 get { return pubURI; }
             }
             
-            private int number;
+            private long number;
             
-            public int Number {
+            public long Number {
                 get { return number; }
             }
             
             internal ArkType(MessageParser parsed) {
                 this.pubURI = parsed["ark.pubURI"];
-                this.number = int.Parse(parsed["ark.number"]);
+                this.number = long.Parse(parsed["ark.number"]);
             }
             
         }
@@ -211,14 +211,14 @@ namespace Freenet.FCP2 {
         }
         
         public class AuthType {
-            private int negTypes;
+            private long negTypes;
             
-            public int NegTypes {
+            public long NegTypes {
                 get { return negTypes; }
             }
             
             internal AuthType(MessageParser parsed) {
-                this.negTypes = int.Parse(parsed["auth.negTypes"]);
+                this.negTypes = long.Parse(parsed["auth.negTypes"]);
             }
         }
         
@@ -253,15 +253,15 @@ namespace Freenet.FCP2 {
                 get { return status; }
             }
             
-            private int totalBytesIn;
+            private long totalBytesIn;
             
-            public int TotalBytesIn {
+            public long TotalBytesIn {
                 get { return totalBytesIn; }
             }
             
-            private int routingBackoffLength;
+            private long routingBackoffLength;
             
-            public int RoutingBackoffLength {
+            public long RoutingBackoffLength {
                 get { return routingBackoffLength; }
             }
             
@@ -271,15 +271,15 @@ namespace Freenet.FCP2 {
                 get { return lastRoutingBackoffReason; }
             }
             
-            private int routingBackoff;
+            private long routingBackoff;
             
-            public int RoutingBackoff {
+            public long RoutingBackoff {
                 get { return routingBackoff; }
             }
             
-            private int totalBytesOut;
+            private long totalBytesOut;
             
-            public int TotalBytesOut {
+            public long TotalBytesOut {
                 get { return totalBytesOut; }
             }
             
@@ -289,25 +289,25 @@ namespace Freenet.FCP2 {
                 this.percentTimeRoutableConnection = double.Parse(parsed["volatile.percentTimeRoutableConnection"]);
                 this.routingBackoffPercent = double.Parse(parsed["volatile.routingBackoffPercent"]);
                 this.status = parsed["volatile.status"];
-                this.totalBytesIn = int.Parse(parsed["volatile.totalBytesIn"]);
-                this.routingBackoffLength = int.Parse(parsed["volatile.routingBackoffLength"]);
+                this.totalBytesIn = long.Parse(parsed["volatile.totalBytesIn"]);
+                this.routingBackoffLength = long.Parse(parsed["volatile.routingBackoffLength"]);
                 this.lastRoutingBackoffReason = parsed["volatile.lastRoutingBackoffReason"];
-                this.routingBackoff = int.Parse(parsed["volatile.routingBackoff"]);
-                this.totalBytesOut = int.Parse(parsed["volatile.totalBytesOut"]);
+                this.routingBackoff = long.Parse(parsed["volatile.routingBackoff"]);
+                this.totalBytesOut = long.Parse(parsed["volatile.totalBytesOut"]);
             }
         }
         
         public class MetadataType {
             
-            private int routableConnectionCheckCount;
+            private long routableConnectionCheckCount;
             
-            public int RoutableConnectionCheckCount {
+            public long RoutableConnectionCheckCount {
                 get { return routableConnectionCheckCount; }
             }
             
-            private int hadRoutableConnectionCount;
+            private long hadRoutableConnectionCount;
             
-            public int HadRoutableConnectionCount {
+            public long HadRoutableConnectionCount {
                 get { return hadRoutableConnectionCount; }
             }
             
@@ -342,8 +342,8 @@ namespace Freenet.FCP2 {
             }
             
             internal MetadataType(MessageParser parsed) {
-                this.routableConnectionCheckCount = int.Parse(parsed[" metadata.routableConnectionCheckCount"]);
-                this.hadRoutableConnectionCount = int.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
+                this.routableConnectionCheckCount = long.Parse(parsed[" metadata.routableConnectionCheckCount"]);
+                this.hadRoutableConnectionCount = long.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
                 this.timeLastConnected = FCP2.FromUnix(parsed[" metadata.timeLastConnected"]);
                 this.timeLastSuccess = FCP2.FromUnix(parsed[" metadata.timeLastSuccess"]);
                 this.timeLastRoutable = FCP2.FromUnix(parsed[" metadata.timeLastRoutable"]);
