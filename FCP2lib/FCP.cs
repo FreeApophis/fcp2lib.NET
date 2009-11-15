@@ -461,19 +461,21 @@ namespace Freenet.FCP2
         /// <returns>returns false if we are already connected</returns>
         private bool ConnectIfNeeded()
         {
-            if(client.Connected) {
-                return false;
+            lock (client) {
+                if(client.Connected) {
+                    return false;
+                }
+                
+                client.Connect(ep);
+                
+                fnread = new MixedReader(client.GetStream());
+                fnwrite = new MixedWriter(client.GetStream());
+                
+                parserThread = new Thread(new ThreadStart(MessageParser));
+                parserThread.Start();
+                
+                RealClientHello(clientName, fcpVersion);
             }
-            
-            client.Connect(ep);
-            
-            fnread = new MixedReader(client.GetStream());
-            fnwrite = new MixedWriter(client.GetStream());
-            
-            parserThread = new Thread(new ThreadStart(MessageParser));
-            parserThread.Start();
-            
-            RealClientHello(clientName, fcpVersion);
             
             return true;
 
