@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
@@ -20,28 +20,18 @@ using System;
 
 namespace Freenet.FCP2
 {
-
-    public class FinishedCompressionEventArgs : EventArgs
+    public class PluginRemovedEventArgs : EventArgs
     {
-        private readonly long codec;
-        private readonly long compressedSize;
         private readonly string identifier;
-        private readonly long originalSize;
+        private readonly string pluginName;
 
-        /// <summary>
-        /// FinishedCompressionEventArgs Constructor
-        /// </summary>
-        /// <param name="parsed">a simple MessageParse</param>
-        internal FinishedCompressionEventArgs(MessageParser parsed)
+        internal PluginRemovedEventArgs(MessageParser parsed)
         {
 #if DEBUG
             FCP2.ArgsDebug(this, parsed);
 #endif
-
             identifier = parsed["Identifier"];
-            codec = long.Parse(parsed["Codec"]);
-            originalSize = long.Parse(parsed["OriginalSize"]);
-            compressedSize = long.Parse(parsed["CompressedSize"]);
+            pluginName = parsed["PluginName"];
 
 #if DEBUG
             parsed.PrintAccessCount();
@@ -53,19 +43,9 @@ namespace Freenet.FCP2
             get { return identifier; }
         }
 
-        public long Codec
+        public string PluginName
         {
-            get { return codec; }
-        }
-
-        public long OriginalSize
-        {
-            get { return originalSize; }
-        }
-
-        public long CompressedSize
-        {
-            get { return compressedSize; }
+            get { return pluginName; }
         }
     }
 }

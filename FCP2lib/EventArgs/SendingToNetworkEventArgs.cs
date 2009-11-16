@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
  *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
@@ -20,40 +20,17 @@ using System;
 
 namespace Freenet.FCP2
 {
-
-    public class ConfigDataEventArgs : EventArgs
+    public class SendingToNetworkEventArgs : EventArgs
     {
-        readonly MessageParser config;
-
-        /// <summary>
-        /// ConfigDataEventArgs Constructor
-        /// </summary>
-        /// <param name="parsed">a simple MessageParse</param>
-        internal ConfigDataEventArgs(MessageParser parsed)
+        internal SendingToNetworkEventArgs(MessageParser parsed)
         {
 #if DEBUG
             FCP2.ArgsDebug(this, parsed);
 #endif
 
-            config = parsed;
-
-            /* Too much to parse by hand -
-             * we would duplicate most of the nodes 
-             * datastructures for configuration 
-             * Therfore we expose the MessageParser directly...
-             * 
-             * C# 4.0 - dynamic type could be the solution!
-             * * * * * */
-
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-
-        }
-
-        public MessageParser Config
-        {
-            get { return config; }
         }
     }
 }

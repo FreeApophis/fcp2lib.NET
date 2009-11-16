@@ -1,4 +1,24 @@
-﻿using System;
+﻿/*
+ *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ * 
+ *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009 Felipe Barriga Richards
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -16,7 +36,7 @@ namespace Freenet.FCP2
     {
         #region Private declarations
         private IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9481);
-        private readonly TcpClient client = new TcpClient();
+        private TcpClient client = new TcpClient();
         private TextReader fnread;
         private TextWriter fnwrite;
 
@@ -74,6 +94,7 @@ namespace Freenet.FCP2
         public event EventHandler<EndListPersistentRequestsEventArgs> EndListPersistentRequestsEvent;
         public event EventHandler<PersistentRequestRemovedEventArgs> PersistentRequestRemovedEvent;
         public event EventHandler<PersistentRequestModifiedEventArgs> PersistentRequestModifiedEvent;
+        public event EventHandler<SendingToNetworkEventArgs> SendingToNetworkEvent;
         public event EventHandler<PutFailedEventArgs> PutFailedEvent;
         public event EventHandler<GetFailedEventArgs> GetFailedEvent;
         public event EventHandler<ProtocolErrorEventArgs> ProtocolErrorEvent;
@@ -83,6 +104,7 @@ namespace Freenet.FCP2
         public event EventHandler<SubscribedUSKEventArgs> SubscribedUSKEvent;
         public event EventHandler<SubscribedUSKUpdateEventArgs> SubscribedUSKUpdateEvent;
         public event EventHandler<PluginInfoEventArgs> PluginInfoEvent;
+        public event EventHandler<PluginRemovedEventArgs> PluginRemovedEvent;
         public event EventHandler<FCPPluginReplyEventArgs> FCPPluginReplyEvent;
         #endregion
 
@@ -331,6 +353,15 @@ namespace Freenet.FCP2
             }
         }
 
+        protected virtual void OnSendingToNetworkEvent(SendingToNetworkEventArgs e)
+        {
+            EventHandler<SendingToNetworkEventArgs> handler = SendingToNetworkEvent;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
         protected virtual void OnPersistentRequestModifiedEvent(PersistentRequestModifiedEventArgs e)
         {
             EventHandler<PersistentRequestModifiedEventArgs> handler = PersistentRequestModifiedEvent;
@@ -339,6 +370,7 @@ namespace Freenet.FCP2
                 handler(this, e);
             }
         }
+
 
         protected virtual void OnPutFailedEvent(PutFailedEventArgs e)
         {
@@ -415,6 +447,15 @@ namespace Freenet.FCP2
         protected virtual void OnPluginInfoEvent(PluginInfoEventArgs e)
         {
             EventHandler<PluginInfoEventArgs> handler = PluginInfoEvent;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnPluginRemovedEvent(PluginRemovedEventArgs e)
+        {
+            EventHandler<PluginRemovedEventArgs> handler = PluginRemovedEvent;
             if (handler != null)
             {
                 handler(this, e);
@@ -570,6 +611,9 @@ namespace Freenet.FCP2
                     case "PersistentRequestModified":
                         OnPersistentRequestModifiedEvent(new PersistentRequestModifiedEventArgs(new MessageParser(fnread)));
                         break;
+                    case "SendingToNetwork":
+                        OnSendingToNetworkEvent(new SendingToNetworkEventArgs(new MessageParser(fnread)));
+                        break;
                     case "PutFailed":
                         OnPutFailedEvent(new PutFailedEventArgs(new MessageParser(fnread)));
                         break;
@@ -596,6 +640,9 @@ namespace Freenet.FCP2
                         break;
                     case "PluginInfo":
                         OnPluginInfoEvent(new PluginInfoEventArgs(new MessageParser(fnread)));
+                        break;
+                    case "PluginRemoved":
+                        OnPluginRemovedEvent(new PluginRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "FCPPluginReply":
                         OnFCPPluginReplyEvent(new FCPPluginReplyEventArgs(new MessageParser(fnread)));
@@ -1540,6 +1587,105 @@ namespace Freenet.FCP2
         }
 
         /// <summary>
+        /// This command asks the Freenet node to load the plugin from the given location. The node will respond with a PluginInfo Event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginUrl">An URI that point to the plugin location. official:the name of the official plugin file:a local file path freenet: a Freenet URL url:any url that your java vm can deal with</param>
+        /// <param name="urlType">Type of plugin source. (currently autodection does not work if the local file does not exist or type is 'url')</param>
+        /// <param name="store">If true, the plugin url is written to config.</param>
+        /// <param name="officialSource">Means of obtaining an official plugin: freenet or https. "freenet" is strongly recommended and is the default unless the network security level is LOW. "https" may be faster and/or more reliable, but is traceable.</param>
+        public void LoadPlugin(string identifier, string pluginUrl, UrlTypeEnum? urlType, bool? store, OfficialSourceTypeEnum? officialSource)
+        {
+            ConnectIfNeeded();
+
+            fnwrite.WriteLine("LoadPlugin");
+            fnwrite.WriteLine("Identifier=" + identifier);
+            fnwrite.WriteLine("PluginURL=" + pluginUrl);
+            if (urlType.HasValue)
+                fnwrite.WriteLine("URLType=" + urlType.Value.ToProtocolString());
+            if (store.HasValue)
+                fnwrite.WriteLine("Store=" + store.Value.ToProtocolString());
+            if (officialSource.HasValue)
+                fnwrite.WriteLine("Source=" + officialSource.Value.ToProtocolString());
+
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
+        }
+
+
+        /// <summary>
+        /// This command asks the Freenet node to load the plugin from the given location. The node will respond with a PluginInfo Event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginUrl">An URI that point to the plugin location. official:the name of the official plugin file:a local file path freenet: a Freenet URL url:any url that your java vm can deal with</param>
+        public void LoadPlugin(string identifier, string pluginUrl)
+        {
+            LoadPlugin(identifier, pluginUrl, null, null, null);
+        }
+
+        /// <summary>
+        /// This command asks the Freenet node to reload the given plugin The node will respond with a PluginInfo Event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
+        /// <param name="purge">If true, the cached copy of the plugin is removed.</param>
+        public void ReloadPlugin(string identifier, string pluginName, bool? purge)
+        {
+            ConnectIfNeeded();
+
+            fnwrite.WriteLine("ReloadPlugin");
+            fnwrite.WriteLine("Identifier=" + identifier);
+            fnwrite.WriteLine("PluginName=" + pluginName);
+            if (purge.HasValue)
+                fnwrite.WriteLine("Purge=" + purge.Value.ToProtocolString());
+
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
+        }
+
+        /// <summary>
+        /// This command asks the Freenet node to reload the given plugin The node will respond with a PluginInfo Event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
+        public void ReloadPlugin(string identifier, string pluginName)
+        {
+            ReloadPlugin(identifier, pluginName, null);
+        }
+
+
+        /// <summary>
+        /// This command asks the Freenet node to remove the given plugin. The node will respond with a PluginRemoved event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
+        /// <param name="purge"> 	If true, the cached copy of the plugin is removed.</param>
+        public void RemovePlugin(string identifier, string pluginName, bool? purge)
+        {
+            ConnectIfNeeded();
+
+            fnwrite.WriteLine("RemovePlugin");
+            fnwrite.WriteLine("Identifier=" + identifier);
+            fnwrite.WriteLine("PluginName=" + pluginName);
+            if (purge.HasValue)
+                fnwrite.WriteLine("Purge=" + purge.Value.ToProtocolString());
+
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
+        }
+
+        /// <summary>
+        /// This command asks the Freenet node to remove the given plugin. The node will respond with a PluginRemoved event.
+        /// </summary>
+        /// <param name="identifier">This is for client to be able to identify responses</param>
+        /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
+        public void RemovePlugin(string identifier, string pluginName)
+        {
+            RemovePlugin(identifier, pluginName, null);
+        }
+
+
+        /// <summary>
         /// This message asks the Freenet node for the presence of the given pluginname The node will respond with a PluginInfo event.
         /// </summary>
         /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
@@ -1548,18 +1694,20 @@ namespace Freenet.FCP2
         public void GetPluginInfo(string pluginName, string identifier, bool? detailed)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("GetPluginInfo");
             fnwrite.WriteLine("PluginName=" + pluginName);
             if (!String.IsNullOrEmpty(identifier))
                 fnwrite.WriteLine("Identifier=" + identifier);
             if (detailed != null)
                 fnwrite.WriteLine("Detailed=" + detailed.Value);
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
 
         /// <summary>
-        /// 
+        /// This message asks the Freenet node for the presence of the given pluginname. The node will respond with a PluginInfo event.
         /// </summary>
         /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
         public void GetPluginInfo(string pluginName)
@@ -1616,27 +1764,60 @@ namespace Freenet.FCP2
             client.GetStream().Flush();
         }
 
+        /// <summary>
+        /// This command is used to send a message to a plugin. The plugin may or may not respond with a FCPPluginReply event.
+        /// </summary>
+        /// <param name="pluginName"></param>
+        /// <param name="pluginParams"></param>
         public void FCPPluginMessage(string pluginName, Dictionary<string, string> pluginParams)
         {
             FCPPluginMessage(pluginName, null, null, pluginParams);
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="identifier"></param>
+        /// <param name="dontPoll"></param>
         public void SubscribeUSK(string uri, string identifier, bool? dontPoll)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("SubscribeUSK");
             fnwrite.WriteLine("URI=" + uri);
             fnwrite.WriteLine("Identifier=" + identifier);
             if (dontPoll != null)
                 fnwrite.WriteLine("DontPoll=" + dontPoll.Value);
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="identifier"></param>
         public void SubscribeUSK(string uri, string identifier)
         {
             SubscribeUSK(uri, identifier, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="identifier"></param>
+        public void UnsubscribeUSK(string identifier)
+        {
+            ConnectIfNeeded();
+
+            fnwrite.WriteLine("SubscribeUSK");
+            fnwrite.WriteLine("Identifier=" + identifier);
+
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
         }
 
         /// <summary>
@@ -1647,9 +1828,11 @@ namespace Freenet.FCP2
         public void WatchGlobal(bool enabled, VerbosityEnum verbosityMask)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("WatchGlobal");
             fnwrite.WriteLine("Enabled=" + enabled);
             fnwrite.WriteLine("VerbosityMask=" + ((long)verbosityMask));
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
@@ -1666,12 +1849,14 @@ namespace Freenet.FCP2
         public void GetRequestStatus(string identifier, bool? global, bool? onlyData)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("GetRequestStatus");
             fnwrite.WriteLine("Identifier=" + identifier);
             if (global != null)
                 fnwrite.WriteLine("Global=" + global.Value);
             if (onlyData != null)
                 fnwrite.WriteLine("OnlyData=" + onlyData.Value);
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
@@ -1699,8 +1884,10 @@ namespace Freenet.FCP2
         public void ListPersistentRequests()
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("ListPersistentRequests");
             fnwrite.WriteLine(EndMessage);
+
             fnwrite.Flush();
         }
 
@@ -1712,9 +1899,11 @@ namespace Freenet.FCP2
         public void RemoveRequest(string identifier, bool global)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("RemoveRequest");
             fnwrite.WriteLine("Identifier=" + identifier);
             fnwrite.WriteLine("Global=" + global);
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
@@ -1733,6 +1922,7 @@ namespace Freenet.FCP2
         public void ModifyPersistentRequest(string identifier, bool global, string clientToken, PriorityClassEnum? priorityClass)
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("ModifyPersistentRequest");
             fnwrite.WriteLine("Identifier=" + identifier);
             fnwrite.WriteLine("Global=" + global);
@@ -1740,6 +1930,7 @@ namespace Freenet.FCP2
                 fnwrite.WriteLine("ClientToken=" + clientToken);
             if (priorityClass != null)
                 fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass));
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
@@ -1780,7 +1971,22 @@ namespace Freenet.FCP2
         public void Shutdown()
         {
             ConnectIfNeeded();
+
             fnwrite.WriteLine("Shutdown");
+            
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
+        }
+
+        /// <summary>
+        /// This command is ignored by the Freenet node and can be used to prevent connection timeouts. The node does not respond with any event to it. Literally, a void command.
+        /// </summary>
+        public void Void()
+        {
+            ConnectIfNeeded();
+
+            fnwrite.WriteLine("Void");
+
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }
