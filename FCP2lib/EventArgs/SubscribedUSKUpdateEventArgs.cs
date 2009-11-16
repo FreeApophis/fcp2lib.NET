@@ -1,46 +1,13 @@
-﻿/*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
- 
 using System;
 
 namespace Freenet.FCP2 {
 
     public class SubscribedUSKUpdateEventArgs : EventArgs {
-        
-        private long edition;
-        
-        public long Edition {
-            get { return edition; }
-        }
-        
-        private string identifier;
-        
-        public string Identifier {
-            get { return identifier; }
-        }
-        
-        private string uri;
-        
-        public string URI {
-            get { return uri; }
-        }
-        
+
+        private readonly long edition;
+        private readonly string identifier;
+        private readonly string uri;
+
         /// <summary>
         /// SubscribedUSKUpdateEventArgs Constructor
         /// </summary>
@@ -50,13 +17,25 @@ namespace Freenet.FCP2 {
             FCP2.ArgsDebug(this, parsed);
             #endif
 
-            this.edition = long.Parse(parsed["Edition"]);
-            this.identifier = parsed["Identifier"];
-            this.uri = parsed["URI"];
+            edition = long.Parse(parsed["Edition"]);
+            identifier = parsed["Identifier"];
+            uri = parsed["URI"];
 
             #if DEBUG
             parsed.PrintAccessCount();
             #endif
+        }
+
+        public long Edition {
+            get { return edition; }
+        }
+
+        public string Identifier {
+            get { return identifier; }
+        }
+
+        public string URI {
+            get { return uri; }
         }
     }
 }

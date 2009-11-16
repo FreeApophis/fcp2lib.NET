@@ -1,368 +1,408 @@
-﻿/*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 using System;
 using System.Net;
 
-namespace Freenet.FCP2 {
-    
-    public class PeerEventArgs : EventArgs {
+namespace Freenet.FCP2
+{
 
-        private string lastGoodVersion;
-        
-        public string LastGoodVersion {
-            get { return lastGoodVersion; }
-        }
-        
-        private bool opennet;
-        
-        public bool Opennet {
-            get { return opennet; }
-        }
-        
-        private string myName;
-        
-        public string MyName {
-            get { return myName; }
-        }
-        
-        private string identity;
-        
-        public string Identity {
-            get { return identity; }
-        }
-        
-        private double location;
-        
-        public double Location {
-            get { return location; }
-        }
-        
-        private bool testnet;
-        
-        public bool Testnet {
-            get { return testnet; }
-        }
-        
-        private string version;
-        
-        public string Version {
-            get { return version; }
-        }
-        
-        private PhysicalType physical;
-        
-        public PhysicalType Physical {
-            get { return physical; }
-        }
-        
-        private ArkType ark;
-        
-        public ArkType Ark {
-            get { return ark; }
-        }
-        
-        private DsaPubKeyType dsaPubKey;
-        
-        public DsaPubKeyType DsaPubKey {
-            get { return dsaPubKey; }
-        }
-        
-        private DsaGroupType dsaGroup;
-        
-        public DsaGroupType DsaGroup {
-            get { return dsaGroup; }
-        }
-        
-        private AuthType auth;
-        
-        public AuthType Auth {
-            get { return auth; }
-        }
-        
-        private VolatileType @volatile = null;
-        
-        public VolatileType Volatile {
-            get { return @volatile; }
-        }
-        
-        private MetadataType metadata = null;
-        
-        public MetadataType Metadata {
-            get { return metadata; }
-        }
-        
+    public class PeerEventArgs : EventArgs
+    {
+        private readonly ArkType ark;
+        private readonly AuthType auth;
+        private readonly DsaGroupType dsaGroup;
+        private readonly DsaPubKeyType dsaPubKey;
+        private readonly string identity;
+        private readonly string lastGoodVersion;
+        private readonly double location;
+        private readonly MetadataType metadata;
+        private readonly string myName;
+        private readonly bool opennet;
+        private readonly PhysicalType physical;
+        private readonly bool testnet;
+        private readonly string version;
+        private readonly VolatileType @volatile;
+
         /// <summary>
         /// PeerEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal PeerEventArgs(MessageParser parsed) {
-            #if DEBUG
+        internal PeerEventArgs(MessageParser parsed)
+        {
+#if DEBUG
             FCP2.ArgsDebug(this, parsed);
-            #endif
-            
-            this.lastGoodVersion = parsed["lastGoodVersion"];
-            this.opennet = bool.Parse(parsed["opennet"]);
-            this.myName = parsed["myName"];
-            this.identity = parsed["identity"];
-            this.location = double.Parse(parsed["location"]);
-            this.testnet = bool.Parse(parsed["testnet"]);
-            this.version = parsed["version"];
+#endif
+
+            lastGoodVersion = parsed["lastGoodVersion"];
+            opennet = bool.Parse(parsed["opennet"]);
+            myName = parsed["myName"];
+            identity = parsed["identity"];
+            location = double.Parse(parsed["location"]);
+            testnet = bool.Parse(parsed["testnet"]);
+            version = parsed["version"];
             physical = new PhysicalType(parsed);
             ark = new ArkType(parsed);
             dsaPubKey = new DsaPubKeyType(parsed);
             dsaGroup = new DsaGroupType(parsed);
             auth = new AuthType(parsed);
-            if (parsed["volatile.averagePingTime"]!=null)
+            if (parsed["volatile.averagePingTime"] != null)
                 @volatile = new VolatileType(parsed);
-            if (parsed["metadata.routableConnectionCheckCount"]!=null)
+            if (parsed["metadata.routableConnectionCheckCount"] != null)
                 metadata = new MetadataType(parsed);
-            
-            #if DEBUG
+
+#if DEBUG
             parsed.PrintAccessCount();
-            #endif
-        }
-        
-        public class PhysicalType {
-            IPEndPoint udp;
-            
-            public IPEndPoint UDP {
-                get { return udp; }
-            }
-            
-            internal PhysicalType(MessageParser parsed) {
-                string[] ip = parsed["physical.udp"].Split(new char[] {':'});
-                this.udp = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
-            }
+#endif
         }
 
-        public class ArkType {
-            private string pubURI;
-            
-            public string PubURI {
+        public string LastGoodVersion
+        {
+            get { return lastGoodVersion; }
+        }
+
+        public bool Opennet
+        {
+            get { return opennet; }
+        }
+
+        public string MyName
+        {
+            get { return myName; }
+        }
+
+        public string Identity
+        {
+            get { return identity; }
+        }
+
+        public double Location
+        {
+            get { return location; }
+        }
+
+        public bool Testnet
+        {
+            get { return testnet; }
+        }
+
+        public string Version
+        {
+            get { return version; }
+        }
+
+        public PhysicalType Physical
+        {
+            get { return physical; }
+        }
+
+        public ArkType Ark
+        {
+            get { return ark; }
+        }
+
+        public DsaPubKeyType DsaPubKey
+        {
+            get { return dsaPubKey; }
+        }
+
+        public DsaGroupType DsaGroup
+        {
+            get { return dsaGroup; }
+        }
+
+        public AuthType Auth
+        {
+            get { return auth; }
+        }
+
+        public VolatileType Volatile
+        {
+            get { return @volatile; }
+        }
+
+        public MetadataType Metadata
+        {
+            get { return metadata; }
+        }
+
+        #region Nested type: ArkType
+
+        public class ArkType
+        {
+            private readonly long number;
+            private readonly string pubURI;
+
+            internal ArkType(MessageParser parsed)
+            {
+                pubURI = parsed["ark.pubURI"];
+                number = long.Parse(parsed["ark.number"]);
+            }
+
+            public string PubURI
+            {
                 get { return pubURI; }
             }
-            
-            private long number;
-            
-            public long Number {
+
+            public long Number
+            {
                 get { return number; }
-            }
-            
-            internal ArkType(MessageParser parsed) {
-                this.pubURI = parsed["ark.pubURI"];
-                this.number = long.Parse(parsed["ark.number"]);
-            }
-            
-        }
-        
-        public class DsaPubKeyType {
-            private string y;
-            
-            public string Y {
-                get { return y; }
-            }
-            
-            internal DsaPubKeyType(MessageParser parsed) {
-                this.y = parsed["dsaPubKey.y"];
             }
         }
 
-        public class DsaGroupType {
-            private string p;
-            
-            public string P {
-                get { return p; }
+        #endregion
+
+        #region Nested type: AuthType
+
+        public class AuthType
+        {
+            private readonly long negTypes;
+
+            internal AuthType(MessageParser parsed)
+            {
+                negTypes = long.Parse(parsed["auth.negTypes"]);
             }
-            
-            private string g;
-            
-            public string G {
-                get { return g; }
-            }
-            
-            private string q;
-            
-            public string Q {
-                get { return q; }
-            }
-            
-            internal DsaGroupType(MessageParser parsed) {
-                this.p = parsed["dsaGroup.p"];
-                this.g = parsed["dsaGroup.g"];
-                this.q = parsed["dsaGroup.q"];
-            }
-        }
-        
-        public class AuthType {
-            private long negTypes;
-            
-            public long NegTypes {
+
+            public long NegTypes
+            {
                 get { return negTypes; }
             }
-            
-            internal AuthType(MessageParser parsed) {
-                this.negTypes = long.Parse(parsed["auth.negTypes"]);
+        }
+
+        #endregion
+
+        #region Nested type: DsaGroupType
+
+        public class DsaGroupType
+        {
+            private readonly string g;
+            private readonly string p;
+            private readonly string q;
+
+            internal DsaGroupType(MessageParser parsed)
+            {
+                p = parsed["dsaGroup.p"];
+                g = parsed["dsaGroup.g"];
+                q = parsed["dsaGroup.q"];
+            }
+
+            public string P
+            {
+                get { return p; }
+            }
+
+            public string G
+            {
+                get { return g; }
+            }
+
+            public string Q
+            {
+                get { return q; }
             }
         }
-        
-        public class VolatileType {
-            private double averagePing;
-            
-            public double AveragePing {
+
+        #endregion
+
+        #region Nested type: DsaPubKeyType
+
+        public class DsaPubKeyType
+        {
+            private readonly string y;
+
+            internal DsaPubKeyType(MessageParser parsed)
+            {
+                y = parsed["dsaPubKey.y"];
+            }
+
+            public string Y
+            {
+                get { return y; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: MetadataType
+
+        public class MetadataType
+        {
+            private readonly DetectedType detected;
+            private readonly long hadRoutableConnectionCount;
+            private readonly long routableConnectionCheckCount;
+            private readonly DateTime timeLastConnected;
+            private readonly DateTime timeLastReceivedPacket;
+            private readonly DateTime timeLastRoutable;
+            private readonly DateTime timeLastSuccess;
+
+            internal MetadataType(MessageParser parsed)
+            {
+                routableConnectionCheckCount = long.Parse(parsed[" metadata.routableConnectionCheckCount"]);
+                hadRoutableConnectionCount = long.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
+                timeLastConnected = FCP2.FromUnix(parsed[" metadata.timeLastConnected"]);
+                timeLastSuccess = FCP2.FromUnix(parsed[" metadata.timeLastSuccess"]);
+                timeLastRoutable = FCP2.FromUnix(parsed[" metadata.timeLastRoutable"]);
+                timeLastReceivedPacket = FCP2.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
+                detected = new DetectedType(parsed);
+            }
+
+            public long RoutableConnectionCheckCount
+            {
+                get { return routableConnectionCheckCount; }
+            }
+
+            public long HadRoutableConnectionCount
+            {
+                get { return hadRoutableConnectionCount; }
+            }
+
+            public DateTime TimeLastConnected
+            {
+                get { return timeLastConnected; }
+            }
+
+            public DateTime TimeLastSuccess
+            {
+                get { return timeLastSuccess; }
+            }
+
+            public DateTime TimeLastRoutable
+            {
+                get { return timeLastRoutable; }
+            }
+
+            public DateTime TimeLastReceivedPacket
+            {
+                get { return timeLastReceivedPacket; }
+            }
+
+            public DetectedType Detected
+            {
+                get { return detected; }
+            }
+
+            #region Nested type: DetectedType
+
+            public class DetectedType
+            {
+                private readonly IPEndPoint udp;
+
+                internal DetectedType(MessageParser parsed)
+                {
+                    string[] ip = parsed["metadata.detected.udp"].Split(new[] { ':' });
+                    var ipAddress = IPAddress.Parse(ip[0]);
+                    if (ipAddress != null) udp = new IPEndPoint((ipAddress), int.Parse(ip[1]));
+                }
+
+                public IPEndPoint UDP
+                {
+                    get { return udp; }
+                }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region Nested type: PhysicalType
+
+        public class PhysicalType
+        {
+            private readonly IPEndPoint udp;
+
+            internal PhysicalType(MessageParser parsed)
+            {
+                string[] ip = parsed["physical.udp"].Split(new[] { ':' });
+                var ipAddress = IPAddress.Parse(ip[0]);
+                if (ipAddress != null) udp = new IPEndPoint((ipAddress), int.Parse(ip[1]));
+            }
+
+            public IPEndPoint UDP
+            {
+                get { return udp; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: VolatileType
+
+        public class VolatileType
+        {
+            private readonly double averagePing;
+            private readonly string lastRoutingBackoffReason;
+            private readonly double overloadProbability;
+            private readonly double percentTimeRoutableConnection;
+            private readonly long routingBackoff;
+            private readonly long routingBackoffLength;
+            private readonly double routingBackoffPercent;
+            private readonly string status;
+            private readonly long totalBytesIn;
+            private readonly long totalBytesOut;
+
+            internal VolatileType(MessageParser parsed)
+            {
+                averagePing = double.Parse(parsed["volatile.averagePingTime"]);
+                overloadProbability = double.Parse(parsed["volatile.overloadProbability"]);
+                percentTimeRoutableConnection = double.Parse(parsed["volatile.percentTimeRoutableConnection"]);
+                routingBackoffPercent = double.Parse(parsed["volatile.routingBackoffPercent"]);
+                status = parsed["volatile.status"];
+                totalBytesIn = long.Parse(parsed["volatile.totalBytesIn"]);
+                routingBackoffLength = long.Parse(parsed["volatile.routingBackoffLength"]);
+                lastRoutingBackoffReason = parsed["volatile.lastRoutingBackoffReason"];
+                routingBackoff = long.Parse(parsed["volatile.routingBackoff"]);
+                totalBytesOut = long.Parse(parsed["volatile.totalBytesOut"]);
+            }
+
+            public double AveragePing
+            {
                 get { return averagePing; }
             }
 
-            private double overloadProbability;
-            
-            public double OverloadProbability {
+            public double OverloadProbability
+            {
                 get { return overloadProbability; }
             }
-            
-            private double percentTimeRoutableConnection;
-            
-            public double PercentTimeRoutableConnection {
+
+            public double PercentTimeRoutableConnection
+            {
                 get { return percentTimeRoutableConnection; }
             }
-            
-            private double routingBackoffPercent;
-            
-            public double RoutingBackoffPercent {
+
+            public double RoutingBackoffPercent
+            {
                 get { return routingBackoffPercent; }
             }
-            
-            private string status;
-            
-            public string Status {
+
+            public string Status
+            {
                 get { return status; }
             }
-            
-            private long totalBytesIn;
-            
-            public long TotalBytesIn {
+
+            public long TotalBytesIn
+            {
                 get { return totalBytesIn; }
             }
-            
-            private long routingBackoffLength;
-            
-            public long RoutingBackoffLength {
+
+            public long RoutingBackoffLength
+            {
                 get { return routingBackoffLength; }
             }
-            
-            private string lastRoutingBackoffReason;
-            
-            public string LastRoutingBackoffReason {
+
+            public string LastRoutingBackoffReason
+            {
                 get { return lastRoutingBackoffReason; }
             }
-            
-            private long routingBackoff;
-            
-            public long RoutingBackoff {
+
+            public long RoutingBackoff
+            {
                 get { return routingBackoff; }
             }
-            
-            private long totalBytesOut;
-            
-            public long TotalBytesOut {
+
+            public long TotalBytesOut
+            {
                 get { return totalBytesOut; }
             }
-            
-            internal VolatileType(MessageParser parsed) {
-                this.averagePing = double.Parse(parsed["volatile.averagePingTime"]);
-                this.overloadProbability = double.Parse(parsed["volatile.overloadProbability"]);
-                this.percentTimeRoutableConnection = double.Parse(parsed["volatile.percentTimeRoutableConnection"]);
-                this.routingBackoffPercent = double.Parse(parsed["volatile.routingBackoffPercent"]);
-                this.status = parsed["volatile.status"];
-                this.totalBytesIn = long.Parse(parsed["volatile.totalBytesIn"]);
-                this.routingBackoffLength = long.Parse(parsed["volatile.routingBackoffLength"]);
-                this.lastRoutingBackoffReason = parsed["volatile.lastRoutingBackoffReason"];
-                this.routingBackoff = long.Parse(parsed["volatile.routingBackoff"]);
-                this.totalBytesOut = long.Parse(parsed["volatile.totalBytesOut"]);
-            }
         }
-        
-        public class MetadataType {
-            
-            private long routableConnectionCheckCount;
-            
-            public long RoutableConnectionCheckCount {
-                get { return routableConnectionCheckCount; }
-            }
-            
-            private long hadRoutableConnectionCount;
-            
-            public long HadRoutableConnectionCount {
-                get { return hadRoutableConnectionCount; }
-            }
-            
-            private DateTime timeLastConnected;
-            
-            public DateTime TimeLastConnected {
-                get { return timeLastConnected; }
-            }
-            
-            private DateTime timeLastSuccess;
-            
-            public DateTime TimeLastSuccess {
-                get { return timeLastSuccess; }
-            }
-            
-            private DateTime timeLastRoutable;
-            
-            public DateTime TimeLastRoutable {
-                get { return timeLastRoutable; }
-            }
-            
-            private DateTime timeLastReceivedPacket;
-            
-            public DateTime TimeLastReceivedPacket {
-                get { return timeLastReceivedPacket; }
-            }
-            
-            private DetectedType detected;
-            
-            public DetectedType Detected {
-                get { return detected; }
-            }
-            
-            internal MetadataType(MessageParser parsed) {
-                this.routableConnectionCheckCount = long.Parse(parsed[" metadata.routableConnectionCheckCount"]);
-                this.hadRoutableConnectionCount = long.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
-                this.timeLastConnected = FCP2.FromUnix(parsed[" metadata.timeLastConnected"]);
-                this.timeLastSuccess = FCP2.FromUnix(parsed[" metadata.timeLastSuccess"]);
-                this.timeLastRoutable = FCP2.FromUnix(parsed[" metadata.timeLastRoutable"]);
-                this.timeLastReceivedPacket = FCP2.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
-                this.detected =  new DetectedType(parsed);
-            }
-            
-            public class DetectedType {
-                IPEndPoint udp;
-                
-                public IPEndPoint UDP {
-                    get { return udp; }
-                }
-                
-                internal DetectedType(MessageParser parsed) {
-                    string[] ip = parsed["metadata.detected.udp"].Split(new char[] {':'});
-                    this.udp = new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1]));
-                }
-            }
-        }
+
+        #endregion
     }
 }

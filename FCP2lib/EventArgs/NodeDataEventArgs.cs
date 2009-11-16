@@ -1,874 +1,918 @@
-﻿/*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
- *  Copyright (c) 2009 Felipe Barriga Richards
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 using System;
-using System.Net;
 using System.Collections.Generic;
+using System.Net;
 
-namespace Freenet.FCP2 {
-    
-    public class NodeDataEventArgs : EventArgs {
-        
-        private string lastGoodVersion;
-        
-        public string LastGoodVersion {
-            get { return lastGoodVersion; }
-        }
-        
-        private string sig;
-        
-        public string Sig {
-            get { return sig; }
-        }
-        
-        private bool opennet;
-        
-        public bool Opennet {
-            get { return opennet; }
-        }
-        
-        private string identity;
-        
-        public string Identity {
-            get { return identity; }
-        }
-        
-        private string myName;
-        
-        public string MyName {
-            get { return myName; }
-        }
-        
-        private string version;
-        
-        public string Version {
-            get { return version; }
-        }
-        
-        private PhysicalType physical;
-        
-        public PhysicalType Physical {
-            get { return physical; }
-        }
-        
-        private ArkType ark;
-        
-        public ArkType Ark {
-            get { return ark; }
-        }
-        
-        private DsaPubKeyType dsaPubKey;
-        
-        public DsaPubKeyType DsaPubKey {
-            get { return dsaPubKey; }
-        }
-        private DsaPrivKeyType dsaPrivKey;
-        
-        public DsaPrivKeyType DsaPrivKey {
-            get { return dsaPrivKey; }
-        }
+namespace Freenet.FCP2
+{
 
-        private DsaGroupType dsaGroup;
-        
-        public DsaGroupType DsaGroup {
-            get { return dsaGroup; }
-        }
-        
-        private AuthType auth;
-        
-        public AuthType Auth {
-            get { return auth; }
-        }
-        
-        private string clientNonce;
-        
-        public string ClientNonce {
-            get { return clientNonce; }
-        }
-        
-        private double location;
-        
-        public double Location {
-            get { return location; }
-        }
-        
-        private VolatileType @volatile = null;
-        
-        public VolatileType Volatile {
-            get { return @volatile; }
-        }
-        
+    public class NodeDataEventArgs : EventArgs
+    {
+        private readonly ArkType ark;
+        private readonly AuthType auth;
+        private readonly string clientNonce;
+        private readonly DsaGroupType dsaGroup;
+        private readonly DsaPrivKeyType dsaPrivKey;
+        private readonly DsaPubKeyType dsaPubKey;
+        private readonly string identity;
+        private readonly string lastGoodVersion;
+        private readonly double location;
+        private readonly string myName;
+        private readonly bool opennet;
+        private readonly PhysicalType physical;
+        private readonly string sig;
+        private readonly string version;
+        private readonly VolatileType @volatile;
+
         /// <summary>
         /// NodeDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal NodeDataEventArgs(MessageParser parsed) {
-            #if DEBUG
+        internal NodeDataEventArgs(MessageParser parsed)
+        {
+#if DEBUG
             FCP2.ArgsDebug(this, parsed);
-            #endif
-            
-            this.lastGoodVersion = parsed["lastGoodVersion"];
-            this.sig = parsed["sig"];
-            this.opennet = bool.Parse(parsed["opennet"]);
-            this.identity = parsed["identity"];
-            this.myName = parsed["myName"];
-            this.version = parsed["version"];
-            this.physical = new PhysicalType(parsed);
-            this.ark = new ArkType(parsed);
-            this.dsaPubKey = new DsaPubKeyType(parsed);
-            this.dsaPrivKey = new DsaPrivKeyType(parsed);
-            this.dsaGroup = new DsaGroupType(parsed);
-            this.auth = new AuthType(parsed);
-            
-            this.clientNonce = parsed["clientNonce"];
-            this.location = (parsed["location"]!=null) ? double.Parse(parsed["location"]) : -1.0;
-            
-            if (parsed["volatile.startedSwaps"]!=null)
+#endif
+
+            lastGoodVersion = parsed["lastGoodVersion"];
+            sig = parsed["sig"];
+            opennet = bool.Parse(parsed["opennet"]);
+            identity = parsed["identity"];
+            myName = parsed["myName"];
+            version = parsed["version"];
+            physical = new PhysicalType(parsed);
+            ark = new ArkType(parsed);
+            dsaPubKey = new DsaPubKeyType(parsed);
+            dsaPrivKey = new DsaPrivKeyType(parsed);
+            dsaGroup = new DsaGroupType(parsed);
+            auth = new AuthType(parsed);
+
+            clientNonce = parsed["clientNonce"];
+            location = (parsed["location"] != null) ? double.Parse(parsed["location"]) : -1.0;
+
+            if (parsed["volatile.startedSwaps"] != null)
                 @volatile = new VolatileType(parsed);
-            
-            #if DEBUG
+
+#if DEBUG
             parsed.PrintAccessCount();
-            #endif
-        }
-        
-        public class PhysicalType {
-            List<IPEndPoint> udp = new List<IPEndPoint>();
-            
-            public List<IPEndPoint> UDP {
-                get { return udp; }
-            }
-            
-            internal PhysicalType(MessageParser parsed) {
-                foreach(string pu in parsed["physical.udp"].Split(new char[] {';'})) {
-                    string[] ip = pu.Split(new char[] {':'});
-                    if(ip.Length > 2) {
-                        /* we have an ipv6 adress */
-                        this.udp.Add(new IPEndPoint(IPAddress.Parse(pu.Substring(0,pu.Length-1-ip[ip.Length-1].Length)), int.Parse(ip[ip.Length-1])));
-                    } else {
-                        this.udp.Add(new IPEndPoint(IPAddress.Parse(ip[0]), int.Parse(ip[1])));
-                    }
-                }
-            }
+#endif
         }
 
-        public class ArkType {
-            private string pubURI;
-            
-            public string PubURI {
+        public string LastGoodVersion
+        {
+            get { return lastGoodVersion; }
+        }
+
+        public string Sig
+        {
+            get { return sig; }
+        }
+
+        public bool Opennet
+        {
+            get { return opennet; }
+        }
+
+        public string Identity
+        {
+            get { return identity; }
+        }
+
+        public string MyName
+        {
+            get { return myName; }
+        }
+
+        public string Version
+        {
+            get { return version; }
+        }
+
+        public PhysicalType Physical
+        {
+            get { return physical; }
+        }
+
+        public ArkType Ark
+        {
+            get { return ark; }
+        }
+
+        public DsaPubKeyType DsaPubKey
+        {
+            get { return dsaPubKey; }
+        }
+
+        public DsaPrivKeyType DsaPrivKey
+        {
+            get { return dsaPrivKey; }
+        }
+
+        public DsaGroupType DsaGroup
+        {
+            get { return dsaGroup; }
+        }
+
+        public AuthType Auth
+        {
+            get { return auth; }
+        }
+
+        public string ClientNonce
+        {
+            get { return clientNonce; }
+        }
+
+        public double Location
+        {
+            get { return location; }
+        }
+
+        public VolatileType Volatile
+        {
+            get { return @volatile; }
+        }
+
+        #region Nested type: ArkType
+
+        public class ArkType
+        {
+            private readonly long number;
+            private readonly string privURI;
+            private readonly string pubURI;
+
+            internal ArkType(MessageParser parsed)
+            {
+                pubURI = parsed["ark.pubURI"];
+                privURI = parsed["ark.privURI"];
+                number = long.Parse(parsed["ark.number"]);
+            }
+
+            public string PubURI
+            {
                 get { return pubURI; }
             }
-            
-            
-            private string privURI;
-            
-            public string PrivURI {
+
+
+            public string PrivURI
+            {
                 get { return privURI; }
             }
-            
-            private long number;
-            
-            public long Number {
+
+            public long Number
+            {
                 get { return number; }
-            }
-            
-            internal ArkType(MessageParser parsed) {
-                this.pubURI = parsed["ark.pubURI"];
-                this.privURI = parsed["ark.privURI"];
-                this.number = long.Parse(parsed["ark.number"]);
-            }
-            
-        }
-        
-        public class DsaPubKeyType {
-            private string y;
-            
-            public string Y {
-                get { return y; }
-            }
-            
-            internal DsaPubKeyType(MessageParser parsed) {
-                this.y = parsed["dsaPubKey.y"];
-            }
-        }
-        
-        public class DsaPrivKeyType {
-            private string x;
-            
-            public string X {
-                get { return x; }
-            }
-            
-            internal DsaPrivKeyType(MessageParser parsed) {
-                this.x = parsed["dsaPrivKey.x"];
             }
         }
 
-        public class DsaGroupType {
-            private string p;
-            
-            public string P {
-                get { return p; }
-            }
-            
-            private string g;
-            
-            public string G {
-                get { return g; }
-            }
-            
-            private string q;
-            
-            public string Q {
-                get { return q; }
-            }
-            
-            internal DsaGroupType(MessageParser parsed) {
-                this.p = parsed["dsaGroup.p"];
-                this.g = parsed["dsaGroup.g"];
-                this.q = parsed["dsaGroup.q"];
-            }
-        }
-        
-        public class AuthType {
-            private List<long> negTypes = new List<long>();
-            
-            public List<long> NegTypes {
-                get { return negTypes; }
-            }
-            
-            internal AuthType(MessageParser parsed) {
-                if (parsed["auth.negTypes"]!=null) {
-                    foreach(string an in parsed["auth.negTypes"].Split(new char[] {';'})) {
-                        this.negTypes.Add(long.Parse(an));
+        #endregion
+
+        #region Nested type: AuthType
+
+        public class AuthType
+        {
+            private readonly List<long> negTypes = new List<long>();
+
+            internal AuthType(MessageParser parsed)
+            {
+                if (parsed["auth.negTypes"] != null)
+                {
+                    foreach (string an in parsed["auth.negTypes"].Split(new[] { ';' }))
+                    {
+                        negTypes.Add(long.Parse(an));
                     }
                 }
             }
+
+            public List<long> NegTypes
+            {
+                get { return negTypes; }
+            }
         }
-        
-        public class VolatileType {
-            
-            private long startedSwaps;
-            
-            public long StartedSwaps {
+
+        #endregion
+
+        #region Nested type: DsaGroupType
+
+        public class DsaGroupType
+        {
+            private readonly string g;
+            private readonly string p;
+            private readonly string q;
+
+            internal DsaGroupType(MessageParser parsed)
+            {
+                p = parsed["dsaGroup.p"];
+                g = parsed["dsaGroup.g"];
+                q = parsed["dsaGroup.q"];
+            }
+
+            public string P
+            {
+                get { return p; }
+            }
+
+            public string G
+            {
+                get { return g; }
+            }
+
+            public string Q
+            {
+                get { return q; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: DsaPrivKeyType
+
+        public class DsaPrivKeyType
+        {
+            private readonly string x;
+
+            internal DsaPrivKeyType(MessageParser parsed)
+            {
+                x = parsed["dsaPrivKey.x"];
+            }
+
+            public string X
+            {
+                get { return x; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: DsaPubKeyType
+
+        public class DsaPubKeyType
+        {
+            private readonly string y;
+
+            internal DsaPubKeyType(MessageParser parsed)
+            {
+                y = parsed["dsaPubKey.y"];
+            }
+
+            public string Y
+            {
+                get { return y; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: PhysicalType
+
+        public class PhysicalType
+        {
+            private readonly List<IPEndPoint> udp = new List<IPEndPoint>();
+
+            internal PhysicalType(MessageParser parsed)
+            {
+                foreach (string pu in parsed["physical.udp"].Split(new[] { ';' }))
+                {
+                    string[] ip = pu.Split(new[] { ':' });
+                    if (ip.Length > 2)
+                    {
+                        /* we have an ipv6 adress */
+                        var ipAddress = IPAddress.Parse(pu.Substring(0, pu.Length - 1 - ip[ip.Length - 1].Length));
+                        if (ipAddress != null) udp.Add(new IPEndPoint(ipAddress, int.Parse(ip[ip.Length - 1])));
+                    }
+                    else
+                    {
+                        var ipAddress = IPAddress.Parse(ip[0]);
+                        if (ipAddress != null) udp.Add(new IPEndPoint(ipAddress, int.Parse(ip[1])));
+                    }
+                }
+            }
+
+            public List<IPEndPoint> UDP
+            {
+                get { return udp; }
+            }
+        }
+
+        #endregion
+
+        #region Nested type: VolatileType
+
+        public class VolatileType
+        {
+            private readonly long allocatedJavaMemory;
+            private readonly long availableCPUs;
+            private readonly double averagePingTime;
+            private readonly double avgConnectedPeersPerNode;
+            private readonly double avgStoreAccessRate;
+            private readonly double backedOffPercent;
+            private readonly double bwlimitDelayTime;
+            private readonly long cacheAccesses;
+            private readonly long cachedKeys;
+            private readonly long cachedSize;
+            private readonly long cachedStoreHits;
+            private readonly long cachedStoreMisses;
+            private readonly long freeJavaMemory;
+            private readonly bool isUsingWrapper;
+            private readonly double locationChangePerMinute;
+            private readonly double locationChangePerSession;
+            private readonly double locationChangePerSwap;
+            private readonly long maximumJavaMemory;
+            private readonly long maxOverallKeys;
+            private readonly long maxOverallSize;
+            private readonly long networkSizeEstimate24HourRecent;
+            private readonly long networkSizeEstimate48HourRecent;
+            private readonly long networkSizeEstimateSession;
+            private double noSwaps;
+            private readonly double noSwapsPerMinute;
+            private readonly long numberOfARKFetchers;
+            private readonly long numberOfBursting;
+            private readonly long numberOfConnected;
+            private readonly long numberOfDisabled;
+            private readonly long numberOfDisconnected;
+            private readonly long numberOfInsertSenders;
+            private readonly long numberOfListening;
+            private readonly long numberOfListenOnly;
+            private readonly long numberOfNeverConnected;
+            private readonly long numberOfNotConnected;
+            private readonly double numberOfRemotePeerLocationsSeenInSwaps;
+            private readonly long numberOfRequestSenders;
+            private readonly long numberOfRoutingBackedOff;
+            private readonly long numberOfSeedClients;
+            private readonly long numberOfSeedServers;
+            private readonly long numberOfSimpleConnected;
+            private readonly long numberOfTooNew;
+            private readonly long numberOfTooOld;
+            private readonly long numberOfTransferringRequestSenders;
+            private readonly NumberWithRoutingBackoffReasonsType numberWithRoutingBackoffReasons;
+            private readonly long opennetSizeEstimate24HourRecent;
+            private readonly long opennetSizeEstimate48HourRecent;
+            private readonly long opennetSizeEstimateSession;
+            private readonly long overallAccesses;
+            private readonly long overallKeys;
+            private readonly long overallSize;
+            private readonly double percentCachedStoreHitsOfAccesses;
+            private readonly double percentOverallKeysOfMax;
+            private readonly double percentStoreHitsOfAccesses;
+            private readonly double pInstantReject;
+            private readonly double recentInputRate;
+            private readonly double recentOutputRate;
+            private readonly double routingMissDistance;
+            private readonly long runningThreadCount;
+            private readonly long startedSwaps;
+            private readonly DateTime startupTime;
+            private readonly long storeAccesses;
+            private readonly long storeHits;
+            private readonly long storeKeys;
+            private readonly long storeMisses;
+            private readonly long storeSize;
+            private readonly double swaps;
+            private readonly double swapsPerMinute;
+            private readonly double swapsPerNoSwaps;
+            private readonly long swapsRejectedAlreadyLocked;
+            private readonly long swapsRejectedLoop;
+            private readonly long swapsRejectedNowhereToGo;
+            private readonly long swapsRejectedRateLimit;
+            private readonly long swapsRejectedRecognizedID;
+            private readonly long totalInputBytes;
+            private readonly readonly long totalInputRate;
+            private readonly long totalOutputBytes;
+            private readonly long totalOutputRate;
+            private readonly long totalPayloadOutputBytes;
+            private readonly long totalPayloadOutputPercent;
+            private readonly long totalPayloadOutputRate;
+            private readonly long unclaimedFifoSize;
+            private readonly long uptimeSeconds;
+            private readonly long usedJavaMemory;
+
+            internal VolatileType(MessageParser parsed)
+            {
+                /* TODO: volatile member */
+                startedSwaps = long.Parse(parsed["volatile.startedSwaps"]);
+                cacheAccesses = long.Parse(parsed["volatile.cacheAccesses"]);
+                totalInputBytes = long.Parse(parsed["volatile.totalInputBytes"]);
+                networkSizeEstimateSession = long.Parse(parsed["volatile.networkSizeEstimateSession"]);
+                storeKeys = long.Parse(parsed["volatile.storeKeys"]);
+                cachedKeys = long.Parse(parsed["volatile.cachedKeys"]);
+                locationChangePerSwap = double.Parse(parsed["volatile.locationChangePerSwap"]);
+                swapsRejectedNowhereToGo = long.Parse(parsed["volatile.swapsRejectedNowhereToGo"]);
+                numberOfNotConnected = long.Parse(parsed["volatile.numberOfNotConnected"]);
+                numberOfListenOnly = long.Parse(parsed["volatile.numberOfListenOnly"]);
+                totalOutputBytes = long.Parse(parsed["volatile.totalOutputBytes"]);
+                swapsPerNoSwaps = double.Parse(parsed["volatile.swapsPerNoSwaps"]);
+                allocatedJavaMemory = long.Parse(parsed["volatile.allocatedJavaMemory"]);
+                percentStoreHitsOfAccesses = double.Parse(parsed["volatile.percentStoreHitsOfAccesses"]);
+                networkSizeEstimate24HourRecent = long.Parse(parsed["volatile.networkSizeEstimate24HourRecent"]);
+                overallAccesses = long.Parse(parsed["volatile.overallAccesses"]);
+                percentOverallKeysOfMax = double.Parse(parsed["volatile.percentOverallKeysOfMax"]);
+                locationChangePerMinute = double.Parse(parsed["volatile.locationChangePerMinute"]);
+                noSwaps = double.Parse(parsed["volatile.noSwaps"]);
+                cachedSize = long.Parse(parsed["volatile.cachedSize"]);
+                uptimeSeconds = long.Parse(parsed["volatile.uptimeSeconds"]);
+                numberOfARKFetchers = long.Parse(parsed["volatile.numberOfARKFetchers"]);
+                networkSizeEstimate48HourRecent = long.Parse(parsed["volatile.networkSizeEstimate48HourRecent"]);
+                maxOverallKeys = long.Parse(parsed["volatile.maxOverallKeys"]);
+                numberOfDisconnected = long.Parse(parsed["volatile.numberOfDisconnected"]);
+                swaps = double.Parse(parsed["volatile.swaps"]);
+                maximumJavaMemory = long.Parse(parsed["volatile.maximumJavaMemory"]);
+                avgStoreAccessRate = double.Parse(parsed["volatile.avgStoreAccessRate"]);
+                totalInputRate = long.Parse(parsed["volatile.totalInputRate"]);
+                recentInputRate = double.Parse(parsed["volatile.recentInputRate"]);
+                overallKeys = long.Parse(parsed["volatile.overallKeys"]);
+                backedOffPercent = double.Parse(parsed["volatile.backedOffPercent"]);
+                runningThreadCount = long.Parse(parsed["volatile.runningThreadCount"]);
+                storeAccesses = long.Parse(parsed["volatile.storeAccesses"]);
+                numberOfDisabled = long.Parse(parsed["volatile.numberOfDisabled"]);
+                cachedStoreMisses = long.Parse(parsed["volatile.cachedStoreMisses"]);
+                routingMissDistance = double.Parse(parsed["volatile.routingMissDistance"]);
+                swapsRejectedRateLimit = long.Parse(parsed["volatile.swapsRejectedRateLimit"]);
+                totalOutputRate = long.Parse(parsed["volatile.totalOutputRate"]);
+                averagePingTime = double.Parse(parsed["volatile.averagePingTime"]);
+                numberOfBursting = long.Parse(parsed["volatile.numberOfBursting"]);
+                numberOfInsertSenders = long.Parse(parsed["volatile.numberOfInsertSenders"]);
+                usedJavaMemory = long.Parse(parsed["volatile.usedJavaMemory"]);
+                startupTime = FCP2.FromUnix(parsed["volatile.startupTime"]);
+                locationChangePerSession = double.Parse(parsed["volatile.locationChangePerSession"]);
+                numberOfNeverConnected = long.Parse(parsed["volatile.numberOfNeverConnected"]);
+                freeJavaMemory = long.Parse(parsed["volatile.freeJavaMemory"]);
+                totalPayloadOutputRate = long.Parse(parsed["volatile.totalPayloadOutputRate"]);
+                isUsingWrapper = bool.Parse(parsed["volatile.isUsingWrapper"]);
+                storeMisses = long.Parse(parsed["volatile.storeMisses"]);
+                storeHits = long.Parse(parsed["volatile.storeHits"]);
+                totalPayloadOutputPercent = long.Parse(parsed["volatile.totalPayloadOutputPercent"]);
+                storeSize = long.Parse(parsed["volatile.storeSize"]);
+                numberOfTooOld = long.Parse(parsed["volatile.numberOfTooOld"]);
+                avgConnectedPeersPerNode = double.Parse(parsed["volatile.avgConnectedPeersPerNode"]);
+                availableCPUs = long.Parse(parsed["volatile.availableCPUs"]);
+                swapsPerMinute = double.Parse(parsed["volatile.swapsPerMinute"]);
+                noSwapsPerMinute = double.Parse(parsed["volatile.noSwapsPerMinute"]);
+                numberOfListening = long.Parse(parsed["volatile.numberOfListening"]);
+                swapsRejectedAlreadyLocked = long.Parse(parsed["volatile.swapsRejectedAlreadyLocked"]);
+                maxOverallSize = long.Parse(parsed["volatile.maxOverallSize"]);
+                numberOfSimpleConnected = long.Parse(parsed["volatile.numberOfSimpleConnected"]);
+                numberOfRequestSenders = long.Parse(parsed["volatile.numberOfRequestSenders"]);
+                overallSize = long.Parse(parsed["volatile.overallSize"]);
+                numberOfTransferringRequestSenders = long.Parse(parsed["volatile.numberOfTransferringRequestSenders"]);
+                percentCachedStoreHitsOfAccesses = double.Parse(parsed["volatile.percentCachedStoreHitsOfAccesses"]);
+                swapsRejectedLoop = long.Parse(parsed["volatile.swapsRejectedLoop"]);
+                bwlimitDelayTime = double.Parse(parsed["volatile.bwlimitDelayTime"]);
+                numberOfRemotePeerLocationsSeenInSwaps = double.Parse(parsed["volatile.numberOfRemotePeerLocationsSeenInSwaps"]);
+                pInstantReject = double.Parse(parsed["volatile.pInstantReject"]);
+                totalPayloadOutputBytes = long.Parse(parsed["volatile.totalPayloadOutputBytes"]);
+                numberOfRoutingBackedOff = long.Parse(parsed["volatile.numberOfRoutingBackedOff"]);
+                unclaimedFifoSize = long.Parse(parsed["volatile.unclaimedFifoSize"]);
+                numberOfConnected = long.Parse(parsed["volatile.numberOfConnected"]);
+                cachedStoreHits = long.Parse(parsed["volatile.cachedStoreHits"]);
+                recentOutputRate = double.Parse(parsed["volatile.recentOutputRate"]);
+                swapsRejectedRecognizedID = long.Parse(parsed["volatile.swapsRejectedRecognizedID"]);
+                numberOfTooNew = long.Parse(parsed["volatile.numberOfTooNew"]);
+                numberOfSeedClients = long.Parse(parsed["volatile.numberOfSeedClients"]);
+                opennetSizeEstimate48HourRecent = long.Parse(parsed["volatile.opennetSizeEstimate48HourRecent"]);
+                numberOfSeedServers = long.Parse(parsed["volatile.numberOfSeedServers"]);
+                opennetSizeEstimateSession = long.Parse(parsed["volatile.opennetSizeEstimateSession"]);
+                opennetSizeEstimate24HourRecent = long.Parse(parsed["volatile.opennetSizeEstimate24HourRecent"]);
+
+                numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(parsed);
+            }
+
+            public long StartedSwaps
+            {
                 get { return startedSwaps; }
             }
-            
-            private long cacheAccesses;
-            
-            public long CacheAccesses {
+
+            public long CacheAccesses
+            {
                 get { return cacheAccesses; }
             }
-            
-            private long totalInputBytes;
-            
-            public long TotalInputBytes {
+
+            public long TotalInputBytes
+            {
                 get { return totalInputBytes; }
             }
-            
-            private long networkSizeEstimateSession;
-            
-            public long NetworkSizeEstimateSession {
+
+            public long NetworkSizeEstimateSession
+            {
                 get { return networkSizeEstimateSession; }
             }
-            
-            private long storeKeys;
-            
-            public long StoreKeys {
+
+            public long StoreKeys
+            {
                 get { return storeKeys; }
             }
-            
-            private long cachedKeys;
-            
-            public long CachedKeys {
+
+            public long CachedKeys
+            {
                 get { return cachedKeys; }
             }
-            
-            private double locationChangePerSwap;
-            
-            public double LocationChangePerSwap {
+
+            public double LocationChangePerSwap
+            {
                 get { return locationChangePerSwap; }
             }
-            
-            private long swapsRejectedNowhereToGo;
-            
-            public long SwapsRejectedNowhereToGo {
+
+            public long SwapsRejectedNowhereToGo
+            {
                 get { return swapsRejectedNowhereToGo; }
             }
-            
-            private long numberOfNotConnected;
-            
-            public long NumberOfNotConnected {
+
+            public long NumberOfNotConnected
+            {
                 get { return numberOfNotConnected; }
             }
-            
-            private long numberOfListenOnly;
-            
-            public long NumberOfListenOnly {
+
+            public long NumberOfListenOnly
+            {
                 get { return numberOfListenOnly; }
             }
-            
-            private long totalOutputBytes;
-            
-            public long TotalOutputBytes {
+
+            public long TotalOutputBytes
+            {
                 get { return totalOutputBytes; }
             }
-            
-            private double swapsPerNoSwaps;
-            
-            public double SwapsPerNoSwaps {
+
+            public double SwapsPerNoSwaps
+            {
                 get { return swapsPerNoSwaps; }
             }
-            
-            private long allocatedJavaMemory;
-            
-            public long AllocatedJavaMemory {
+
+            public long AllocatedJavaMemory
+            {
                 get { return allocatedJavaMemory; }
             }
-            
-            private double percentStoreHitsOfAccesses;
-            
-            public double PercentStoreHitsOfAccesses {
+
+            public double PercentStoreHitsOfAccesses
+            {
                 get { return percentStoreHitsOfAccesses; }
             }
-            
-            private long networkSizeEstimate24hourRecent;
-            
-            public long NetworkSizeEstimate24hourRecent {
-                get { return networkSizeEstimate24hourRecent; }
+
+            public long NetworkSizeEstimate24HourRecent
+            {
+                get { return networkSizeEstimate24HourRecent; }
             }
-            
-            private long overallAccesses;
-            
-            public long OverallAccesses {
+
+            public long OverallAccesses
+            {
                 get { return overallAccesses; }
             }
-            
-            private double percentOverallKeysOfMax;
-            
-            public double PercentOverallKeysOfMax {
+
+            public double PercentOverallKeysOfMax
+            {
                 get { return percentOverallKeysOfMax; }
             }
-            
-            private double locationChangePerMinute;
-            
-            public double LocationChangePerMinute {
+
+            public double LocationChangePerMinute
+            {
                 get { return locationChangePerMinute; }
             }
-            
-            private double noSwaps;
-            
-            public double NoSwaps {
+
+            public double NoSwaps
+            {
                 get { return noSwaps; }
                 set { noSwaps = value; }
             }
-            
-            private long cachedSize;
-            
-            public long CachedSize {
+
+            public long CachedSize
+            {
                 get { return cachedSize; }
             }
-            
-            private long uptimeSeconds;
-            
-            public long UptimeSeconds {
+
+            public long UptimeSeconds
+            {
                 get { return uptimeSeconds; }
             }
-            
-            private long numberOfARKFetchers;
-            
-            public long NumberOfARKFetchers {
+
+            public long NumberOfARKFetchers
+            {
                 get { return numberOfARKFetchers; }
             }
-            
-            private long networkSizeEstimate48hourRecent;
-            
-            public long NetworkSizeEstimate48hourRecent {
-                get { return networkSizeEstimate48hourRecent; }
+
+            public long NetworkSizeEstimate48HourRecent
+            {
+                get { return networkSizeEstimate48HourRecent; }
             }
-            
-            private long maxOverallKeys;
-            
-            public long MaxOverallKeys {
+
+            public long MaxOverallKeys
+            {
                 get { return maxOverallKeys; }
             }
-            
-            private long numberOfDisconnected;
-            
-            public long NumberOfDisconnected {
+
+            public long NumberOfDisconnected
+            {
                 get { return numberOfDisconnected; }
             }
-            
-            private double swaps;
-            
-            public double Swaps {
+
+            public double Swaps
+            {
                 get { return swaps; }
             }
-            
-            private long maximumJavaMemory;
-            
-            public long MaximumJavaMemory {
+
+            public long MaximumJavaMemory
+            {
                 get { return maximumJavaMemory; }
             }
-            
-            private double avgStoreAccessRate;
-            
-            public double AvgStoreAccessRate {
+
+            public double AvgStoreAccessRate
+            {
                 get { return avgStoreAccessRate; }
             }
-            
-            private long totalInputRate;
-            
-            public long TotalInputRate {
+
+            public long TotalInputRate
+            {
                 get { return totalInputRate; }
             }
-            
-            private double recentInputRate;
-            
-            public double RecentInputRate {
+
+            public double RecentInputRate
+            {
                 get { return recentInputRate; }
             }
-            
-            private long overallKeys;
-            
-            public long OverallKeys {
+
+            public long OverallKeys
+            {
                 get { return overallKeys; }
             }
-            
-            private double backedOffPercent;
-            
-            public double BackedOffPercent {
+
+            public double BackedOffPercent
+            {
                 get { return backedOffPercent; }
             }
-            
-            private long runningThreadCount;
-            
-            public long RunningThreadCount {
+
+            public long RunningThreadCount
+            {
                 get { return runningThreadCount; }
             }
-            
-            private long storeAccesses;
-            
-            public long StoreAccesses {
+
+            public long StoreAccesses
+            {
                 get { return storeAccesses; }
             }
-            
-            private long numberOfDisabled;
-            
-            public long NumberOfDisabled {
+
+            public long NumberOfDisabled
+            {
                 get { return numberOfDisabled; }
             }
-            
-            private long cachedStoreMisses;
-            
-            public long CachedStoreMisses {
+
+            public long CachedStoreMisses
+            {
                 get { return cachedStoreMisses; }
             }
-            
-            private double routingMissDistance;
-            
-            public double RoutingMissDistance {
+
+            public double RoutingMissDistance
+            {
                 get { return routingMissDistance; }
             }
-            
-            private long swapsRejectedRateLimit;
-            
-            public long SwapsRejectedRateLimit {
+
+            public long SwapsRejectedRateLimit
+            {
                 get { return swapsRejectedRateLimit; }
             }
-            
-            private long totalOutputRate;
-            
-            public long TotalOutputRate {
+
+            public long TotalOutputRate
+            {
                 get { return totalOutputRate; }
             }
-            
-            private double averagePingTime;
-            
-            public double AveragePingTime {
+
+            public double AveragePingTime
+            {
                 get { return averagePingTime; }
             }
-            
-            private long numberOfBursting;
-            
-            public long NumberOfBursting {
+
+            public long NumberOfBursting
+            {
                 get { return numberOfBursting; }
             }
-            
-            private long numberOfInsertSenders;
-            
-            public long NumberOfInsertSenders {
+
+            public long NumberOfInsertSenders
+            {
                 get { return numberOfInsertSenders; }
             }
-            
-            private long usedJavaMemory;
-            
-            public long UsedJavaMemory {
+
+            public long UsedJavaMemory
+            {
                 get { return usedJavaMemory; }
             }
-            
-            private DateTime startupTime;
-            
-            public DateTime StartupTime {
+
+            public DateTime StartupTime
+            {
                 get { return startupTime; }
             }
-            
-            private double locationChangePerSession;
-            
-            public double LocationChangePerSession {
+
+            public double LocationChangePerSession
+            {
                 get { return locationChangePerSession; }
             }
-            
-            private long numberOfNeverConnected;
-            
-            public long NumberOfNeverConnected {
+
+            public long NumberOfNeverConnected
+            {
                 get { return numberOfNeverConnected; }
             }
-            
-            private long freeJavaMemory;
-            
-            public long FreeJavaMemory {
+
+            public long FreeJavaMemory
+            {
                 get { return freeJavaMemory; }
             }
-            
-            private long totalPayloadOutputRate;
-            
-            public long TotalPayloadOutputRate {
+
+            public long TotalPayloadOutputRate
+            {
                 get { return totalPayloadOutputRate; }
             }
-            
-            private bool isUsingWrapper;
-            
-            public bool IsUsingWrapper {
+
+            public bool IsUsingWrapper
+            {
                 get { return isUsingWrapper; }
             }
-            
-            private long storeMisses;
-            
-            public long StoreMisses {
+
+            public long StoreMisses
+            {
                 get { return storeMisses; }
             }
-            
-            private long storeHits;
-            
-            public long StoreHits {
+
+            public long StoreHits
+            {
                 get { return storeHits; }
             }
-            
-            private long totalPayloadOutputPercent;
-            
-            public long TotalPayloadOutputPercent {
+
+            public long TotalPayloadOutputPercent
+            {
                 get { return totalPayloadOutputPercent; }
             }
-            
-            private long storeSize;
-            
-            public long StoreSize {
+
+            public long StoreSize
+            {
                 get { return storeSize; }
             }
-            
-            private long numberOfTooOld;
-            
-            public long NumberOfTooOld {
+
+            public long NumberOfTooOld
+            {
                 get { return numberOfTooOld; }
             }
-            
-            private double avgConnectedPeersPerNode;
-            
-            public double AvgConnectedPeersPerNode {
+
+            public double AvgConnectedPeersPerNode
+            {
                 get { return avgConnectedPeersPerNode; }
             }
-            
-            private long availableCPUs;
-            
-            public long AvailableCPUs {
+
+            public long AvailableCPUs
+            {
                 get { return availableCPUs; }
             }
-            
-            private double swapsPerMinute;
-            
-            public double SwapsPerMinute {
+
+            public double SwapsPerMinute
+            {
                 get { return swapsPerMinute; }
             }
-            
-            private double noSwapsPerMinute;
-            
-            public double NoSwapsPerMinute {
+
+            public double NoSwapsPerMinute
+            {
                 get { return noSwapsPerMinute; }
             }
-            
-            private long numberOfListening;
-            
-            public long NumberOfListening {
+
+            public long NumberOfListening
+            {
                 get { return numberOfListening; }
             }
-            
-            private long swapsRejectedAlreadyLocked;
-            
-            public long SwapsRejectedAlreadyLocked {
+
+            public long SwapsRejectedAlreadyLocked
+            {
                 get { return swapsRejectedAlreadyLocked; }
             }
-            
-            private long maxOverallSize;
-            
-            public long MaxOverallSize {
+
+            public long MaxOverallSize
+            {
                 get { return maxOverallSize; }
             }
-            
-            private long numberOfSimpleConnected;
-            
-            public long NumberOfSimpleConnected {
+
+            public long NumberOfSimpleConnected
+            {
                 get { return numberOfSimpleConnected; }
             }
-            
-            private long numberOfRequestSenders;
-            
-            public long NumberOfRequestSenders {
+
+            public long NumberOfRequestSenders
+            {
                 get { return numberOfRequestSenders; }
             }
-            
-            private long overallSize;
-            
-            public long OverallSize {
+
+            public long OverallSize
+            {
                 get { return overallSize; }
             }
-            
-            private long numberOfTransferringRequestSenders;
-            
-            public long NumberOfTransferringRequestSenders {
+
+            public long NumberOfTransferringRequestSenders
+            {
                 get { return numberOfTransferringRequestSenders; }
             }
-            
-            private double percentCachedStoreHitsOfAccesses;
-            
-            public double PercentCachedStoreHitsOfAccesses {
+
+            public double PercentCachedStoreHitsOfAccesses
+            {
                 get { return percentCachedStoreHitsOfAccesses; }
             }
-            
-            private long swapsRejectedLoop;
-            
-            public long SwapsRejectedLoop {
+
+            public long SwapsRejectedLoop
+            {
                 get { return swapsRejectedLoop; }
             }
-            
-            private double bwlimitDelayTime;
-            
-            public double BwlimitDelayTime {
+
+            public double BwlimitDelayTime
+            {
                 get { return bwlimitDelayTime; }
             }
-            
-            private double numberOfRemotePeerLocationsSeenInSwaps;
-            
-            public double NumberOfRemotePeerLocationsSeenInSwaps {
+
+            public double NumberOfRemotePeerLocationsSeenInSwaps
+            {
                 get { return numberOfRemotePeerLocationsSeenInSwaps; }
             }
-            
-            private double pInstantReject;
-            
-            public double PInstantReject {
+
+            public double PInstantReject
+            {
                 get { return pInstantReject; }
             }
-            
-            private long totalPayloadOutputBytes;
-            
-            public long TotalPayloadOutputBytes {
+
+            public long TotalPayloadOutputBytes
+            {
                 get { return totalPayloadOutputBytes; }
             }
-            
-            private long numberOfRoutingBackedOff;
-            
-            public long NumberOfRoutingBackedOff {
+
+            public long NumberOfRoutingBackedOff
+            {
                 get { return numberOfRoutingBackedOff; }
             }
-            
-            private long unclaimedFIFOSize;
-            
-            public long UnclaimedFIFOSize {
-                get { return unclaimedFIFOSize; }
+
+            public long UnclaimedFIFOSize
+            {
+                get { return unclaimedFifoSize; }
             }
-            
-            private long numberOfConnected;
-            
-            public long NumberOfConnected {
+
+            public long NumberOfConnected
+            {
                 get { return numberOfConnected; }
             }
-            
-            private long cachedStoreHits;
-            
-            public long CachedStoreHits {
+
+            public long CachedStoreHits
+            {
                 get { return cachedStoreHits; }
             }
-            
-            private double recentOutputRate;
-            
-            public double RecentOutputRate {
+
+            public double RecentOutputRate
+            {
                 get { return recentOutputRate; }
             }
-            
-            private long swapsRejectedRecognizedID;
-            
-            public long SwapsRejectedRecognizedID {
+
+            public long SwapsRejectedRecognizedID
+            {
                 get { return swapsRejectedRecognizedID; }
             }
-            
-            private long numberOfTooNew;
-            
-            public long NumberOfTooNew {
+
+            public long NumberOfTooNew
+            {
                 get { return numberOfTooNew; }
             }
-            
-            private long numberOfSeedClients;
-            
-            public long NumberOfSeedClients {
+
+            public long NumberOfSeedClients
+            {
                 get { return numberOfSeedClients; }
             }
-            
-            private long opennetSizeEstimate48hourRecent;
-            
-            public long OpennetSizeEstimate48hourRecent {
-                get { return opennetSizeEstimate48hourRecent; }
+
+            public long OpennetSizeEstimate48HourRecent
+            {
+                get { return opennetSizeEstimate48HourRecent; }
             }
-            
-            private long numberOfSeedServers;
-            
-            public long NumberOfSeedServers {
+
+            public long NumberOfSeedServers
+            {
                 get { return numberOfSeedServers; }
             }
-            
-            private long opennetSizeEstimateSession;
-            
-            public long OpennetSizeEstimateSession {
+
+            public long OpennetSizeEstimateSession
+            {
                 get { return opennetSizeEstimateSession; }
             }
-            
-            private long opennetSizeEstimate24hourRecent;
-            
-            public long OpennetSizeEstimate24hourRecent {
-                get { return opennetSizeEstimate24hourRecent; }
+
+            public long OpennetSizeEstimate24HourRecent
+            {
+                get { return opennetSizeEstimate24HourRecent; }
             }
-            
-            private NumberWithRoutingBackoffReasonsType numberWithRoutingBackoffReasons;
-            
-            public NumberWithRoutingBackoffReasonsType NumberWithRoutingBackoffReasons {
+
+            public NumberWithRoutingBackoffReasonsType NumberWithRoutingBackoffReasons
+            {
                 get { return numberWithRoutingBackoffReasons; }
             }
-            
+
             /*
             private long numberWithRoutingBackoffReasons.ForwardRejectedOverload;
             private long numberWithRoutingBackoffReasons.ForwardRejectedOverload5;
              */
-            
-            internal VolatileType(MessageParser parsed)  {
-                /* TODO: volatile member */
-                startedSwaps=long.Parse(parsed["volatile.startedSwaps"]);
-                cacheAccesses=long.Parse(parsed["volatile.cacheAccesses"]);
-                totalInputBytes=long.Parse(parsed["volatile.totalInputBytes"]);
-                networkSizeEstimateSession=long.Parse(parsed["volatile.networkSizeEstimateSession"]);
-                storeKeys=long.Parse(parsed["volatile.storeKeys"]);
-                cachedKeys=long.Parse(parsed["volatile.cachedKeys"]);
-                locationChangePerSwap=double.Parse(parsed["volatile.locationChangePerSwap"]);
-                swapsRejectedNowhereToGo=long.Parse(parsed["volatile.swapsRejectedNowhereToGo"]);
-                numberOfNotConnected=long.Parse(parsed["volatile.numberOfNotConnected"]);
-                numberOfListenOnly=long.Parse(parsed["volatile.numberOfListenOnly"]);
-                totalOutputBytes=long.Parse(parsed["volatile.totalOutputBytes"]);
-                swapsPerNoSwaps=double.Parse(parsed["volatile.swapsPerNoSwaps"]);
-                allocatedJavaMemory=long.Parse(parsed["volatile.allocatedJavaMemory"]);
-                percentStoreHitsOfAccesses=double.Parse(parsed["volatile.percentStoreHitsOfAccesses"]);
-                networkSizeEstimate24hourRecent=long.Parse(parsed["volatile.networkSizeEstimate24hourRecent"]);
-                overallAccesses=long.Parse(parsed["volatile.overallAccesses"]);
-                percentOverallKeysOfMax=double.Parse(parsed["volatile.percentOverallKeysOfMax"]);
-                locationChangePerMinute=double.Parse(parsed["volatile.locationChangePerMinute"]);
-                noSwaps=double.Parse(parsed["volatile.noSwaps"]);
-                cachedSize=long.Parse(parsed["volatile.cachedSize"]);
-                uptimeSeconds=long.Parse(parsed["volatile.uptimeSeconds"]);
-                numberOfARKFetchers=long.Parse(parsed["volatile.numberOfARKFetchers"]);
-                networkSizeEstimate48hourRecent=long.Parse(parsed["volatile.networkSizeEstimate48hourRecent"]);
-                maxOverallKeys=long.Parse(parsed["volatile.maxOverallKeys"]);
-                numberOfDisconnected=long.Parse(parsed["volatile.numberOfDisconnected"]);
-                swaps=double.Parse(parsed["volatile.swaps"]);
-                maximumJavaMemory=long.Parse(parsed["volatile.maximumJavaMemory"]);
-                avgStoreAccessRate=double.Parse(parsed["volatile.avgStoreAccessRate"]);
-                totalInputRate=long.Parse(parsed["volatile.totalInputRate"]);
-                recentInputRate=double.Parse(parsed["volatile.recentInputRate"]);
-                overallKeys=long.Parse(parsed["volatile.overallKeys"]);
-                backedOffPercent=double.Parse(parsed["volatile.backedOffPercent"]);
-                runningThreadCount=long.Parse(parsed["volatile.runningThreadCount"]);
-                storeAccesses=long.Parse(parsed["volatile.storeAccesses"]);
-                numberOfDisabled=long.Parse(parsed["volatile.numberOfDisabled"]);
-                cachedStoreMisses=long.Parse(parsed["volatile.cachedStoreMisses"]);
-                routingMissDistance=double.Parse(parsed["volatile.routingMissDistance"]);
-                swapsRejectedRateLimit=long.Parse(parsed["volatile.swapsRejectedRateLimit"]);
-                totalOutputRate=long.Parse(parsed["volatile.totalOutputRate"]);
-                averagePingTime=double.Parse(parsed["volatile.averagePingTime"]);
-                numberOfBursting=long.Parse(parsed["volatile.numberOfBursting"]);
-                numberOfInsertSenders=long.Parse(parsed["volatile.numberOfInsertSenders"]);
-                usedJavaMemory=long.Parse(parsed["volatile.usedJavaMemory"]);
-                startupTime=FCP2.FromUnix(parsed["volatile.startupTime"]);
-                locationChangePerSession=double.Parse(parsed["volatile.locationChangePerSession"]);
-                numberOfNeverConnected=long.Parse(parsed["volatile.numberOfNeverConnected"]);
-                freeJavaMemory=long.Parse(parsed["volatile.freeJavaMemory"]);
-                totalPayloadOutputRate=long.Parse(parsed["volatile.totalPayloadOutputRate"]);
-                isUsingWrapper=bool.Parse(parsed["volatile.isUsingWrapper"]);
-                storeMisses=long.Parse(parsed["volatile.storeMisses"]);
-                storeHits=long.Parse(parsed["volatile.storeHits"]);
-                totalPayloadOutputPercent=long.Parse(parsed["volatile.totalPayloadOutputPercent"]);
-                storeSize=long.Parse(parsed["volatile.storeSize"]);
-                numberOfTooOld=long.Parse(parsed["volatile.numberOfTooOld"]);
-                avgConnectedPeersPerNode=double.Parse(parsed["volatile.avgConnectedPeersPerNode"]);
-                availableCPUs=long.Parse(parsed["volatile.availableCPUs"]);
-                swapsPerMinute=double.Parse(parsed["volatile.swapsPerMinute"]);
-                noSwapsPerMinute=double.Parse(parsed["volatile.noSwapsPerMinute"]);
-                numberOfListening=long.Parse(parsed["volatile.numberOfListening"]);
-                swapsRejectedAlreadyLocked=long.Parse(parsed["volatile.swapsRejectedAlreadyLocked"]);
-                maxOverallSize=long.Parse(parsed["volatile.maxOverallSize"]);
-                numberOfSimpleConnected=long.Parse(parsed["volatile.numberOfSimpleConnected"]);
-                numberOfRequestSenders=long.Parse(parsed["volatile.numberOfRequestSenders"]);
-                overallSize=long.Parse(parsed["volatile.overallSize"]);
-                numberOfTransferringRequestSenders=long.Parse(parsed["volatile.numberOfTransferringRequestSenders"]);
-                percentCachedStoreHitsOfAccesses=double.Parse(parsed["volatile.percentCachedStoreHitsOfAccesses"]);
-                swapsRejectedLoop=long.Parse(parsed["volatile.swapsRejectedLoop"]);
-                bwlimitDelayTime=double.Parse(parsed["volatile.bwlimitDelayTime"]);
-                numberOfRemotePeerLocationsSeenInSwaps=double.Parse(parsed["volatile.numberOfRemotePeerLocationsSeenInSwaps"]);
-                pInstantReject=double.Parse(parsed["volatile.pInstantReject"]);
-                totalPayloadOutputBytes=long.Parse(parsed["volatile.totalPayloadOutputBytes"]);
-                numberOfRoutingBackedOff=long.Parse(parsed["volatile.numberOfRoutingBackedOff"]);
-                unclaimedFIFOSize=long.Parse(parsed["volatile.unclaimedFIFOSize"]);
-                numberOfConnected=long.Parse(parsed["volatile.numberOfConnected"]);
-                cachedStoreHits=long.Parse(parsed["volatile.cachedStoreHits"]);
-                recentOutputRate=double.Parse(parsed["volatile.recentOutputRate"]);
-                swapsRejectedRecognizedID=long.Parse(parsed["volatile.swapsRejectedRecognizedID"]);
-                numberOfTooNew=long.Parse(parsed["volatile.numberOfTooNew"]);
 
-                numberOfSeedClients = long.Parse(parsed["volatile.numberOfSeedClients"]);
-                opennetSizeEstimate48hourRecent = long.Parse(parsed["volatile.opennetSizeEstimate48hourRecent"]);
-                numberOfSeedServers = long.Parse(parsed["volatile.numberOfSeedServers"]);
-                opennetSizeEstimateSession = long.Parse(parsed["volatile.opennetSizeEstimateSession"]);
-                opennetSizeEstimate24hourRecent = long.Parse(parsed["volatile.opennetSizeEstimate24hourRecent"]);              
-                
-                numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(parsed);
-            }
-            
-            public class NumberWithRoutingBackoffReasonsType {
-                internal NumberWithRoutingBackoffReasonsType(MessageParser parsed) {
+            #region Nested type: NumberWithRoutingBackoffReasonsType
+
+            public class NumberWithRoutingBackoffReasonsType
+            {
+                internal NumberWithRoutingBackoffReasonsType(MessageParser parsed)
+                {
                     /* TODO: implementation */
                 }
             }
+
+            #endregion
         }
+
+        #endregion
     }
 }
