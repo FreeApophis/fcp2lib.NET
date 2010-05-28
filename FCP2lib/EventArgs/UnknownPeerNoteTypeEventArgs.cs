@@ -16,12 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
-
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class UnknownPeerNoteTypeEventArgs : EventArgs
+    public class UnknownPeerNoteTypeEventArgs : System.EventArgs
     {
 
         private readonly string peerNoteType;
@@ -33,7 +31,7 @@ namespace Freenet.FCP2
         internal UnknownPeerNoteTypeEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             peerNoteType = parsed["PeerNoteType"];

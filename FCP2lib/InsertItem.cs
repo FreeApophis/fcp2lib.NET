@@ -19,7 +19,7 @@
 
 using System.IO;
 
-namespace Freenet.FCP2
+namespace FCP2
 {
     /// <summary>
     /// Description of InsertItem.

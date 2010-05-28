@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Freenet.FCP2
+namespace FCP2
 {
     /// <summary>
     /// Description of Class1.
@@ -44,7 +44,7 @@ namespace Freenet.FCP2
         public MessageParser(TextReader reader)
         {
             string line;
-            while ((line = reader.ReadLine()) != FCP2.EndMessage)
+            while ((line = reader.ReadLine()) != FCP2Protocol.EndMessage)
             {
                 int pos;
                 if (line == "End")

@@ -19,10 +19,10 @@
 using System;
 using System.IO;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class AllDataEventArgs : EventArgs
+    public class AllDataEventArgs : System.EventArgs
     {
         private readonly DateTime completionTime;
         private Stream data;
@@ -39,7 +39,7 @@ namespace Freenet.FCP2
         internal AllDataEventArgs(MessageParser parsed, Stream data)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             if (!parsed.DataAvailable)
@@ -48,8 +48,8 @@ namespace Freenet.FCP2
             this.data = data;
             identifier = parsed["Identifier"];
             datalength = long.Parse(parsed["DataLength"]);
-            startupTime = FCP2.FromUnix(parsed["StartupTime"]);
-            completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
+            startupTime = FCP2Protocol.FromUnix(parsed["StartupTime"]);
+            completionTime = FCP2Protocol.FromUnix(parsed["CompletionTime"]);
 
 #if DEBUG
             parsed.PrintAccessCount();

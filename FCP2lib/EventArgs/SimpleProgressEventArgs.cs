@@ -16,12 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class SimpleProgressEventArgs : EventArgs
+    public class SimpleProgressEventArgs : System.EventArgs
     {
         private readonly long failed;
         private readonly long fatallyFailed;
@@ -38,7 +37,7 @@ namespace Freenet.FCP2
         internal SimpleProgressEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             total = long.Parse(parsed["Total"]);

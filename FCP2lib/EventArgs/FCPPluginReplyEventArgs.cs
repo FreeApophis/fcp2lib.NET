@@ -19,10 +19,10 @@
 using System;
 using System.IO;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class FCPPluginReplyEventArgs : EventArgs
+    public class FCPPluginReplyEventArgs : System.EventArgs
     {
         private readonly Stream data;
         private readonly long? dataLength;
@@ -37,7 +37,7 @@ namespace Freenet.FCP2
         internal FCPPluginReplyEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             pluginName = parsed["PluginName"];

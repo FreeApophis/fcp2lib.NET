@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
     public static class EnumExtension
     {

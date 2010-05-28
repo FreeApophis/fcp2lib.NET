@@ -20,7 +20,7 @@
 using System.IO;
 using System.Text;
 
-namespace Freenet.FCP2
+namespace FCP2
 {
     /// <summary>
     /// Minimalistic StreamReader Implementation which makes it possible to read binary data aswell.

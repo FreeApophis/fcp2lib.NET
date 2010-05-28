@@ -16,12 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
-
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class DataFoundEventArgs : EventArgs
+    public class DataFoundEventArgs : System.EventArgs
     {
         private readonly string contentType;
         private readonly long datalength;
@@ -36,7 +34,7 @@ namespace Freenet.FCP2
         internal DataFoundEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             contentType = parsed["Metadata.ContentType"];

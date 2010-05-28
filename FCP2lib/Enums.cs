@@ -18,7 +18,7 @@
  */
 using System;
 
-namespace Freenet.FCP2
+namespace FCP2
 {
     /// <summary>
     /// Specify the type of the peer note, by code number (currently, may change in the future). 

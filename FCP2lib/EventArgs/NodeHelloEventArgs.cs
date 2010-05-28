@@ -17,12 +17,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
-
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class NodeHelloEventArgs : EventArgs
+    public class NodeHelloEventArgs : System.EventArgs
     {
         private readonly long build;
         private readonly string compressionCodecs;
@@ -43,7 +41,7 @@ namespace Freenet.FCP2
         internal NodeHelloEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             connectionIdentifier = parsed["ConnectionIdentifier"];

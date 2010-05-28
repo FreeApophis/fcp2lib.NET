@@ -19,10 +19,10 @@
 using System;
 using System.Net;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class PeerEventArgs : EventArgs
+    public class PeerEventArgs : System.EventArgs
     {
         private readonly ArkType ark;
         private readonly AuthType auth;
@@ -46,7 +46,7 @@ namespace Freenet.FCP2
         internal PeerEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             lastGoodVersion = parsed["lastGoodVersion"];
@@ -254,10 +254,10 @@ namespace Freenet.FCP2
             {
                 routableConnectionCheckCount = long.Parse(parsed[" metadata.routableConnectionCheckCount"]);
                 hadRoutableConnectionCount = long.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
-                timeLastConnected = FCP2.FromUnix(parsed[" metadata.timeLastConnected"]);
-                timeLastSuccess = FCP2.FromUnix(parsed[" metadata.timeLastSuccess"]);
-                timeLastRoutable = FCP2.FromUnix(parsed[" metadata.timeLastRoutable"]);
-                timeLastReceivedPacket = FCP2.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
+                timeLastConnected = FCP2Protocol.FromUnix(parsed[" metadata.timeLastConnected"]);
+                timeLastSuccess = FCP2Protocol.FromUnix(parsed[" metadata.timeLastSuccess"]);
+                timeLastRoutable = FCP2Protocol.FromUnix(parsed[" metadata.timeLastRoutable"]);
+                timeLastReceivedPacket = FCP2Protocol.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
                 detected = new DetectedType(parsed);
             }
 

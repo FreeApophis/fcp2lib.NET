@@ -18,10 +18,10 @@
  */
 using System;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class PersistentGetEventArgs : EventArgs
+    public class PersistentGetEventArgs : System.EventArgs
     {
         private readonly string clientToken;
         private readonly string filename;
@@ -41,7 +41,7 @@ namespace Freenet.FCP2
         internal PersistentGetEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             uri = parsed["URI"];

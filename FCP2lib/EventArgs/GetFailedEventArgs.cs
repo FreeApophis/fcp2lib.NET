@@ -16,12 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
-
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class GetFailedEventArgs : EventArgs
+    public class GetFailedEventArgs : System.EventArgs
     {
         private readonly long code;
         private readonly string codeDescription;
@@ -42,7 +40,7 @@ namespace Freenet.FCP2
         internal GetFailedEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
             if (parsed["Global"] != null)
                 global = bool.Parse(parsed["Global"]);

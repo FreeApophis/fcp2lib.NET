@@ -16,11 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
-    public class TestDDAReplyEventArgs : EventArgs
+    public class TestDDAReplyEventArgs : System.EventArgs
     {
         private readonly string contentToWrite;
         private readonly string directory;
@@ -34,7 +33,7 @@ namespace Freenet.FCP2
         internal TestDDAReplyEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             directory = parsed["Directory"];

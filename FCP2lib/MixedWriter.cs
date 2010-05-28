@@ -20,7 +20,7 @@
 using System.IO;
 using System.Text;
 
-namespace Freenet.FCP2
+namespace FCP2
 {
     /// <summary>
     /// Minimalistic StreamWriter Implementation which makes it possible to write binary data aswell.

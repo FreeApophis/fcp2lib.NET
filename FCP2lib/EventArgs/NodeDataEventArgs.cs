@@ -16,14 +16,15 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */using System;
+ */
+using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class NodeDataEventArgs : EventArgs
+    public class NodeDataEventArgs : System.EventArgs
     {
         private readonly ArkType ark;
         private readonly AuthType auth;
@@ -48,7 +49,7 @@ namespace Freenet.FCP2
         internal NodeDataEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             lastGoodVersion = parsed["lastGoodVersion"];
@@ -340,9 +341,8 @@ namespace Freenet.FCP2
             private readonly long networkSizeEstimate24HourRecent;
             private readonly long networkSizeEstimate48HourRecent;
             private readonly long networkSizeEstimateSession;
-            private double noSwaps;
             private readonly double noSwapsPerMinute;
-            private readonly long numberOfARKFetchers;
+            private readonly long numberOfArkFetchers;
             private readonly long numberOfBursting;
             private readonly long numberOfConnected;
             private readonly long numberOfDisabled;
@@ -423,10 +423,10 @@ namespace Freenet.FCP2
                 overallAccesses = long.Parse(parsed["volatile.overallAccesses"]);
                 percentOverallKeysOfMax = double.Parse(parsed["volatile.percentOverallKeysOfMax"]);
                 locationChangePerMinute = double.Parse(parsed["volatile.locationChangePerMinute"]);
-                noSwaps = double.Parse(parsed["volatile.noSwaps"]);
+                NoSwaps = double.Parse(parsed["volatile.noSwaps"]);
                 cachedSize = long.Parse(parsed["volatile.cachedSize"]);
                 uptimeSeconds = long.Parse(parsed["volatile.uptimeSeconds"]);
-                numberOfARKFetchers = long.Parse(parsed["volatile.numberOfARKFetchers"]);
+                numberOfArkFetchers = long.Parse(parsed["volatile.numberOfARKFetchers"]);
                 networkSizeEstimate48HourRecent = long.Parse(parsed["volatile.networkSizeEstimate48HourRecent"]);
                 maxOverallKeys = long.Parse(parsed["volatile.maxOverallKeys"]);
                 numberOfDisconnected = long.Parse(parsed["volatile.numberOfDisconnected"]);
@@ -448,7 +448,7 @@ namespace Freenet.FCP2
                 numberOfBursting = long.Parse(parsed["volatile.numberOfBursting"]);
                 numberOfInsertSenders = long.Parse(parsed["volatile.numberOfInsertSenders"]);
                 usedJavaMemory = long.Parse(parsed["volatile.usedJavaMemory"]);
-                startupTime = FCP2.FromUnix(parsed["volatile.startupTime"]);
+                startupTime = FCP2Protocol.FromUnix(parsed["volatile.startupTime"]);
                 locationChangePerSession = double.Parse(parsed["volatile.locationChangePerSession"]);
                 numberOfNeverConnected = long.Parse(parsed["volatile.numberOfNeverConnected"]);
                 freeJavaMemory = long.Parse(parsed["volatile.freeJavaMemory"]);
@@ -582,11 +582,7 @@ namespace Freenet.FCP2
                 get { return locationChangePerMinute; }
             }
 
-            public double NoSwaps
-            {
-                get { return noSwaps; }
-                set { noSwaps = value; }
-            }
+            public double NoSwaps { get; set; }
 
             public long CachedSize
             {
@@ -598,9 +594,9 @@ namespace Freenet.FCP2
                 get { return uptimeSeconds; }
             }
 
-            public long NumberOfARKFetchers
+            public long NumberOfArkFetchers
             {
-                get { return numberOfARKFetchers; }
+                get { return numberOfArkFetchers; }
             }
 
             public long NetworkSizeEstimate48HourRecent
@@ -853,7 +849,7 @@ namespace Freenet.FCP2
                 get { return numberOfRoutingBackedOff; }
             }
 
-            public long UnclaimedFIFOSize
+            public long UnclaimedFifoSize
             {
                 get { return unclaimedFifoSize; }
             }

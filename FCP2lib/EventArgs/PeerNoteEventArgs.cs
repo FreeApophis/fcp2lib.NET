@@ -19,10 +19,10 @@
 using System;
 using System.Text;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class PeerNoteEventArgs : EventArgs
+    public class PeerNoteEventArgs : System.EventArgs
     {
 
         private readonly string nodeIdentifier;
@@ -36,7 +36,7 @@ namespace Freenet.FCP2
         internal PeerNoteEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             nodeIdentifier = parsed["NodeIdentifier"];

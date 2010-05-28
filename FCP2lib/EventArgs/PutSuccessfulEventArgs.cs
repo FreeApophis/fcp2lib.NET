@@ -18,10 +18,10 @@
  */
 using System;
 
-namespace Freenet.FCP2
+namespace FCP2.EventArgs
 {
 
-    public class PutSuccessfulEventArgs : EventArgs
+    public class PutSuccessfulEventArgs : System.EventArgs
     {
         private readonly DateTime completionTime;
         private readonly bool global;
@@ -36,13 +36,13 @@ namespace Freenet.FCP2
         internal PutSuccessfulEventArgs(MessageParser parsed)
         {
 #if DEBUG
-            FCP2.ArgsDebug(this, parsed);
+            FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
             global = bool.Parse(parsed["Global"]);
             identifier = parsed["Identifier"];
-            startupTime = FCP2.FromUnix(parsed["StartupTime"]);
-            completionTime = FCP2.FromUnix(parsed["CompletionTime"]);
+            startupTime = FCP2Protocol.FromUnix(parsed["StartupTime"]);
+            completionTime = FCP2Protocol.FromUnix(parsed["CompletionTime"]);
             uri = parsed["URI"];
 
 #if DEBUG
