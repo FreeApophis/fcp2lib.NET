@@ -499,7 +499,7 @@ namespace FCP2.Protocol
         public void Disconnect()
         {
             if (!client.Connected) return;
-
+            RealDisconnect();
             client.GetStream().Close();
             client.Close();
         }
@@ -1704,6 +1704,17 @@ namespace FCP2.Protocol
 
             fnwrite.WriteLine("Shutdown");
 
+            fnwrite.WriteLine(EndMessage);
+            fnwrite.Flush();
+        }
+
+        /// <summary>
+        /// Disconnect will immediately disconnect the FCP client from the server. 
+        /// No confirmation message is sent by the node. Disconnect contains no data. 
+        /// </summary>
+        private void RealDisconnect()
+        {
+            fnwrite.WriteLine("Disconnect");
             fnwrite.WriteLine(EndMessage);
             fnwrite.Flush();
         }

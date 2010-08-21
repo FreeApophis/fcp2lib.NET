@@ -70,8 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventArgs\CompatibilityModeEventArgs.cs" />
-    <Compile Include="DynamicReturnValue.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="Protocol\DynamicReturnValue.cs" />
+    <Compile Include="Protocol\Enums.cs" />
     <Compile Include="EventArgs\AllDataEventArgs.cs" />
     <Compile Include="EventArgs\CloseConnectionDuplicateClientNameEventArgs.cs" />
     <Compile Include="EventArgs\ConfigDataEventArgs.cs" />
@@ -115,12 +115,12 @@
     <Compile Include="FCP2Download.cs" />
     <Compile Include="FCP2Upload.cs" />
     <Compile Include="FCPClient.cs" />
-    <Compile Include="InsertItem.cs" />
-    <Compile Include="MessageParser.cs" />
-    <Compile Include="FCP.cs" />
-    <Compile Include="MessageParserSubElement.cs" />
-    <Compile Include="MixedReader.cs" />
-    <Compile Include="MixedWriter.cs" />
+    <Compile Include="Protocol\InsertItem.cs" />
+    <Compile Include="Protocol\MessageParser.cs" />
+    <Compile Include="Protocol\FCP2Protocol.cs" />
+    <Compile Include="Protocol\MessageParserSubElement.cs" />
+    <Compile Include="Protocol\MixedReader.cs" />
+    <Compile Include="Protocol\MixedWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
