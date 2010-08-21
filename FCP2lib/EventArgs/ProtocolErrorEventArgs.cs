@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -33,18 +33,18 @@ namespace FCP2.EventArgs
         /// ProtocolErrorEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal ProtocolErrorEventArgs(MessageParser parsed)
+        internal ProtocolErrorEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            global = (parsed["Global"] != null) ? bool.Parse(parsed["Global"]) : false;
-            code = long.Parse(parsed["Code"]);
-            codeDescription = parsed["CodeDescription"];
-            extraDescription = parsed["ExtraDescription"];
-            fatal = bool.Parse(parsed["Fatal"]);
-            identifier = parsed["Identifier"];
+            global = parsed.Global;
+            code = parsed.Code;
+            codeDescription = parsed.CodeDescription;
+            extraDescription = parsed.ExtraDescription;
+            fatal = parsed.Fatal;
+            identifier = parsed.Identifier;
 
 #if DEBUG
             parsed.PrintAccessCount();

@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,17 +30,16 @@ namespace FCP2.EventArgs
         /// PluginInfoEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal PluginInfoEventArgs(MessageParser parsed)
+        internal PluginInfoEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            pluginName = parsed["PluginName"];
-            identifier = parsed["Identifier"];
-            originalUri = parsed["OriginalUri"];
-            if (parsed["Started"] != null)
-                started = bool.Parse(parsed["Started"]);
+            pluginName = parsed.PluginName;
+            identifier = parsed.Identifier;
+            originalUri = parsed.OriginalUri;
+            started = parsed.Started;
 
 #if DEBUG
             parsed.PrintAccessCount();

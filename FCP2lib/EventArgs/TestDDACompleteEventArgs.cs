@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -33,15 +33,15 @@ namespace FCP2.EventArgs
         /// TestDDACompleteEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal TestDDACompleteEventArgs(MessageParser parsed)
+        internal TestDDACompleteEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            directory = parsed["Directory"];
-            readDirectoryAllowed = (parsed["ReadDirectoryAllowed"] != null) ? bool.Parse(parsed["ReadDirectoryAllowed"]) : false;
-            writeDirectoryAllowed = (parsed["WriteDirectoryAllowed"] != null) ? bool.Parse(parsed["WriteDirectoryAllowed"]) : false;
+            directory = parsed.Directory;
+            readDirectoryAllowed = parsed.ReadDirectoryAllowed;
+            writeDirectoryAllowed = parsed.WriteDirectoryAllowed;
 
 #if DEBUG
             parsed.PrintAccessCount();

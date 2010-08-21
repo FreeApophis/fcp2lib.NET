@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -113,173 +113,154 @@ namespace FCP2
         #region EventInvocation
         protected virtual void OnNodeHelloEvent(NodeHelloEventArgs e)
         {
-            EventHandler<NodeHelloEventArgs> handler = NodeHelloEvent;
-            if (handler != null)
+            if (NodeHelloEvent != null)
             {
-                handler(this, e);
+                NodeHelloEvent(this, e);
             }
         }
 
         protected virtual void OnCloseConnectionDuplicateClientNameEvent(CloseConnectionDuplicateClientNameEventArgs e)
         {
-            EventHandler<CloseConnectionDuplicateClientNameEventArgs> handler = CloseConnectionDuplicateClientNameEvent;
-            if (handler != null)
+            if (CloseConnectionDuplicateClientNameEvent != null)
             {
-                handler(this, e);
+                CloseConnectionDuplicateClientNameEvent(this, e);
             }
         }
 
         protected virtual void OnPeerEvent(PeerEventArgs e)
         {
-            EventHandler<PeerEventArgs> handler = PeerEvent;
-            if (handler != null)
+            if (PeerEvent != null)
             {
-                handler(this, e);
+                PeerEvent(this, e);
             }
         }
 
         protected virtual void OnPeerNoteEvent(PeerNoteEventArgs e)
         {
-            EventHandler<PeerNoteEventArgs> handler = PeerNoteEvent;
-            if (handler != null)
+            if (PeerNoteEvent != null)
             {
-                handler(this, e);
+                PeerNoteEvent(this, e);
             }
         }
 
         protected virtual void OnEndListPeersEvent(EndListPeersEventArgs e)
         {
-            EventHandler<EndListPeersEventArgs> handler = EndListPeersEvent;
-            if (handler != null)
+            if (EndListPeersEvent != null)
             {
-                handler(this, e);
+                EndListPeersEvent(this, e);
             }
         }
 
         protected virtual void OnEndListPeerNotesEvent(EndListPeerNotesEventArgs e)
         {
-            EventHandler<EndListPeerNotesEventArgs> handler = EndListPeerNotesEvent;
-            if (handler != null)
+            if (EndListPeerNotesEvent != null)
             {
-                handler(this, e);
+                EndListPeerNotesEvent(this, e);
             }
         }
 
         protected virtual void OnPeerRemovedEvent(PeerRemovedEventArgs e)
         {
-            EventHandler<PeerRemovedEventArgs> handler = PeerRemovedEvent;
-            if (handler != null)
+            if (PeerRemovedEvent != null)
             {
-                handler(this, e);
+                PeerRemovedEvent(this, e);
             }
         }
 
 
         protected virtual void OnNodeDataEvent(NodeDataEventArgs e)
         {
-            EventHandler<NodeDataEventArgs> handler = NodeDataEvent;
-            if (handler != null)
+            if (NodeDataEvent != null)
             {
-                handler(this, e);
+                NodeDataEvent(this, e);
             }
         }
 
         protected virtual void OnConfigDataEvent(ConfigDataEventArgs e)
         {
-            EventHandler<ConfigDataEventArgs> handler = ConfigDataEvent;
-            if (handler != null)
+            if (ConfigDataEvent != null)
             {
-                handler(this, e);
+                ConfigDataEvent(this, e);
             }
         }
 
         protected virtual void OnTestDDAReplyEvent(TestDDAReplyEventArgs e)
         {
-            EventHandler<TestDDAReplyEventArgs> handler = TestDDAReplyEvent;
-            if (handler != null)
+            if (TestDDAReplyEvent != null)
             {
-                handler(this, e);
+                TestDDAReplyEvent(this, e);
             }
         }
 
         protected virtual void OnTestDDACompleteEvent(TestDDACompleteEventArgs e)
         {
-            EventHandler<TestDDACompleteEventArgs> handler = TestDDACompleteEvent;
-            if (handler != null)
+            if (TestDDACompleteEvent != null)
             {
-                handler(this, e);
+                TestDDACompleteEvent(this, e);
             }
         }
 
         protected virtual void OnSSKKeypairEvent(SSKKeypairEventArgs e)
         {
-            EventHandler<SSKKeypairEventArgs> handler = SSKKeypairEvent;
-            if (handler != null)
+            if (SSKKeypairEvent != null)
             {
-                handler(this, e);
+                SSKKeypairEvent(this, e);
             }
         }
 
         protected virtual void OnPersistentGetEvent(PersistentGetEventArgs e)
         {
-            EventHandler<PersistentGetEventArgs> handler = PersistentGetEvent;
-            if (handler != null)
+            if (PersistentGetEvent != null)
             {
-                handler(this, e);
+                PersistentGetEvent(this, e);
             }
         }
 
         protected virtual void OnPersistentPutEvent(PersistentPutEventArgs e)
         {
-            EventHandler<PersistentPutEventArgs> handler = PersistentPutEvent;
-            if (handler != null)
+            if (PersistentPutEvent != null)
             {
-                handler(this, e);
+                PersistentPutEvent(this, e);
             }
         }
 
         protected virtual void OnPersistentPutDirEvent(PersistentPutDirEventArgs e)
         {
-            EventHandler<PersistentPutDirEventArgs> handler = PersistentPutDirEvent;
-            if (handler != null)
+            if (PersistentPutDirEvent != null)
             {
-                handler(this, e);
+                PersistentPutDirEvent(this, e);
             }
         }
 
         protected virtual void OnURIGeneratedEvent(URIGeneratedEventArgs e)
         {
-            EventHandler<URIGeneratedEventArgs> handler = URIGeneratedEvent;
-            if (handler != null)
+            if (URIGeneratedEvent != null)
             {
-                handler(this, e);
+                URIGeneratedEvent(this, e);
             }
         }
 
         protected virtual void OnPutSuccessfulEvent(PutSuccessfulEventArgs e)
         {
-            EventHandler<PutSuccessfulEventArgs> handler = PutSuccessfulEvent;
-            if (handler != null)
+            if (PutSuccessfulEvent != null)
             {
-                handler(this, e);
+                PutSuccessfulEvent(this, e);
             }
         }
 
         protected virtual void OnPutFetchableEvent(PutFetchableEventArgs e)
         {
-            EventHandler<PutFetchableEventArgs> handler = PutFetchableEvent;
-            if (handler != null)
+            if (PutFetchableEvent != null)
             {
-                handler(this, e);
+                PutFetchableEvent(this, e);
             }
         }
 
         protected virtual void OnDataFoundEvent(DataFoundEventArgs e)
         {
-            EventHandler<DataFoundEventArgs> handler = DataFoundEvent;
-            if (handler != null)
+            if (DataFoundEvent != null)
             {
-                handler(this, e);
+                DataFoundEvent(this, e);
             }
         }
 
@@ -289,187 +270,167 @@ namespace FCP2
         /// <param name="e"></param>
         protected virtual void OnAllDataEvent(AllDataEventArgs e)
         {
-            EventHandler<AllDataEventArgs> handler = AllDataEvent;
-            if (handler != null)
+            if (AllDataEvent != null)
             {
-                handler(this, e);
+                AllDataEvent(this, e);
             }
 
             Stream data;
 
             // we read the Data into oblivion if no consumer read it! (!Reason for MixedReader)
-            if ((data = e.GetStream()) != null)
+            if ((data = e.GetStream()) == null) return;
+
+            var buffer = new byte[1024];
+            var bytesToRead = e.Datalength;
+            while (bytesToRead > 0)
             {
-                var buffer = new byte[1024];
-                long bytesToRead = e.Datalength;
-                while (bytesToRead > 0)
-                {
-                    bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
-                }
+                bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
             }
         }
 
 
         protected virtual void OnStartedCompressionEvent(StartedCompressionEventArgs e)
         {
-            EventHandler<StartedCompressionEventArgs> handler = StartedCompressionEvent;
-            if (handler != null)
+            if (StartedCompressionEvent != null)
             {
-                handler(this, e);
+                StartedCompressionEvent(this, e);
             }
         }
 
         protected virtual void OnFinishedCompressionEvent(FinishedCompressionEventArgs e)
         {
-            EventHandler<FinishedCompressionEventArgs> handler = FinishedCompressionEvent;
-            if (handler != null)
+            if (FinishedCompressionEvent != null)
             {
-                handler(this, e);
+                FinishedCompressionEvent(this, e);
             }
         }
 
         protected virtual void OnSimpleProgressEvent(SimpleProgressEventArgs e)
         {
-            EventHandler<SimpleProgressEventArgs> handler = SimpleProgressEvent;
-            if (handler != null)
+            if (SimpleProgressEvent != null)
             {
-                handler(this, e);
+                SimpleProgressEvent(this, e);
             }
         }
 
         protected virtual void OnEndListPersistentRequestsEvent(EndListPersistentRequestsEventArgs e)
         {
-            EventHandler<EndListPersistentRequestsEventArgs> handler = EndListPersistentRequestsEvent;
-            if (handler != null)
+            if (EndListPersistentRequestsEvent != null)
             {
-                handler(this, e);
+                EndListPersistentRequestsEvent(this, e);
             }
         }
 
         protected virtual void OnPersistentRequestRemovedEvent(PersistentRequestRemovedEventArgs e)
         {
-            EventHandler<PersistentRequestRemovedEventArgs> handler = PersistentRequestRemovedEvent;
-            if (handler != null)
+            if (PersistentRequestRemovedEvent != null)
             {
-                handler(this, e);
+                PersistentRequestRemovedEvent(this, e);
             }
         }
 
         protected virtual void OnSendingToNetworkEvent(SendingToNetworkEventArgs e)
         {
-            EventHandler<SendingToNetworkEventArgs> handler = SendingToNetworkEvent;
-            if (handler != null)
+            if (SendingToNetworkEvent != null)
             {
-                handler(this, e);
+                SendingToNetworkEvent(this, e);
             }
         }
 
         protected virtual void OnPersistentRequestModifiedEvent(PersistentRequestModifiedEventArgs e)
         {
-            EventHandler<PersistentRequestModifiedEventArgs> handler = PersistentRequestModifiedEvent;
-            if (handler != null)
+            if (PersistentRequestModifiedEvent != null)
             {
-                handler(this, e);
+                PersistentRequestModifiedEvent(this, e);
             }
         }
 
 
         protected virtual void OnPutFailedEvent(PutFailedEventArgs e)
         {
-            EventHandler<PutFailedEventArgs> handler = PutFailedEvent;
-            if (handler != null)
+            if (PutFailedEvent != null)
             {
-                handler(this, e);
+                PutFailedEvent(this, e);
             }
         }
 
         protected virtual void OnGetFailedEvent(GetFailedEventArgs e)
         {
-            EventHandler<GetFailedEventArgs> handler = GetFailedEvent;
-            if (handler != null)
+            if (GetFailedEvent != null)
             {
-                handler(this, e);
+                GetFailedEvent(this, e);
             }
         }
 
         protected virtual void OnProtocolErrorEvent(ProtocolErrorEventArgs e)
         {
-            EventHandler<ProtocolErrorEventArgs> handler = ProtocolErrorEvent;
-            if (handler != null)
+            if (ProtocolErrorEvent != null)
             {
-                handler(this, e);
+                ProtocolErrorEvent(this, e);
             }
         }
 
         protected virtual void OnIdentifierCollisionEvent(IdentifierCollisionEventArgs e)
         {
-            EventHandler<IdentifierCollisionEventArgs> handler = IdentifierCollisionEvent;
-            if (handler != null)
+            if (IdentifierCollisionEvent != null)
             {
-                handler(this, e);
+                IdentifierCollisionEvent(this, e);
             }
         }
 
         protected virtual void OnUnknownNodeIdentifierEvent(UnknownNodeIdentifierEventArgs e)
         {
-            EventHandler<UnknownNodeIdentifierEventArgs> handler = UnknownNodeIdentifierEvent;
-            if (handler != null)
+            if (UnknownNodeIdentifierEvent != null)
             {
-                handler(this, e);
+                UnknownNodeIdentifierEvent(this, e);
             }
         }
 
         protected virtual void OnUnknownPeerNoteTypeEvent(UnknownPeerNoteTypeEventArgs e)
         {
-            EventHandler<UnknownPeerNoteTypeEventArgs> handler = UnknownPeerNoteTypeEvent;
-            if (handler != null)
+            if (UnknownPeerNoteTypeEvent != null)
             {
-                handler(this, e);
+                UnknownPeerNoteTypeEvent(this, e);
             }
         }
 
         protected virtual void OnSubscribedUSKEvent(SubscribedUSKEventArgs e)
         {
-            EventHandler<SubscribedUSKEventArgs> handler = SubscribedUSKEvent;
-            if (handler != null)
+            if (SubscribedUSKEvent != null)
             {
-                handler(this, e);
+                SubscribedUSKEvent(this, e);
             }
         }
 
         protected virtual void OnSubscribedUSKUpdateEvent(SubscribedUSKUpdateEventArgs e)
         {
-            EventHandler<SubscribedUSKUpdateEventArgs> handler = SubscribedUSKUpdateEvent;
-            if (handler != null)
+            if (SubscribedUSKUpdateEvent != null)
             {
-                handler(this, e);
+                SubscribedUSKUpdateEvent(this, e);
             }
         }
 
         protected virtual void OnPluginInfoEvent(PluginInfoEventArgs e)
         {
-            EventHandler<PluginInfoEventArgs> handler = PluginInfoEvent;
-            if (handler != null)
+            if (PluginInfoEvent != null)
             {
-                handler(this, e);
+                PluginInfoEvent(this, e);
             }
         }
 
         protected virtual void OnPluginRemovedEvent(PluginRemovedEventArgs e)
         {
-            EventHandler<PluginRemovedEventArgs> handler = PluginRemovedEvent;
-            if (handler != null)
+            if (PluginRemovedEvent != null)
             {
-                handler(this, e);
+                PluginRemovedEvent(this, e);
             }
         }
 
         protected virtual void OnFCPPluginReplyEvent(FCPPluginReplyEventArgs e)
         {
-            EventHandler<FCPPluginReplyEventArgs> handler = FCPPluginReplyEvent;
-            if (handler != null)
+            if (FCPPluginReplyEvent != null)
             {
-                handler(this, e);
+                FCPPluginReplyEvent(this, e);
             }
         }
         #endregion
@@ -519,11 +480,10 @@ namespace FCP2
         /// </summary>
         public void Disconnect()
         {
-            if (client.Connected)
-            {
-                client.GetStream().Close();
-                client.Close();
-            }
+            if (!client.Connected) return;
+
+            client.GetStream().Close();
+            client.Close();
         }
 
 

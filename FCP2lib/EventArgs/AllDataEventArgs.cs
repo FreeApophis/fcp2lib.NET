@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace FCP2.EventArgs
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
         /// <param name="data">Data</param>
-        internal AllDataEventArgs(MessageParser parsed, Stream data)
+        internal AllDataEventArgs(dynamic parsed, Stream data)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
@@ -46,10 +46,10 @@ namespace FCP2.EventArgs
                 throw new NotSupportedException("AllDataEvent without Data");
 
             this.data = data;
-            identifier = parsed["Identifier"];
-            datalength = long.Parse(parsed["DataLength"]);
-            startupTime = FCP2Protocol.FromUnix(parsed["StartupTime"]);
-            completionTime = FCP2Protocol.FromUnix(parsed["CompletionTime"]);
+            identifier = parsed.Identifier;
+            datalength = parsed.DataLength;
+            startupTime = parsed.StartupTime;
+            completionTime = parsed.CompletionTime;
 
 #if DEBUG
             parsed.PrintAccessCount();
@@ -85,7 +85,7 @@ namespace FCP2.EventArgs
         /// </summary>
         public Stream GetStream()
         {
-            Stream temp = data;
+            var temp = data;
             data = null;
             return temp;
         }

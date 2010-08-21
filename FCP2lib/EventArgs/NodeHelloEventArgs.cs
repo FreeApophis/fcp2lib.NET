@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -38,23 +38,23 @@ namespace FCP2.EventArgs
         /// NodeHelloEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal NodeHelloEventArgs(MessageParser parsed)
+        internal NodeHelloEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            connectionIdentifier = parsed["ConnectionIdentifier"];
-            fcpVersion = parsed["FCPVersion"];
-            version = parsed["Version"];
-            node = parsed["Node"];
-            nodeLanguage = parsed["NodeLanguage"];
-            extBuild = long.Parse(parsed["ExtBuild"]);
-            extRevision = long.Parse(parsed["ExtRevision"]);
-            build = long.Parse(parsed["Build"]);
-            revision = parsed["Revision"];
-            testnet = bool.Parse(parsed["Testnet"]);
-            compressionCodecs = parsed["CompressionCodecs"];
+            connectionIdentifier = parsed.ConnectionIdentifier;
+            fcpVersion = parsed.FCPVersion;
+            version = parsed.Version;
+            node = parsed.Node;
+            nodeLanguage = parsed.NodeLanguage;
+            extBuild = parsed.ExtBuild;
+            extRevision = parsed.ExtRevision;
+            build = parsed.Build;
+            revision = parsed.Revision;
+            testnet = parsed.Testnet;
+            compressionCodecs = parsed.CompressionCodecs;
 
 #if DEBUG
             parsed.PrintAccessCount();

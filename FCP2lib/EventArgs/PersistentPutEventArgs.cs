@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -39,23 +39,23 @@ namespace FCP2.EventArgs
         /// PersistentPutEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal PersistentPutEventArgs(MessageParser parsed)
+        internal PersistentPutEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            uri = parsed["URI"];
-            verbosity = (VerbosityEnum)(long.Parse(parsed["Verbosity"]));
-            priorityClass = (PriorityClassEnum)long.Parse(parsed["PriorityClass"]);
-            uploadFrom = (UploadFromEnum)Enum.Parse(typeof(UploadFromEnum), parsed["UploadFrom"]);
-            filename = parsed["Filename"];
-            targetFilename = parsed["TargetFilename"];
-            metadata = new MetadataType(parsed);
-            clientToken = parsed["ClientToken"];
-            global = bool.Parse(parsed["Global"]);
-            dataLength = long.Parse(parsed["DataLength"]);
-            maxRetries = long.Parse(parsed["MaxRetries"]);
+            uri = parsed.URI;
+            verbosity = parsed.Verbosity;
+            priorityClass = parsed.PriorityClass;
+            uploadFrom =parsed.UploadFrom;
+            filename = parsed.Filename;
+            targetFilename = parsed.TargetFilename;
+            metadata = new MetadataType(parsed.Metadata);
+            clientToken = parsed.ClientToken;
+            global = parsed.Global;
+            dataLength = parsed.DataLength;
+            maxRetries = parsed.MaxRetries;
 
 #if DEBUG
             parsed.PrintAccessCount();
@@ -123,9 +123,9 @@ namespace FCP2.EventArgs
         {
             private readonly string contentType;
 
-            internal MetadataType(MessageParser parsed)
+            internal MetadataType(dynamic metadata)
             {
-                contentType = parsed["Metadata.ContentType"];
+                contentType = metadata.ContentType;
             }
 
             public string ContentType

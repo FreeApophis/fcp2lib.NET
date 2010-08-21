@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,16 +33,16 @@ namespace FCP2.EventArgs
         /// PeerNoteEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal PeerNoteEventArgs(MessageParser parsed)
+        internal PeerNoteEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            nodeIdentifier = parsed["NodeIdentifier"];
+            nodeIdentifier = parsed.NodeIdentifier;
             var enc = new UTF8Encoding();
-            noteText = enc.GetString(Convert.FromBase64String(parsed["NoteText"]));
-            peerNoteType = (PeerNoteTypeEnum)long.Parse(parsed["PeerNoteType"]);
+            noteText = enc.GetString(Convert.FromBase64String(parsed.NoteText));
+            peerNoteType = parsed.PeerNoteType;
 
 #if DEBUG
             parsed.PrintAccessCount();

@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 
 namespace FCP2
@@ -26,7 +27,7 @@ namespace FCP2
     /// <summary>
     /// Description of Class1.
     /// </summary>
-    public class MessageParser
+    public class MessageParser : DynamicObject
     {
         private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
 
@@ -58,7 +59,9 @@ namespace FCP2
                 {
                     throw new NotImplementedException("EmptyValue:" + line);
                 }
-                parameters.Add(line.Substring(0, pos), line.Substring(pos + 1));
+                var key = line.Substring(0, pos);
+                var val = line.Substring(pos + 1);
+                parameters.Add(key, val);
 #if DEBUG
                 debugcount.Add(line.Substring(0, pos), 0);
 #endif
@@ -68,24 +71,30 @@ namespace FCP2
         /// <summary>
         /// Intelligent Accessor, returns null if a value does not exists! And does not bark out at all!
         /// </summary>
-        public string this[string keyword]
+        internal string SafeGet(string keyword)
         {
-            get
+            if (parameters.ContainsKey(keyword))
             {
-                if (parameters.ContainsKey(keyword))
-                {
 #if DEBUG
-                    debugcount[keyword]++;
+                debugcount[keyword]++;
 #endif
-                    return parameters[keyword];
-                }
-#if DEBUG
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("keyword '" + keyword + "' not found!");
-                Console.ForegroundColor = ConsoleColor.Gray;
-#endif
-                return null;
+                return parameters[keyword];
             }
+            return null;
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            var temp = SafeGet(binder.Name);
+            if (temp != null)
+            {
+                result = new DynamicReturnValue(temp);
+            }
+            else
+            {
+                result = new MessageParserSubElement(this, binder.Name);
+            }
+            return true;
         }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
@@ -100,23 +109,27 @@ namespace FCP2
 #if DEBUG
         public void PrintAccessCount()
         {
-            //            bool allaccessed = true;
-            //            Console.ForegroundColor = ConsoleColor.Yellow;
-            //            foreach(string key in debugcount.Keys) {
-            //                Console.WriteLine("[" + debugcount[key] + "] " + key);
-            //                allaccessed = allaccessed && (debugcount[key] != 0);
-            //            }
-            //            if(allaccessed) {
-            //                Console.ForegroundColor = ConsoleColor.Green;
-            //                Console.WriteLine("All fields have been accessed");
-            //            } else {
-            //                Console.ForegroundColor = ConsoleColor.Red;
-            //                Console.WriteLine("Some fields have not been accessed");
-            //            }
-            //            Console.ForegroundColor = ConsoleColor.Gray;
+            bool allaccessed = true;
+            foreach (string key in debugcount.Keys)
+            {
+                Console.ForegroundColor = debugcount[key] == 0 ? ConsoleColor.Yellow : ConsoleColor.Green;
+
+                Console.WriteLine("[" + debugcount[key] + "] " + key);
+                allaccessed = allaccessed && (debugcount[key] != 0);
+            }
+            if (allaccessed)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("All fields have been accessed");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Some fields have not been accessed");
+            }
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
 #endif
 
     }
-
 }

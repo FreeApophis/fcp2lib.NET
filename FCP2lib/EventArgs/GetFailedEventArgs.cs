@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,26 +37,23 @@ namespace FCP2.EventArgs
         /// GetFailedEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal GetFailedEventArgs(MessageParser parsed)
+        internal GetFailedEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
-            if (parsed["Global"] != null)
-                global = bool.Parse(parsed["Global"]);
-            code = long.Parse(parsed["Code"]);
-            codeDescription = parsed["CodeDescription"];
-            extraDescription = parsed["ExtraDescription"];
-            if (parsed["Fatal"] != null)
-                fatal = bool.Parse(parsed["Fatal"]);
-            shortCodeDescription = parsed["ShortCodeDescription"];
-            identifier = parsed["Identifier"];
-            if (parsed["ExpectedDataLength"] != null)
-                expectedDataLength = long.Parse(parsed["ExpectedDataLength"]);
-            expectedMetadata = new ExpectedMetadataType(parsed);
-            if (parsed["FinalizedExpected"] != null)
-                finalizedExpected = bool.Parse(parsed["FinalizedExpected"]);
-            redirectURI = parsed["RedirectURI"];
+
+            global = parsed.Global;
+            code = parsed.Code;
+            codeDescription = parsed.CodeDescription;
+            extraDescription = parsed.ExtraDescription;
+            fatal = parsed.Fatal;
+            shortCodeDescription = parsed.ShortCodeDescription;
+            identifier = parsed.Identifier;
+            expectedDataLength = parsed.ExpectedDataLength;
+            expectedMetadata = new ExpectedMetadataType(parsed.ExpectedMetadata);
+            finalizedExpected = parsed.FinalizedExpected;
+            redirectURI = parsed.RedirectURI;
 
             /* TODO: Complex Get Failed */
 
@@ -127,9 +124,9 @@ namespace FCP2.EventArgs
 
             private readonly string contentType;
 
-            internal ExpectedMetadataType(MessageParser parsed)
+            internal ExpectedMetadataType(dynamic expectedMetadata)
             {
-                contentType = parsed["ExpectedMetadata.ContentType"];
+                contentType = expectedMetadata.ContentType;
             }
 
             public string ContentType

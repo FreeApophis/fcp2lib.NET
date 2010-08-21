@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -46,30 +46,33 @@ namespace FCP2.EventArgs
         /// NodeDataEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal NodeDataEventArgs(MessageParser parsed)
+        internal NodeDataEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            lastGoodVersion = parsed["lastGoodVersion"];
-            sig = parsed["sig"];
-            opennet = bool.Parse(parsed["opennet"]);
-            identity = parsed["identity"];
-            myName = parsed["myName"];
-            version = parsed["version"];
-            physical = new PhysicalType(parsed);
-            ark = new ArkType(parsed);
-            dsaPubKey = new DsaPubKeyType(parsed);
-            dsaPrivKey = new DsaPrivKeyType(parsed);
-            dsaGroup = new DsaGroupType(parsed);
-            auth = new AuthType(parsed);
+            lastGoodVersion = parsed.lastGoodVersion;
+            sig = parsed.sig;
+            opennet = parsed.opennet;
+            identity = parsed.identity;
+            myName = parsed.myName;
+            version = parsed.version;
+            physical = new PhysicalType(parsed.physical);
+            ark = new ArkType(parsed.ark);
+            dsaPubKey = new DsaPubKeyType(parsed.dsaPubKey);
+            dsaPrivKey = new DsaPrivKeyType(parsed.dsaPrivKey);
+            dsaGroup = new DsaGroupType(parsed.dsaGroup);
+            auth = new AuthType(parsed.auth);
 
-            clientNonce = parsed["clientNonce"];
-            location = (parsed["location"] != null) ? double.Parse(parsed["location"]) : -1.0;
+            clientNonce = parsed.clientNonce;
+            location = parsed.location;
+            if (!parsed.location.LastConversionSucessfull) { location = -1.0; }
 
-            if (parsed["volatile.startedSwaps"] != null)
-                @volatile = new VolatileType(parsed);
+            if (parsed.@volatile.startedSwaps.Exists())
+            {
+                @volatile = new VolatileType(parsed.@volatile);
+            }
 
 #if DEBUG
             parsed.PrintAccessCount();
@@ -159,11 +162,11 @@ namespace FCP2.EventArgs
             private readonly string privURI;
             private readonly string pubURI;
 
-            internal ArkType(MessageParser parsed)
+            internal ArkType(dynamic ark)
             {
-                pubURI = parsed["ark.pubURI"];
-                privURI = parsed["ark.privURI"];
-                number = long.Parse(parsed["ark.number"]);
+                pubURI = ark.pubURI;
+                privURI = ark.privURI;
+                number = ark.number;
             }
 
             public string PubURI
@@ -191,11 +194,11 @@ namespace FCP2.EventArgs
         {
             private readonly List<long> negTypes = new List<long>();
 
-            internal AuthType(MessageParser parsed)
+            internal AuthType(dynamic auth)
             {
-                if (parsed["auth.negTypes"] != null)
+                if (auth.negTypes != null)
                 {
-                    foreach (string an in parsed["auth.negTypes"].Split(new[] { ';' }))
+                    foreach (string an in ((string)auth.negTypes).Split(new[] { ';' }))
                     {
                         negTypes.Add(long.Parse(an));
                     }
@@ -218,11 +221,11 @@ namespace FCP2.EventArgs
             private readonly string p;
             private readonly string q;
 
-            internal DsaGroupType(MessageParser parsed)
+            internal DsaGroupType(dynamic dsaGroup)
             {
-                p = parsed["dsaGroup.p"];
-                g = parsed["dsaGroup.g"];
-                q = parsed["dsaGroup.q"];
+                p = dsaGroup.p;
+                g = dsaGroup.g;
+                q = dsaGroup.q;
             }
 
             public string P
@@ -249,9 +252,9 @@ namespace FCP2.EventArgs
         {
             private readonly string x;
 
-            internal DsaPrivKeyType(MessageParser parsed)
+            internal DsaPrivKeyType(dynamic dsaPrivKey)
             {
-                x = parsed["dsaPrivKey.x"];
+                x = dsaPrivKey.x;
             }
 
             public string X
@@ -268,9 +271,9 @@ namespace FCP2.EventArgs
         {
             private readonly string y;
 
-            internal DsaPubKeyType(MessageParser parsed)
+            internal DsaPubKeyType(dynamic dsaPubKey)
             {
-                y = parsed["dsaPubKey.y"];
+                y = dsaPubKey.y;
             }
 
             public string Y
@@ -287,11 +290,11 @@ namespace FCP2.EventArgs
         {
             private readonly List<IPEndPoint> udp = new List<IPEndPoint>();
 
-            internal PhysicalType(MessageParser parsed)
+            internal PhysicalType(dynamic physical)
             {
-                foreach (string pu in parsed["physical.udp"].Split(new[] { ';' }))
+                foreach (string pu in ((string)physical.udp).Split(new[] { ';' }))
                 {
-                    string[] ip = pu.Split(new[] { ':' });
+                    var ip = pu.Split(new[] { ':' });
                     if (ip.Length > 2)
                     {
                         /* we have an ipv6 adress */
@@ -402,94 +405,93 @@ namespace FCP2.EventArgs
             private readonly long uptimeSeconds;
             private readonly long usedJavaMemory;
 
-            internal VolatileType(MessageParser parsed)
+            internal VolatileType(dynamic @volatile)
             {
-                /* TODO: volatile member */
-                startedSwaps = long.Parse(parsed["volatile.startedSwaps"]);
-                cacheAccesses = long.Parse(parsed["volatile.cacheAccesses"]);
-                totalInputBytes = long.Parse(parsed["volatile.totalInputBytes"]);
-                networkSizeEstimateSession = long.Parse(parsed["volatile.networkSizeEstimateSession"]);
-                storeKeys = long.Parse(parsed["volatile.storeKeys"]);
-                cachedKeys = long.Parse(parsed["volatile.cachedKeys"]);
-                locationChangePerSwap = double.Parse(parsed["volatile.locationChangePerSwap"]);
-                swapsRejectedNowhereToGo = long.Parse(parsed["volatile.swapsRejectedNowhereToGo"]);
-                numberOfNotConnected = long.Parse(parsed["volatile.numberOfNotConnected"]);
-                numberOfListenOnly = long.Parse(parsed["volatile.numberOfListenOnly"]);
-                totalOutputBytes = long.Parse(parsed["volatile.totalOutputBytes"]);
-                swapsPerNoSwaps = double.Parse(parsed["volatile.swapsPerNoSwaps"]);
-                allocatedJavaMemory = long.Parse(parsed["volatile.allocatedJavaMemory"]);
-                percentStoreHitsOfAccesses = double.Parse(parsed["volatile.percentStoreHitsOfAccesses"]);
-                networkSizeEstimate24HourRecent = long.Parse(parsed["volatile.networkSizeEstimate24HourRecent"]);
-                overallAccesses = long.Parse(parsed["volatile.overallAccesses"]);
-                percentOverallKeysOfMax = double.Parse(parsed["volatile.percentOverallKeysOfMax"]);
-                locationChangePerMinute = double.Parse(parsed["volatile.locationChangePerMinute"]);
-                NoSwaps = double.Parse(parsed["volatile.noSwaps"]);
-                cachedSize = long.Parse(parsed["volatile.cachedSize"]);
-                uptimeSeconds = long.Parse(parsed["volatile.uptimeSeconds"]);
-                numberOfArkFetchers = long.Parse(parsed["volatile.numberOfARKFetchers"]);
-                networkSizeEstimate48HourRecent = long.Parse(parsed["volatile.networkSizeEstimate48HourRecent"]);
-                maxOverallKeys = long.Parse(parsed["volatile.maxOverallKeys"]);
-                numberOfDisconnected = long.Parse(parsed["volatile.numberOfDisconnected"]);
-                swaps = double.Parse(parsed["volatile.swaps"]);
-                maximumJavaMemory = long.Parse(parsed["volatile.maximumJavaMemory"]);
-                avgStoreAccessRate = double.Parse(parsed["volatile.avgStoreAccessRate"]);
-                totalInputRate = long.Parse(parsed["volatile.totalInputRate"]);
-                recentInputRate = double.Parse(parsed["volatile.recentInputRate"]);
-                overallKeys = long.Parse(parsed["volatile.overallKeys"]);
-                backedOffPercent = double.Parse(parsed["volatile.backedOffPercent"]);
-                runningThreadCount = long.Parse(parsed["volatile.runningThreadCount"]);
-                storeAccesses = long.Parse(parsed["volatile.storeAccesses"]);
-                numberOfDisabled = long.Parse(parsed["volatile.numberOfDisabled"]);
-                cachedStoreMisses = long.Parse(parsed["volatile.cachedStoreMisses"]);
-                routingMissDistance = double.Parse(parsed["volatile.routingMissDistance"]);
-                swapsRejectedRateLimit = long.Parse(parsed["volatile.swapsRejectedRateLimit"]);
-                totalOutputRate = long.Parse(parsed["volatile.totalOutputRate"]);
-                averagePingTime = double.Parse(parsed["volatile.averagePingTime"]);
-                numberOfBursting = long.Parse(parsed["volatile.numberOfBursting"]);
-                numberOfInsertSenders = long.Parse(parsed["volatile.numberOfInsertSenders"]);
-                usedJavaMemory = long.Parse(parsed["volatile.usedJavaMemory"]);
-                startupTime = FCP2Protocol.FromUnix(parsed["volatile.startupTime"]);
-                locationChangePerSession = double.Parse(parsed["volatile.locationChangePerSession"]);
-                numberOfNeverConnected = long.Parse(parsed["volatile.numberOfNeverConnected"]);
-                freeJavaMemory = long.Parse(parsed["volatile.freeJavaMemory"]);
-                totalPayloadOutputRate = long.Parse(parsed["volatile.totalPayloadOutputRate"]);
-                isUsingWrapper = bool.Parse(parsed["volatile.isUsingWrapper"]);
-                storeMisses = long.Parse(parsed["volatile.storeMisses"]);
-                storeHits = long.Parse(parsed["volatile.storeHits"]);
-                totalPayloadOutputPercent = long.Parse(parsed["volatile.totalPayloadOutputPercent"]);
-                storeSize = long.Parse(parsed["volatile.storeSize"]);
-                numberOfTooOld = long.Parse(parsed["volatile.numberOfTooOld"]);
-                avgConnectedPeersPerNode = double.Parse(parsed["volatile.avgConnectedPeersPerNode"]);
-                availableCPUs = long.Parse(parsed["volatile.availableCPUs"]);
-                swapsPerMinute = double.Parse(parsed["volatile.swapsPerMinute"]);
-                noSwapsPerMinute = double.Parse(parsed["volatile.noSwapsPerMinute"]);
-                numberOfListening = long.Parse(parsed["volatile.numberOfListening"]);
-                swapsRejectedAlreadyLocked = long.Parse(parsed["volatile.swapsRejectedAlreadyLocked"]);
-                maxOverallSize = long.Parse(parsed["volatile.maxOverallSize"]);
-                numberOfSimpleConnected = long.Parse(parsed["volatile.numberOfSimpleConnected"]);
-                numberOfRequestSenders = long.Parse(parsed["volatile.numberOfRequestSenders"]);
-                overallSize = long.Parse(parsed["volatile.overallSize"]);
-                numberOfTransferringRequestSenders = long.Parse(parsed["volatile.numberOfTransferringRequestSenders"]);
-                percentCachedStoreHitsOfAccesses = double.Parse(parsed["volatile.percentCachedStoreHitsOfAccesses"]);
-                swapsRejectedLoop = long.Parse(parsed["volatile.swapsRejectedLoop"]);
-                bwlimitDelayTime = double.Parse(parsed["volatile.bwlimitDelayTime"]);
-                numberOfRemotePeerLocationsSeenInSwaps = double.Parse(parsed["volatile.numberOfRemotePeerLocationsSeenInSwaps"]);
-                pInstantReject = double.Parse(parsed["volatile.pInstantReject"]);
-                totalPayloadOutputBytes = long.Parse(parsed["volatile.totalPayloadOutputBytes"]);
-                numberOfRoutingBackedOff = long.Parse(parsed["volatile.numberOfRoutingBackedOff"]);
-                unclaimedFifoSize = long.Parse(parsed["volatile.unclaimedFifoSize"]);
-                numberOfConnected = long.Parse(parsed["volatile.numberOfConnected"]);
-                cachedStoreHits = long.Parse(parsed["volatile.cachedStoreHits"]);
-                recentOutputRate = double.Parse(parsed["volatile.recentOutputRate"]);
-                swapsRejectedRecognizedID = long.Parse(parsed["volatile.swapsRejectedRecognizedID"]);
-                numberOfTooNew = long.Parse(parsed["volatile.numberOfTooNew"]);
-                numberOfSeedClients = long.Parse(parsed["volatile.numberOfSeedClients"]);
-                opennetSizeEstimate48HourRecent = long.Parse(parsed["volatile.opennetSizeEstimate48HourRecent"]);
-                numberOfSeedServers = long.Parse(parsed["volatile.numberOfSeedServers"]);
-                opennetSizeEstimateSession = long.Parse(parsed["volatile.opennetSizeEstimateSession"]);
-                opennetSizeEstimate24HourRecent = long.Parse(parsed["volatile.opennetSizeEstimate24HourRecent"]);
+                startedSwaps = @volatile.startedSwaps;
+                cacheAccesses = @volatile.cacheAccesses;
+                totalInputBytes = @volatile.totalInputBytes;
+                networkSizeEstimateSession = @volatile.networkSizeEstimateSession;
+                storeKeys = @volatile.storeKeys;
+                cachedKeys = @volatile.cachedKeys;
+                locationChangePerSwap = @volatile.locationChangePerSwap;
+                swapsRejectedNowhereToGo = @volatile.swapsRejectedNowhereToGo;
+                numberOfNotConnected = @volatile.numberOfNotConnected;
+                numberOfListenOnly = @volatile.numberOfListenOnly;
+                totalOutputBytes = @volatile.totalOutputBytes;
+                swapsPerNoSwaps = @volatile.swapsPerNoSwaps;
+                allocatedJavaMemory = @volatile.allocatedJavaMemory;
+                percentStoreHitsOfAccesses = @volatile.percentStoreHitsOfAccesses;
+                networkSizeEstimate24HourRecent = @volatile.networkSizeEstimate24HourRecent;
+                overallAccesses = @volatile.overallAccesses;
+                percentOverallKeysOfMax = @volatile.percentOverallKeysOfMax;
+                locationChangePerMinute = @volatile.locationChangePerMinute;
+                NoSwaps = @volatile.noSwaps;
+                cachedSize = @volatile.cachedSize;
+                uptimeSeconds = @volatile.uptimeSeconds;
+                numberOfArkFetchers = @volatile.numberOfARKFetchers;
+                networkSizeEstimate48HourRecent = @volatile.networkSizeEstimate48HourRecent;
+                maxOverallKeys = @volatile.maxOverallKeys;
+                numberOfDisconnected = @volatile.numberOfDisconnected;
+                swaps = @volatile.swaps;
+                maximumJavaMemory = @volatile.maximumJavaMemory;
+                avgStoreAccessRate = @volatile.avgStoreAccessRate;
+                totalInputRate = @volatile.totalInputRate;
+                recentInputRate = @volatile.recentInputRate;
+                overallKeys = @volatile.overallKeys;
+                backedOffPercent = @volatile.backedOffPercent;
+                runningThreadCount = @volatile.runningThreadCount;
+                storeAccesses = @volatile.storeAccesses;
+                numberOfDisabled = @volatile.numberOfDisabled;
+                cachedStoreMisses = @volatile.cachedStoreMisses;
+                routingMissDistance = @volatile.routingMissDistance;
+                swapsRejectedRateLimit = @volatile.swapsRejectedRateLimit;
+                totalOutputRate = @volatile.totalOutputRate;
+                averagePingTime = @volatile.averagePingTime;
+                numberOfBursting = @volatile.numberOfBursting;
+                numberOfInsertSenders = @volatile.numberOfInsertSenders;
+                usedJavaMemory = @volatile.usedJavaMemory;
+                startupTime = @volatile.startupTime;
+                locationChangePerSession = @volatile.locationChangePerSession;
+                numberOfNeverConnected = @volatile.numberOfNeverConnected;
+                freeJavaMemory = @volatile.freeJavaMemory;
+                totalPayloadOutputRate = @volatile.totalPayloadOutputRate;
+                isUsingWrapper = @volatile.isUsingWrapper;
+                storeMisses = @volatile.storeMisses;
+                storeHits = @volatile.storeHits;
+                totalPayloadOutputPercent = @volatile.totalPayloadOutputPercent;
+                storeSize = @volatile.storeSize;
+                numberOfTooOld = @volatile.numberOfTooOld;
+                avgConnectedPeersPerNode = @volatile.avgConnectedPeersPerNode;
+                availableCPUs = @volatile.availableCPUs;
+                swapsPerMinute = @volatile.swapsPerMinute;
+                noSwapsPerMinute = @volatile.noSwapsPerMinute;
+                numberOfListening = @volatile.numberOfListening;
+                swapsRejectedAlreadyLocked = @volatile.swapsRejectedAlreadyLocked;
+                maxOverallSize = @volatile.maxOverallSize;
+                numberOfSimpleConnected = @volatile.numberOfSimpleConnected;
+                numberOfRequestSenders = @volatile.numberOfRequestSenders;
+                overallSize = @volatile.overallSize;
+                numberOfTransferringRequestSenders = @volatile.numberOfTransferringRequestSenders;
+                percentCachedStoreHitsOfAccesses = @volatile.percentCachedStoreHitsOfAccesses;
+                swapsRejectedLoop = @volatile.swapsRejectedLoop;
+                bwlimitDelayTime = @volatile.bwlimitDelayTime;
+                numberOfRemotePeerLocationsSeenInSwaps = @volatile.numberOfRemotePeerLocationsSeenInSwaps;
+                pInstantReject = @volatile.pInstantReject;
+                totalPayloadOutputBytes = @volatile.totalPayloadOutputBytes;
+                numberOfRoutingBackedOff = @volatile.numberOfRoutingBackedOff;
+                unclaimedFifoSize = @volatile.unclaimedFifoSize;
+                numberOfConnected = @volatile.numberOfConnected;
+                cachedStoreHits = @volatile.cachedStoreHits;
+                recentOutputRate = @volatile.recentOutputRate;
+                swapsRejectedRecognizedID = @volatile.swapsRejectedRecognizedID;
+                numberOfTooNew = @volatile.numberOfTooNew;
+                numberOfSeedClients = @volatile.numberOfSeedClients;
+                opennetSizeEstimate48HourRecent = @volatile.opennetSizeEstimate48HourRecent;
+                numberOfSeedServers = @volatile.numberOfSeedServers;
+                opennetSizeEstimateSession = @volatile.opennetSizeEstimateSession;
+                opennetSizeEstimate24HourRecent = @volatile.opennetSizeEstimate24HourRecent;
 
-                numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(parsed);
+                numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(@volatile.numberWithRoutingBackoffReasons);
             }
 
             public long StartedSwaps
@@ -909,16 +911,12 @@ namespace FCP2.EventArgs
                 get { return numberWithRoutingBackoffReasons; }
             }
 
-            /*
-            private long numberWithRoutingBackoffReasons.ForwardRejectedOverload;
-            private long numberWithRoutingBackoffReasons.ForwardRejectedOverload5;
-             */
 
             #region Nested type: NumberWithRoutingBackoffReasonsType
 
             public class NumberWithRoutingBackoffReasonsType
             {
-                internal NumberWithRoutingBackoffReasonsType(MessageParser parsed)
+                internal NumberWithRoutingBackoffReasonsType(dynamic numberWithRoutingBackoffReasons)
                 {
                     /* TODO: implementation */
                 }

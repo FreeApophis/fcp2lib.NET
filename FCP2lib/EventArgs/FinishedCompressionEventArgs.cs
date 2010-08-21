@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,16 +30,16 @@ namespace FCP2.EventArgs
         /// FinishedCompressionEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal FinishedCompressionEventArgs(MessageParser parsed)
+        internal FinishedCompressionEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            identifier = parsed["Identifier"];
-            codec = long.Parse(parsed["Codec"]);
-            originalSize = long.Parse(parsed["OriginalSize"]);
-            compressedSize = long.Parse(parsed["CompressedSize"]);
+            identifier = parsed.Identifier;
+            codec = parsed.Codec;
+            originalSize = parsed.OriginalSize;
+            compressedSize = parsed.CompressedSize;
 
 #if DEBUG
             parsed.PrintAccessCount();

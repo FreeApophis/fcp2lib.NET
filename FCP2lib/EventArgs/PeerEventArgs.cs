@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,28 +43,26 @@ namespace FCP2.EventArgs
         /// PeerEventArgs Constructor
         /// </summary>
         /// <param name="parsed">a simple MessageParse</param>
-        internal PeerEventArgs(MessageParser parsed)
+        internal PeerEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            lastGoodVersion = parsed["lastGoodVersion"];
-            opennet = bool.Parse(parsed["opennet"]);
-            myName = parsed["myName"];
-            identity = parsed["identity"];
-            location = double.Parse(parsed["location"]);
-            testnet = bool.Parse(parsed["testnet"]);
-            version = parsed["version"];
+            lastGoodVersion = parsed.lastGoodVersion;
+            opennet = parsed.opennet;
+            myName = parsed.myName;
+            identity = parsed.identity;
+            location = parsed.location;
+            testnet = parsed.testnet;
+            version = parsed.version;
             physical = new PhysicalType(parsed);
             ark = new ArkType(parsed);
             dsaPubKey = new DsaPubKeyType(parsed);
             dsaGroup = new DsaGroupType(parsed);
             auth = new AuthType(parsed);
-            if (parsed["volatile.averagePingTime"] != null)
-                @volatile = new VolatileType(parsed);
-            if (parsed["metadata.routableConnectionCheckCount"] != null)
-                metadata = new MetadataType(parsed);
+            @volatile = new VolatileType(parsed);
+            metadata = new MetadataType(parsed);
 
 #if DEBUG
             parsed.PrintAccessCount();
@@ -131,7 +129,7 @@ namespace FCP2.EventArgs
             get { return auth; }
         }
 
-        public VolatileType Volatile
+        public VolatileType @Volatile
         {
             get { return @volatile; }
         }
@@ -148,10 +146,10 @@ namespace FCP2.EventArgs
             private readonly long number;
             private readonly string pubURI;
 
-            internal ArkType(MessageParser parsed)
+            internal ArkType(dynamic parsed)
             {
-                pubURI = parsed["ark.pubURI"];
-                number = long.Parse(parsed["ark.number"]);
+                pubURI = parsed.ark.pubURI;
+                number = parsed.ark.number;
             }
 
             public string PubURI
@@ -173,9 +171,9 @@ namespace FCP2.EventArgs
         {
             private readonly long negTypes;
 
-            internal AuthType(MessageParser parsed)
+            internal AuthType(dynamic parsed)
             {
-                negTypes = long.Parse(parsed["auth.negTypes"]);
+                negTypes = parsed.auth.negTypes;
             }
 
             public long NegTypes
@@ -194,11 +192,11 @@ namespace FCP2.EventArgs
             private readonly string p;
             private readonly string q;
 
-            internal DsaGroupType(MessageParser parsed)
+            internal DsaGroupType(dynamic parsed)
             {
-                p = parsed["dsaGroup.p"];
-                g = parsed["dsaGroup.g"];
-                q = parsed["dsaGroup.q"];
+                p = parsed.dsaGroup.p;
+                g = parsed.dsaGroup.g;
+                q = parsed.dsaGroup.q;
             }
 
             public string P
@@ -225,9 +223,9 @@ namespace FCP2.EventArgs
         {
             private readonly string y;
 
-            internal DsaPubKeyType(MessageParser parsed)
+            internal DsaPubKeyType(dynamic parsed)
             {
-                y = parsed["dsaPubKey.y"];
+                y = parsed.dsaPubKey.y;
             }
 
             public string Y
@@ -250,14 +248,14 @@ namespace FCP2.EventArgs
             private readonly DateTime timeLastRoutable;
             private readonly DateTime timeLastSuccess;
 
-            internal MetadataType(MessageParser parsed)
+            internal MetadataType(dynamic parsed)
             {
-                routableConnectionCheckCount = long.Parse(parsed[" metadata.routableConnectionCheckCount"]);
-                hadRoutableConnectionCount = long.Parse(parsed[" metadata.hadRoutableConnectionCount"]);
-                timeLastConnected = FCP2Protocol.FromUnix(parsed[" metadata.timeLastConnected"]);
-                timeLastSuccess = FCP2Protocol.FromUnix(parsed[" metadata.timeLastSuccess"]);
-                timeLastRoutable = FCP2Protocol.FromUnix(parsed[" metadata.timeLastRoutable"]);
-                timeLastReceivedPacket = FCP2Protocol.FromUnix(parsed[" metadata.timeLastReceivedPacket"]);
+                routableConnectionCheckCount = parsed.metadata.routableConnectionCheckCount;
+                hadRoutableConnectionCount = parsed.metadata.hadRoutableConnectionCount;
+                timeLastConnected = parsed.metadata.timeLastConnected;
+                timeLastSuccess = parsed.metadata.timeLastSuccess;
+                timeLastRoutable = parsed.metadata.timeLastRoutable;
+                timeLastReceivedPacket = parsed.metadata.timeLastReceivedPacket;
                 detected = new DetectedType(parsed);
             }
 
@@ -302,9 +300,9 @@ namespace FCP2.EventArgs
             {
                 private readonly IPEndPoint udp;
 
-                internal DetectedType(MessageParser parsed)
+                internal DetectedType(dynamic parsed)
                 {
-                    string[] ip = parsed["metadata.detected.udp"].Split(new[] { ':' });
+                    string[] ip = parsed.metadata.detected.udp.Split(new[] { ':' });
                     var ipAddress = IPAddress.Parse(ip[0]);
                     if (ipAddress != null) udp = new IPEndPoint((ipAddress), int.Parse(ip[1]));
                 }
@@ -326,9 +324,9 @@ namespace FCP2.EventArgs
         {
             private readonly IPEndPoint udp;
 
-            internal PhysicalType(MessageParser parsed)
+            internal PhysicalType(dynamic parsed)
             {
-                string[] ip = parsed["physical.udp"].Split(new[] { ':' });
+                string[] ip = parsed.physical.udp.Split(new[] { ':' });
                 var ipAddress = IPAddress.Parse(ip[0]);
                 if (ipAddress != null) udp = new IPEndPoint((ipAddress), int.Parse(ip[1]));
             }
@@ -341,7 +339,7 @@ namespace FCP2.EventArgs
 
         #endregion
 
-        #region Nested type: VolatileType
+        #region Nested type: @VolatileType
 
         public class VolatileType
         {
@@ -356,18 +354,18 @@ namespace FCP2.EventArgs
             private readonly long totalBytesIn;
             private readonly long totalBytesOut;
 
-            internal VolatileType(MessageParser parsed)
+            internal VolatileType(dynamic parsed)
             {
-                averagePing = double.Parse(parsed["volatile.averagePingTime"]);
-                overloadProbability = double.Parse(parsed["volatile.overloadProbability"]);
-                percentTimeRoutableConnection = double.Parse(parsed["volatile.percentTimeRoutableConnection"]);
-                routingBackoffPercent = double.Parse(parsed["volatile.routingBackoffPercent"]);
-                status = parsed["volatile.status"];
-                totalBytesIn = long.Parse(parsed["volatile.totalBytesIn"]);
-                routingBackoffLength = long.Parse(parsed["volatile.routingBackoffLength"]);
-                lastRoutingBackoffReason = parsed["volatile.lastRoutingBackoffReason"];
-                routingBackoff = long.Parse(parsed["volatile.routingBackoff"]);
-                totalBytesOut = long.Parse(parsed["volatile.totalBytesOut"]);
+                averagePing = parsed.@volatile.averagePingTime;
+                overloadProbability = parsed.@volatile.overloadProbability;
+                percentTimeRoutableConnection = parsed.@volatile.percentTimeRoutableConnection;
+                routingBackoffPercent = parsed.@volatile.routingBackoffPercent;
+                status = parsed.@volatile.status;
+                totalBytesIn = parsed.@volatile.totalBytesIn;
+                routingBackoffLength = parsed.@volatile.routingBackoffLength;
+                lastRoutingBackoffReason = parsed.@volatile.lastRoutingBackoffReason;
+                routingBackoff = parsed.@volatile.routingBackoff;
+                totalBytesOut = parsed.@volatile.totalBytesOut;
             }
 
             public double AveragePing
