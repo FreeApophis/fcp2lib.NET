@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventArgs\CompatibilityModeEventArgs.cs" />
     <Compile Include="DynamicReturnValue.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="EventArgs\AllDataEventArgs.cs" />
@@ -110,6 +111,10 @@
     <Compile Include="EventArgs\UnknownNodeIdentifierEventArgs.cs" />
     <Compile Include="EventArgs\UnknownPeerNoteTypeEventArgs.cs" />
     <Compile Include="EventArgs\URIGeneratedEventArgs.cs" />
+    <Compile Include="EventArgs\ExpectedHashesEventArgs.cs" />
+    <Compile Include="FCP2Download.cs" />
+    <Compile Include="FCP2Upload.cs" />
+    <Compile Include="FCPClient.cs" />
     <Compile Include="InsertItem.cs" />
     <Compile Include="MessageParser.cs" />
     <Compile Include="FCP.cs" />

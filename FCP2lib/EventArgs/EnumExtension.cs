@@ -18,6 +18,7 @@
  */
 
 using System;
+using FCP2.Protocol;
 
 namespace FCP2.EventArgs
 {
