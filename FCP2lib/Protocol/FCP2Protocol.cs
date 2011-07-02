@@ -43,7 +43,7 @@ namespace FCP2.Protocol
         private TextWriter fnwrite;
         private readonly bool isMultiThreaded;
 
-        private string clientName;
+        public string ClientName { get; private set; }
         private const string FCPVersion = "2.0";
         #endregion
 
@@ -157,19 +157,33 @@ namespace FCP2.Protocol
         #endregion
 
         private Thread parserThread;
-        public FCP2Protocol(string clientName, IPEndPoint nodeAdress = null, bool isMultiThreaded = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nodeAdress"></param>
+        /// <param name="clientName">A name to uniquely identify the client to the node. This is
+        /// used for persistence, so a client can see the same local queue if it disconnects
+        /// and then reconnects. If a connection is attempted with the same name as an existing
+        /// connection, you will get an error</param>
+        public FCP2Protocol(IPEndPoint nodeAdress, string clientName)
         {
             if (nodeAdress != null)
             {
                 ep = nodeAdress;
             }
-            this.clientName = clientName;
+            this.ClientName = clientName;
             this.isMultiThreaded = isMultiThreaded;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clientName">A name to uniquely identify the client to the node. This is
+        /// used for persistence, so a client can see the same local queue if it disconnects
+        /// and then reconnects. If a connection is attempted with the same name as an existing
+        /// connection, you will get an error</param>
         public FCP2Protocol(string clientName)
         {
-            this.clientName = clientName;
+            this.ClientName = clientName;
         }
 
         /// <summary>
@@ -193,7 +207,7 @@ namespace FCP2.Protocol
                 parserThread = new Thread(MessageParser);
                 parserThread.Start();
 
-                RealClientHello(clientName, FCPVersion);
+                RealClientHello(ClientName, FCPVersion);
             }
 
             return true;
@@ -387,16 +401,12 @@ namespace FCP2.Protocol
         /// This must be the first message from the client on any given connection.
         /// The node will respond with a NodeHello Event.
         /// </summary>
-        /// <param name="name">A name to uniquely identify the client to the node. This is
-        /// used for persistence, so a client can see the same local queue if it disconnects
-        /// and then reconnects. If a connection is attempted with the same name as an existing
-        /// connection, you will get an error</param>
-        public void ClientHello(string name = null)
+
+        public void ClientHello()
         {
-            clientName = name;
             if (!ConnectIfNeeded())
             {
-                RealClientHello(name, FCPVersion);
+                RealClientHello(ClientName, FCPVersion);
             }
         }
 
@@ -1112,9 +1122,9 @@ namespace FCP2.Protocol
                 fnwrite.WriteLine("MaxRetries=" + maxRetries.Value);
             if (priorityClass != null)
                 fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            if (global.HasValue && global.Value && persistence != null && persistence.Value == PersistenceEnum.Connection)
+            if (global.HasValue && global.Value && persistence.HasValue && persistence.Value == PersistenceEnum.Connection)
                 throw new FormatException("Error, global request must be persistent");
-            if (persistence != null)
+            if (persistence.HasValue)
                 fnwrite.WriteLine("Persistence=" + persistence.Value);
             if (!String.IsNullOrEmpty(clientToken))
                 fnwrite.WriteLine("ClientToken=" + clientToken);
