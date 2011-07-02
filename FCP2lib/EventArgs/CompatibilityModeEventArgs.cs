@@ -22,9 +22,9 @@ namespace FCP2.EventArgs
             identifier = parsed.Identifier;
             global = parsed.Global;
             min = parsed.Min;
-            minNumber = parsed.Min.Number;
+            minNumber = parsed.MinNumber;
             max = parsed.Max;
-            maxNumber = parsed.Max.Number;
+            maxNumber = parsed.MaxNumber;
             splitfileCryptoKey = parsed.SplitfileCryptoKey;
             dontCompress = parsed.DontCompress;
             definitive = parsed.Definitive;

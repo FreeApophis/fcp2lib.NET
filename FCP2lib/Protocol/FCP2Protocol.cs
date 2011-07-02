@@ -41,6 +41,7 @@ namespace FCP2.Protocol
         private readonly TcpClient client = new TcpClient();
         private TextReader fnread;
         private TextWriter fnwrite;
+        private readonly bool isMultiThreaded;
 
         private string clientName;
         private const string FCPVersion = "2.0";
@@ -93,12 +94,15 @@ namespace FCP2.Protocol
         public event EventHandler<StartedCompressionEventArgs> StartedCompressionEvent;
         public event EventHandler<FinishedCompressionEventArgs> FinishedCompressionEvent;
         public event EventHandler<SimpleProgressEventArgs> SimpleProgressEvent;
-        public event EventHandler<CompatibilityModeEventArgs> CompatibilityModeEvent;
         public event EventHandler<ExpectedHashesEventArgs> ExpectedHashesEvent;
+        public event EventHandler<ExpectedMimeEventArgs> ExpectedMimeEvent;
+        public event EventHandler<ExpectedDataLengthEventArgs> ExpectedDataLengthEvent;
+        public event EventHandler<CompatibilityModeEventArgs> CompatibilityModeEvent;
         public event EventHandler<EndListPersistentRequestsEventArgs> EndListPersistentRequestsEvent;
         public event EventHandler<PersistentRequestRemovedEventArgs> PersistentRequestRemovedEvent;
         public event EventHandler<PersistentRequestModifiedEventArgs> PersistentRequestModifiedEvent;
         public event EventHandler<SendingToNetworkEventArgs> SendingToNetworkEvent;
+        public event EventHandler<EnterFiniteCooldownEventArgs> EnterFiniteCooldownEvent;
         public event EventHandler<PutFailedEventArgs> PutFailedEvent;
         public event EventHandler<GetFailedEventArgs> GetFailedEvent;
         public event EventHandler<ProtocolErrorEventArgs> ProtocolErrorEvent;
@@ -113,156 +117,17 @@ namespace FCP2.Protocol
         #endregion
 
         #region EventInvocation
-        protected virtual void OnNodeHelloEvent(NodeHelloEventArgs e)
+        protected void DispatchEvent<T>(object sender, EventHandler<T> handler, T eventArgs) where T : System.EventArgs
         {
-            if (NodeHelloEvent != null)
+            if (handler == null) return;
+
+            if (isMultiThreaded)
             {
-                NodeHelloEvent(this, e);
+                ThreadPool.QueueUserWorkItem(state => handler.Invoke(sender, eventArgs));
             }
-        }
-
-        protected virtual void OnCloseConnectionDuplicateClientNameEvent(CloseConnectionDuplicateClientNameEventArgs e)
-        {
-            if (CloseConnectionDuplicateClientNameEvent != null)
+            else
             {
-                CloseConnectionDuplicateClientNameEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPeerEvent(PeerEventArgs e)
-        {
-            if (PeerEvent != null)
-            {
-                PeerEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPeerNoteEvent(PeerNoteEventArgs e)
-        {
-            if (PeerNoteEvent != null)
-            {
-                PeerNoteEvent(this, e);
-            }
-        }
-
-        protected virtual void OnEndListPeersEvent(EndListPeersEventArgs e)
-        {
-            if (EndListPeersEvent != null)
-            {
-                EndListPeersEvent(this, e);
-            }
-        }
-
-        protected virtual void OnEndListPeerNotesEvent(EndListPeerNotesEventArgs e)
-        {
-            if (EndListPeerNotesEvent != null)
-            {
-                EndListPeerNotesEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPeerRemovedEvent(PeerRemovedEventArgs e)
-        {
-            if (PeerRemovedEvent != null)
-            {
-                PeerRemovedEvent(this, e);
-            }
-        }
-
-
-        protected virtual void OnNodeDataEvent(NodeDataEventArgs e)
-        {
-            if (NodeDataEvent != null)
-            {
-                NodeDataEvent(this, e);
-            }
-        }
-
-        protected virtual void OnConfigDataEvent(ConfigDataEventArgs e)
-        {
-            if (ConfigDataEvent != null)
-            {
-                ConfigDataEvent(this, e);
-            }
-        }
-
-        protected virtual void OnTestDDAReplyEvent(TestDDAReplyEventArgs e)
-        {
-            if (TestDDAReplyEvent != null)
-            {
-                TestDDAReplyEvent(this, e);
-            }
-        }
-
-        protected virtual void OnTestDDACompleteEvent(TestDDACompleteEventArgs e)
-        {
-            if (TestDDACompleteEvent != null)
-            {
-                TestDDACompleteEvent(this, e);
-            }
-        }
-
-        protected virtual void OnSSKKeypairEvent(SSKKeypairEventArgs e)
-        {
-            if (SSKKeypairEvent != null)
-            {
-                SSKKeypairEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPersistentGetEvent(PersistentGetEventArgs e)
-        {
-            if (PersistentGetEvent != null)
-            {
-                PersistentGetEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPersistentPutEvent(PersistentPutEventArgs e)
-        {
-            if (PersistentPutEvent != null)
-            {
-                PersistentPutEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPersistentPutDirEvent(PersistentPutDirEventArgs e)
-        {
-            if (PersistentPutDirEvent != null)
-            {
-                PersistentPutDirEvent(this, e);
-            }
-        }
-
-        protected virtual void OnURIGeneratedEvent(URIGeneratedEventArgs e)
-        {
-            if (URIGeneratedEvent != null)
-            {
-                URIGeneratedEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPutSuccessfulEvent(PutSuccessfulEventArgs e)
-        {
-            if (PutSuccessfulEvent != null)
-            {
-                PutSuccessfulEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPutFetchableEvent(PutFetchableEventArgs e)
-        {
-            if (PutFetchableEvent != null)
-            {
-                PutFetchableEvent(this, e);
-            }
-        }
-
-        protected virtual void OnDataFoundEvent(DataFoundEventArgs e)
-        {
-            if (DataFoundEvent != null)
-            {
-                DataFoundEvent(this, e);
+                handler(sender, eventArgs);
             }
         }
 
@@ -289,175 +154,17 @@ namespace FCP2.Protocol
                 bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
             }
         }
-
-
-        protected virtual void OnStartedCompressionEvent(StartedCompressionEventArgs e)
-        {
-            if (StartedCompressionEvent != null)
-            {
-                StartedCompressionEvent(this, e);
-            }
-        }
-
-        protected virtual void OnFinishedCompressionEvent(FinishedCompressionEventArgs e)
-        {
-            if (FinishedCompressionEvent != null)
-            {
-                FinishedCompressionEvent(this, e);
-            }
-        }
-
-        protected virtual void OnSimpleProgressEvent(SimpleProgressEventArgs e)
-        {
-            if (SimpleProgressEvent != null)
-            {
-                SimpleProgressEvent(this, e);
-            }
-        }
-
-        private void OnCompatibilityModeEvent(CompatibilityModeEventArgs e)
-        {
-            if (CompatibilityModeEvent != null)
-            {
-                CompatibilityModeEvent(this, e);
-            }
-        }
-
-        private void OnExpectedHashesEvent(ExpectedHashesEventArgs e)
-        {
-            if (ExpectedHashesEvent != null)
-            {
-                ExpectedHashesEvent(this, e);
-            }
-        }
-
-        protected virtual void OnEndListPersistentRequestsEvent(EndListPersistentRequestsEventArgs e)
-        {
-            if (EndListPersistentRequestsEvent != null)
-            {
-                EndListPersistentRequestsEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPersistentRequestRemovedEvent(PersistentRequestRemovedEventArgs e)
-        {
-            if (PersistentRequestRemovedEvent != null)
-            {
-                PersistentRequestRemovedEvent(this, e);
-            }
-        }
-
-        protected virtual void OnSendingToNetworkEvent(SendingToNetworkEventArgs e)
-        {
-            if (SendingToNetworkEvent != null)
-            {
-                SendingToNetworkEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPersistentRequestModifiedEvent(PersistentRequestModifiedEventArgs e)
-        {
-            if (PersistentRequestModifiedEvent != null)
-            {
-                PersistentRequestModifiedEvent(this, e);
-            }
-        }
-
-
-        protected virtual void OnPutFailedEvent(PutFailedEventArgs e)
-        {
-            if (PutFailedEvent != null)
-            {
-                PutFailedEvent(this, e);
-            }
-        }
-
-        protected virtual void OnGetFailedEvent(GetFailedEventArgs e)
-        {
-            if (GetFailedEvent != null)
-            {
-                GetFailedEvent(this, e);
-            }
-        }
-
-        protected virtual void OnProtocolErrorEvent(ProtocolErrorEventArgs e)
-        {
-            if (ProtocolErrorEvent != null)
-            {
-                ProtocolErrorEvent(this, e);
-            }
-        }
-
-        protected virtual void OnIdentifierCollisionEvent(IdentifierCollisionEventArgs e)
-        {
-            if (IdentifierCollisionEvent != null)
-            {
-                IdentifierCollisionEvent(this, e);
-            }
-        }
-
-        protected virtual void OnUnknownNodeIdentifierEvent(UnknownNodeIdentifierEventArgs e)
-        {
-            if (UnknownNodeIdentifierEvent != null)
-            {
-                UnknownNodeIdentifierEvent(this, e);
-            }
-        }
-
-        protected virtual void OnUnknownPeerNoteTypeEvent(UnknownPeerNoteTypeEventArgs e)
-        {
-            if (UnknownPeerNoteTypeEvent != null)
-            {
-                UnknownPeerNoteTypeEvent(this, e);
-            }
-        }
-
-        protected virtual void OnSubscribedUSKEvent(SubscribedUSKEventArgs e)
-        {
-            if (SubscribedUSKEvent != null)
-            {
-                SubscribedUSKEvent(this, e);
-            }
-        }
-
-        protected virtual void OnSubscribedUSKUpdateEvent(SubscribedUSKUpdateEventArgs e)
-        {
-            if (SubscribedUSKUpdateEvent != null)
-            {
-                SubscribedUSKUpdateEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPluginInfoEvent(PluginInfoEventArgs e)
-        {
-            if (PluginInfoEvent != null)
-            {
-                PluginInfoEvent(this, e);
-            }
-        }
-
-        protected virtual void OnPluginRemovedEvent(PluginRemovedEventArgs e)
-        {
-            if (PluginRemovedEvent != null)
-            {
-                PluginRemovedEvent(this, e);
-            }
-        }
-
-        protected virtual void OnFCPPluginReplyEvent(FCPPluginReplyEventArgs e)
-        {
-            if (FCPPluginReplyEvent != null)
-            {
-                FCPPluginReplyEvent(this, e);
-            }
-        }
         #endregion
 
         private Thread parserThread;
-        public FCP2Protocol(IPEndPoint nodeAdress, string clientName)
+        public FCP2Protocol(string clientName, IPEndPoint nodeAdress = null, bool isMultiThreaded = false)
         {
-            ep = nodeAdress;
+            if (nodeAdress != null)
+            {
+                ep = nodeAdress;
+            }
             this.clientName = clientName;
+            this.isMultiThreaded = isMultiThreaded;
         }
 
         public FCP2Protocol(string clientName)
@@ -514,124 +221,133 @@ namespace FCP2.Protocol
                 switch (line)
                 {
                     case "NodeHello":
-                        OnNodeHelloEvent(new NodeHelloEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, NodeHelloEvent, new NodeHelloEventArgs(new MessageParser(fnread)));
                         break;
                     case "CloseConnectionDuplicateClientName":
-                        OnCloseConnectionDuplicateClientNameEvent(new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, CloseConnectionDuplicateClientNameEvent, new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(fnread)));
                         break;
                     case "Peer":
-                        OnPeerEvent(new PeerEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PeerEvent, new PeerEventArgs(new MessageParser(fnread)));
                         break;
                     case "PeerNote":
-                        OnPeerNoteEvent(new PeerNoteEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PeerNoteEvent, new PeerNoteEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPeers":
-                        OnEndListPeersEvent(new EndListPeersEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, EndListPeersEvent, new EndListPeersEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPeerNotes":
-                        OnEndListPeerNotesEvent(new EndListPeerNotesEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, EndListPeerNotesEvent, new EndListPeerNotesEventArgs(new MessageParser(fnread)));
                         break;
                     case "PeerRemoved":
-                        OnPeerRemovedEvent(new PeerRemovedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PeerRemovedEvent, new PeerRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "NodeData":
-                        OnNodeDataEvent(new NodeDataEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, NodeDataEvent, new NodeDataEventArgs(new MessageParser(fnread)));
                         break;
                     case "ConfigData":
-                        OnConfigDataEvent(new ConfigDataEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, ConfigDataEvent, new ConfigDataEventArgs(new MessageParser(fnread)));
                         break;
                     case "TestDDAReply":
-                        OnTestDDAReplyEvent(new TestDDAReplyEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, TestDDAReplyEvent, new TestDDAReplyEventArgs(new MessageParser(fnread)));
                         break;
                     case "TestDDAComplete":
-                        OnTestDDACompleteEvent(new TestDDACompleteEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, TestDDACompleteEvent, new TestDDACompleteEventArgs(new MessageParser(fnread)));
                         break;
                     case "SSKKeypair":
-                        OnSSKKeypairEvent(new SSKKeypairEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, SSKKeypairEvent, new SSKKeypairEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentGet":
-                        OnPersistentGetEvent(new PersistentGetEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PersistentGetEvent, new PersistentGetEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentPut":
-                        OnPersistentPutEvent(new PersistentPutEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PersistentPutEvent, new PersistentPutEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentPutDir":
-                        OnPersistentPutDirEvent(new PersistentPutDirEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PersistentPutDirEvent, new PersistentPutDirEventArgs(new MessageParser(fnread)));
                         break;
                     case "URIGenerated":
-                        OnURIGeneratedEvent(new URIGeneratedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, URIGeneratedEvent, new URIGeneratedEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutSuccessful":
-                        OnPutSuccessfulEvent(new PutSuccessfulEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PutSuccessfulEvent, new PutSuccessfulEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutFetchable":
-                        OnPutFetchableEvent(new PutFetchableEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PutFetchableEvent, new PutFetchableEventArgs(new MessageParser(fnread)));
                         break;
                     case "DataFound":
-                        OnDataFoundEvent(new DataFoundEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, DataFoundEvent, new DataFoundEventArgs(new MessageParser(fnread)));
                         break;
                     case "AllData":
                         OnAllDataEvent(new AllDataEventArgs(new MessageParser(fnread), client.GetStream()));
                         break;
                     case "StartedCompression":
-                        OnStartedCompressionEvent(new StartedCompressionEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, StartedCompressionEvent, new StartedCompressionEventArgs(new MessageParser(fnread)));
                         break;
                     case "FinishedCompression":
-                        OnFinishedCompressionEvent(new FinishedCompressionEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, FinishedCompressionEvent, new FinishedCompressionEventArgs(new MessageParser(fnread)));
                         break;
                     case "SimpleProgress":
-                        OnSimpleProgressEvent(new SimpleProgressEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, SimpleProgressEvent, new SimpleProgressEventArgs(new MessageParser(fnread)));
                         break;
                     case "ExpectedHashes":
-                        OnExpectedHashesEvent(new ExpectedHashesEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, ExpectedHashesEvent, new ExpectedHashesEventArgs(new MessageParser(fnread)));
+                        break;
+                    case "ExpectedMIME":
+                        DispatchEvent(this, ExpectedMimeEvent, new ExpectedMimeEventArgs(new MessageParser(fnread)));
+                        break;
+                    case "ExpectedDataLength":
+                        DispatchEvent(this, ExpectedDataLengthEvent, new ExpectedDataLengthEventArgs(new MessageParser(fnread)));
                         break;
                     case "CompatibilityMode":
-                        OnCompatibilityModeEvent(new CompatibilityModeEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, CompatibilityModeEvent, new CompatibilityModeEventArgs(new MessageParser(fnread)));
                         break;
                     case "EndListPersistentRequests":
-                        OnEndListPersistentRequestsEvent(new EndListPersistentRequestsEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, EndListPersistentRequestsEvent, new EndListPersistentRequestsEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentRequestRemoved":
-                        OnPersistentRequestRemovedEvent(new PersistentRequestRemovedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PersistentRequestRemovedEvent, new PersistentRequestRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "PersistentRequestModified":
-                        OnPersistentRequestModifiedEvent(new PersistentRequestModifiedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PersistentRequestModifiedEvent, new PersistentRequestModifiedEventArgs(new MessageParser(fnread)));
                         break;
                     case "SendingToNetwork":
-                        OnSendingToNetworkEvent(new SendingToNetworkEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, SendingToNetworkEvent, new SendingToNetworkEventArgs(new MessageParser(fnread)));
+                        break;
+                    case "EnterFiniteCooldown":
+                        DispatchEvent(this, EnterFiniteCooldownEvent, new EnterFiniteCooldownEventArgs(new MessageParser(fnread)));
                         break;
                     case "PutFailed":
-                        OnPutFailedEvent(new PutFailedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PutFailedEvent, new PutFailedEventArgs(new MessageParser(fnread)));
                         break;
                     case "GetFailed":
-                        OnGetFailedEvent(new GetFailedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, GetFailedEvent, new GetFailedEventArgs(new MessageParser(fnread)));
                         break;
                     case "ProtocolError":
-                        OnProtocolErrorEvent(new ProtocolErrorEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, ProtocolErrorEvent, new ProtocolErrorEventArgs(new MessageParser(fnread)));
                         break;
                     case "IdentifierCollision":
-                        OnIdentifierCollisionEvent(new IdentifierCollisionEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, IdentifierCollisionEvent, new IdentifierCollisionEventArgs(new MessageParser(fnread)));
                         break;
                     case "UnknownNodeIdentifier":
-                        OnUnknownNodeIdentifierEvent(new UnknownNodeIdentifierEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, UnknownNodeIdentifierEvent, new UnknownNodeIdentifierEventArgs(new MessageParser(fnread)));
                         break;
                     case "UnknownPeerNoteType":
-                        OnUnknownPeerNoteTypeEvent(new UnknownPeerNoteTypeEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, UnknownPeerNoteTypeEvent, new UnknownPeerNoteTypeEventArgs(new MessageParser(fnread)));
                         break;
                     case "SubscribedUSK":
-                        OnSubscribedUSKEvent(new SubscribedUSKEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, SubscribedUSKEvent, new SubscribedUSKEventArgs(new MessageParser(fnread)));
                         break;
                     case "SubscribedUSKUpdate":
-                        OnSubscribedUSKUpdateEvent(new SubscribedUSKUpdateEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, SubscribedUSKUpdateEvent, new SubscribedUSKUpdateEventArgs(new MessageParser(fnread)));
                         break;
                     case "PluginInfo":
-                        OnPluginInfoEvent(new PluginInfoEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PluginInfoEvent, new PluginInfoEventArgs(new MessageParser(fnread)));
                         break;
                     case "PluginRemoved":
-                        OnPluginRemovedEvent(new PluginRemovedEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, PluginRemovedEvent, new PluginRemovedEventArgs(new MessageParser(fnread)));
                         break;
                     case "FCPPluginReply":
-                        OnFCPPluginReplyEvent(new FCPPluginReplyEventArgs(new MessageParser(fnread)));
+                        DispatchEvent(this, FCPPluginReplyEvent, new FCPPluginReplyEventArgs(new MessageParser(fnread)));
                         break;
                     case "":
                         /* ignore empty line */
@@ -1398,7 +1114,8 @@ namespace FCP2.Protocol
                 fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
             if (global.HasValue && global.Value && persistence != null && persistence.Value == PersistenceEnum.Connection)
                 throw new FormatException("Error, global request must be persistent");
-            fnwrite.WriteLine("Persistence=" + persistence.Value);
+            if (persistence != null)
+                fnwrite.WriteLine("Persistence=" + persistence.Value);
             if (!String.IsNullOrEmpty(clientToken))
                 fnwrite.WriteLine("ClientToken=" + clientToken);
             if (global.HasValue)

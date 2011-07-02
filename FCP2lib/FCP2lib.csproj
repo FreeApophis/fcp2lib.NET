@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="EventArgs\CompatibilityModeEventArgs.cs" />
     <Compile Include="Protocol\DynamicReturnValue.cs" />
+    <Compile Include="EventArgs\EnterFiniteCooldownEventArgs.cs" />
     <Compile Include="Protocol\Enums.cs" />
     <Compile Include="EventArgs\AllDataEventArgs.cs" />
     <Compile Include="EventArgs\CloseConnectionDuplicateClientNameEventArgs.cs" />
@@ -114,7 +115,9 @@
     <Compile Include="EventArgs\ExpectedHashesEventArgs.cs" />
     <Compile Include="FCP2Download.cs" />
     <Compile Include="FCP2Upload.cs" />
-    <Compile Include="FCPClient.cs" />
+    <Compile Include="FCP2Client.cs" />
+    <Compile Include="EventArgs\ExpectedDataLengthEventArgs.cs" />
+    <Compile Include="EventArgs\ExpectedMIMEEventArgs.cs" />
     <Compile Include="Protocol\InsertItem.cs" />
     <Compile Include="Protocol\MessageParser.cs" />
     <Compile Include="Protocol\FCP2Protocol.cs" />

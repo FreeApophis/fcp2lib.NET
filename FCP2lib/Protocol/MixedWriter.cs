@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.IO;
 using System.Text;
 
@@ -54,9 +55,9 @@ namespace FCP2.Protocol
         public override void WriteLine(string value)
         {
 #if DEBUG
-            //            Console.ForegroundColor = ConsoleColor.Blue;
-            //            Console.WriteLine(value);
-            //            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(value);
+            Console.ForegroundColor = ConsoleColor.Gray;
 #endif
             value = value + "\n";
             var enc = new UTF8Encoding();

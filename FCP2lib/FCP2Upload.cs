@@ -22,7 +22,7 @@ using FCP2.Protocol;
 
 namespace FCP2
 {
-    internal class FCP2Upload
+    public class FCP2Upload
     {
         private FCP2Protocol fcp;
 

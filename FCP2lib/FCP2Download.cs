@@ -22,7 +22,7 @@ using FCP2.Protocol;
 
 namespace FCP2
 {
-    class FCP2Download
+    public class FCP2Download
     {
         private FCP2Protocol fcp;
 

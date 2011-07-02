@@ -64,6 +64,7 @@ namespace FCP2.Protocol
             if (type == typeof(double)) { return 0.0; }
             if (type == typeof(decimal)) { return 0.0m; }
             if (type == typeof(DateTime)) { return DateTime.Now; }
+             if (type == typeof(PriorityClassEnum)) { return PriorityClassEnum.Medium; }
             return null;
         }
 

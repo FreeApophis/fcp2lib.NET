@@ -36,7 +36,6 @@ namespace FCP2.EventArgs
         private readonly string identity;
         private readonly string lastGoodVersion;
         private readonly double location;
-        private readonly string myName;
         private readonly bool opennet;
         private readonly PhysicalType physical;
         private readonly string sig;
@@ -57,7 +56,6 @@ namespace FCP2.EventArgs
             sig = parsed.sig;
             opennet = parsed.opennet;
             identity = parsed.identity;
-            myName = parsed.myName;
             version = parsed.version;
             physical = new PhysicalType(parsed.physical);
             ark = new ArkType(parsed.ark);
@@ -98,11 +96,6 @@ namespace FCP2.EventArgs
         public string Identity
         {
             get { return identity; }
-        }
-
-        public string MyName
-        {
-            get { return myName; }
         }
 
         public string Version
@@ -351,13 +344,11 @@ namespace FCP2.EventArgs
             private readonly long numberOfConnected;
             private readonly long numberOfDisabled;
             private readonly long numberOfDisconnected;
-            private readonly long numberOfInsertSenders;
             private readonly long numberOfListening;
             private readonly long numberOfListenOnly;
             private readonly long numberOfNeverConnected;
             private readonly long numberOfNotConnected;
             private readonly double numberOfRemotePeerLocationsSeenInSwaps;
-            private readonly long numberOfRequestSenders;
             private readonly long numberOfRoutingBackedOff;
             private readonly long numberOfSeedClients;
             private readonly long numberOfSeedServers;
@@ -366,8 +357,6 @@ namespace FCP2.EventArgs
             private readonly long numberOfTooOld;
             private readonly long numberOfTransferringRequestSenders;
             private readonly NumberWithRoutingBackoffReasonsType numberWithRoutingBackoffReasons;
-            private readonly long opennetSizeEstimate24HourRecent;
-            private readonly long opennetSizeEstimate48HourRecent;
             private readonly long opennetSizeEstimateSession;
             private readonly long overallAccesses;
             private readonly long overallKeys;
@@ -391,7 +380,6 @@ namespace FCP2.EventArgs
             private readonly double swapsPerMinute;
             private readonly double swapsPerNoSwaps;
             private readonly long swapsRejectedAlreadyLocked;
-            private readonly long swapsRejectedLoop;
             private readonly long swapsRejectedNowhereToGo;
             private readonly long swapsRejectedRateLimit;
             private readonly long swapsRejectedRecognizedID;
@@ -402,7 +390,6 @@ namespace FCP2.EventArgs
             private readonly long totalPayloadOutputBytes;
             private readonly long totalPayloadOutputPercent;
             private readonly long totalPayloadOutputRate;
-            private readonly long unclaimedFifoSize;
             private readonly long uptimeSeconds;
             private readonly long usedJavaMemory;
 
@@ -449,7 +436,6 @@ namespace FCP2.EventArgs
                 totalOutputRate = @volatile.totalOutputRate;
                 averagePingTime = @volatile.averagePingTime;
                 numberOfBursting = @volatile.numberOfBursting;
-                numberOfInsertSenders = @volatile.numberOfInsertSenders;
                 usedJavaMemory = @volatile.usedJavaMemory;
                 startupTime = @volatile.startupTime;
                 locationChangePerSession = @volatile.locationChangePerSession;
@@ -470,27 +456,22 @@ namespace FCP2.EventArgs
                 swapsRejectedAlreadyLocked = @volatile.swapsRejectedAlreadyLocked;
                 maxOverallSize = @volatile.maxOverallSize;
                 numberOfSimpleConnected = @volatile.numberOfSimpleConnected;
-                numberOfRequestSenders = @volatile.numberOfRequestSenders;
                 overallSize = @volatile.overallSize;
                 numberOfTransferringRequestSenders = @volatile.numberOfTransferringRequestSenders;
                 percentCachedStoreHitsOfAccesses = @volatile.percentCachedStoreHitsOfAccesses;
-                swapsRejectedLoop = @volatile.swapsRejectedLoop;
                 bwlimitDelayTime = @volatile.bwlimitDelayTime;
                 numberOfRemotePeerLocationsSeenInSwaps = @volatile.numberOfRemotePeerLocationsSeenInSwaps;
                 pInstantReject = @volatile.pInstantReject;
                 totalPayloadOutputBytes = @volatile.totalPayloadOutputBytes;
                 numberOfRoutingBackedOff = @volatile.numberOfRoutingBackedOff;
-                unclaimedFifoSize = @volatile.unclaimedFifoSize;
                 numberOfConnected = @volatile.numberOfConnected;
                 cachedStoreHits = @volatile.cachedStoreHits;
                 recentOutputRate = @volatile.recentOutputRate;
                 swapsRejectedRecognizedID = @volatile.swapsRejectedRecognizedID;
                 numberOfTooNew = @volatile.numberOfTooNew;
                 numberOfSeedClients = @volatile.numberOfSeedClients;
-                opennetSizeEstimate48HourRecent = @volatile.opennetSizeEstimate48HourRecent;
                 numberOfSeedServers = @volatile.numberOfSeedServers;
                 opennetSizeEstimateSession = @volatile.opennetSizeEstimateSession;
-                opennetSizeEstimate24HourRecent = @volatile.opennetSizeEstimate24HourRecent;
 
                 numberWithRoutingBackoffReasons = new NumberWithRoutingBackoffReasonsType(@volatile.numberWithRoutingBackoffReasons);
             }
@@ -697,11 +678,6 @@ namespace FCP2.EventArgs
                 get { return numberOfBursting; }
             }
 
-            public long NumberOfInsertSenders
-            {
-                get { return numberOfInsertSenders; }
-            }
-
             public long UsedJavaMemory
             {
                 get { return usedJavaMemory; }
@@ -802,11 +778,6 @@ namespace FCP2.EventArgs
                 get { return numberOfSimpleConnected; }
             }
 
-            public long NumberOfRequestSenders
-            {
-                get { return numberOfRequestSenders; }
-            }
-
             public long OverallSize
             {
                 get { return overallSize; }
@@ -820,11 +791,6 @@ namespace FCP2.EventArgs
             public double PercentCachedStoreHitsOfAccesses
             {
                 get { return percentCachedStoreHitsOfAccesses; }
-            }
-
-            public long SwapsRejectedLoop
-            {
-                get { return swapsRejectedLoop; }
             }
 
             public double BwlimitDelayTime
@@ -850,11 +816,6 @@ namespace FCP2.EventArgs
             public long NumberOfRoutingBackedOff
             {
                 get { return numberOfRoutingBackedOff; }
-            }
-
-            public long UnclaimedFifoSize
-            {
-                get { return unclaimedFifoSize; }
             }
 
             public long NumberOfConnected
@@ -887,11 +848,6 @@ namespace FCP2.EventArgs
                 get { return numberOfSeedClients; }
             }
 
-            public long OpennetSizeEstimate48HourRecent
-            {
-                get { return opennetSizeEstimate48HourRecent; }
-            }
-
             public long NumberOfSeedServers
             {
                 get { return numberOfSeedServers; }
@@ -900,11 +856,6 @@ namespace FCP2.EventArgs
             public long OpennetSizeEstimateSession
             {
                 get { return opennetSizeEstimateSession; }
-            }
-
-            public long OpennetSizeEstimate24HourRecent
-            {
-                get { return opennetSizeEstimate24HourRecent; }
             }
 
             public NumberWithRoutingBackoffReasonsType NumberWithRoutingBackoffReasons
@@ -917,9 +868,60 @@ namespace FCP2.EventArgs
 
             public class NumberWithRoutingBackoffReasonsType
             {
+
+                private readonly int insertTimeoutNoFinalAck;
+                private readonly int transferFailedInsert;
+                private readonly int turtledTransfer;
+                private readonly int forwardRejectedOverload;
+                private readonly int transferFailedRequest;
+
                 internal NumberWithRoutingBackoffReasonsType(dynamic numberWithRoutingBackoffReasons)
                 {
-                    /* TODO: implementation */
+                    insertTimeoutNoFinalAck = numberWithRoutingBackoffReasons.InsertTimeoutNoFinalAck;
+                    transferFailedInsert = numberWithRoutingBackoffReasons.TransferFailedInsert;
+                    turtledTransfer = numberWithRoutingBackoffReasons.TurtledTransfer;
+                    forwardRejectedOverload = numberWithRoutingBackoffReasons.ForwardRejectedOverload;
+                    transferFailedRequest = numberWithRoutingBackoffReasons.TransferFailedRequest;
+                }
+
+                public int InsertTimeoutNoFinalAck
+                {
+                    get
+                    {
+                        return insertTimeoutNoFinalAck;
+                    }
+                }
+
+                public int TransferFailedInsert
+                {
+                    get
+                    {
+                        return transferFailedInsert;
+                    }
+                }
+
+                public int TurtledTransfer
+                {
+                    get
+                    {
+                        return turtledTransfer;
+                    }
+                }
+
+                public int ForwardRejectedOverload
+                {
+                    get
+                    {
+                        return forwardRejectedOverload;
+                    }
+                }
+
+                public int TransferFailedRequest
+                {
+                    get
+                    {
+                        return transferFailedRequest;
+                    }
                 }
             }
 

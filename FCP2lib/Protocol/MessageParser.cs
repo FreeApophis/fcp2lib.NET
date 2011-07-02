@@ -113,8 +113,8 @@ namespace FCP2.Protocol
             foreach (string key in debugcount.Keys)
             {
                 Console.ForegroundColor = debugcount[key] == 0 ? ConsoleColor.Yellow : ConsoleColor.Green;
+                Console.WriteLine("[" + debugcount[key] + "] " + key + " (" + parameters[key] + ")");
 
-                Console.WriteLine("[" + debugcount[key] + "] " + key);
                 allaccessed = allaccessed && (debugcount[key] != 0);
             }
             if (allaccessed)
