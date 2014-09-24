@@ -1,12 +1,30 @@
-﻿using FCP2.Protocol;
+﻿/*
+ *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ * 
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-namespace FCP2.EventArgs
+namespace FCP2
 {
+
     public class ExpectedHashesEventArgs : System.EventArgs
     {
-        private readonly string identifier;
-        private readonly bool global;
-        private readonly HashesType hashes;
+        readonly string identifier;
+        readonly bool global;
+        readonly HashesType hashes;
 
 
         internal ExpectedHashesEventArgs(dynamic parsed)
@@ -51,12 +69,12 @@ namespace FCP2.EventArgs
         #region Nested type: HashesType
         public class HashesType
         {
-            private readonly string sha512;
-            private readonly string sha256;
-            private readonly string md5;
-            private readonly string sha1;
-            private readonly string tth;
-            private readonly string ed2k;
+            readonly string sha512;
+            readonly string sha256;
+            readonly string md5;
+            readonly string sha1;
+            readonly string tth;
+            readonly string ed2k;
 
             public HashesType(dynamic hashes)
             {

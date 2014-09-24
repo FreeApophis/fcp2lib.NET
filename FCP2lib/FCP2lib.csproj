@@ -34,6 +34,11 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ReleaseVersion>0.9</ReleaseVersion>
+    <Description>This is a complete implementation of the FCP2 (Freenet Client Protocol 2.0) specification for the access of Freenet-nodes with any .NET Language. </Description>
+    <CodePage>65001</CodePage>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>

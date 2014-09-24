@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -17,30 +17,30 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Net;
-using FCP2.Protocol;
 
-namespace FCP2.EventArgs
+namespace FCP2
 {
 
     public class NodeDataEventArgs : System.EventArgs
     {
-        private readonly ArkType ark;
-        private readonly AuthType auth;
-        private readonly string clientNonce;
-        private readonly DsaGroupType dsaGroup;
-        private readonly DsaPrivKeyType dsaPrivKey;
-        private readonly DsaPubKeyType dsaPubKey;
-        private readonly string identity;
-        private readonly string lastGoodVersion;
-        private readonly double location;
-        private readonly bool opennet;
-        private readonly PhysicalType physical;
-        private readonly string sig;
-        private readonly string version;
-        private readonly VolatileType @volatile;
+        readonly ArkType ark;
+        readonly AuthType auth;
+        readonly string clientNonce;
+        readonly DsaGroupType dsaGroup;
+        readonly DsaPrivKeyType dsaPrivKey;
+        readonly DsaPubKeyType dsaPubKey;
+        readonly string identity;
+        readonly string lastGoodVersion;
+        readonly double location;
+        readonly bool opennet;
+        readonly PhysicalType physical;
+        readonly string sig;
+        readonly string version;
+        readonly VolatileType @volatile;
 
         /// <summary>
         /// NodeDataEventArgs Constructor
@@ -152,9 +152,9 @@ namespace FCP2.EventArgs
 
         public class ArkType
         {
-            private readonly long number;
-            private readonly string privURI;
-            private readonly string pubURI;
+            readonly long number;
+            readonly string privURI;
+            readonly string pubURI;
 
             internal ArkType(dynamic ark)
             {
@@ -186,7 +186,7 @@ namespace FCP2.EventArgs
 
         public class AuthType
         {
-            private readonly List<long> negTypes = new List<long>();
+            readonly List<long> negTypes = new List<long>();
 
             internal AuthType(dynamic auth)
             {
@@ -211,9 +211,9 @@ namespace FCP2.EventArgs
 
         public class DsaGroupType
         {
-            private readonly string g;
-            private readonly string p;
-            private readonly string q;
+            readonly string g;
+            readonly string p;
+            readonly string q;
 
             internal DsaGroupType(dynamic dsaGroup)
             {
@@ -244,7 +244,7 @@ namespace FCP2.EventArgs
 
         public class DsaPrivKeyType
         {
-            private readonly string x;
+             readonly string x;
 
             internal DsaPrivKeyType(dynamic dsaPrivKey)
             {
@@ -263,7 +263,7 @@ namespace FCP2.EventArgs
 
         public class DsaPubKeyType
         {
-            private readonly string y;
+            readonly string y;
 
             internal DsaPubKeyType(dynamic dsaPubKey)
             {
@@ -282,7 +282,7 @@ namespace FCP2.EventArgs
 
         public class PhysicalType
         {
-            private readonly List<IPEndPoint> udp = new List<IPEndPoint>();
+            readonly List<IPEndPoint> udp = new List<IPEndPoint>();
 
             internal PhysicalType(dynamic physical)
             {
@@ -315,83 +315,83 @@ namespace FCP2.EventArgs
 
         public class VolatileType
         {
-            private readonly long allocatedJavaMemory;
-            private readonly long availableCPUs;
-            private readonly double averagePingTime;
-            private readonly double avgConnectedPeersPerNode;
-            private readonly double avgStoreAccessRate;
-            private readonly double backedOffPercent;
-            private readonly double bwlimitDelayTime;
-            private readonly long cacheAccesses;
-            private readonly long cachedKeys;
-            private readonly long cachedSize;
-            private readonly long cachedStoreHits;
-            private readonly long cachedStoreMisses;
-            private readonly long freeJavaMemory;
-            private readonly bool isUsingWrapper;
-            private readonly double locationChangePerMinute;
-            private readonly double locationChangePerSession;
-            private readonly double locationChangePerSwap;
-            private readonly long maximumJavaMemory;
-            private readonly long maxOverallKeys;
-            private readonly long maxOverallSize;
-            private readonly long networkSizeEstimate24HourRecent;
-            private readonly long networkSizeEstimate48HourRecent;
-            private readonly long networkSizeEstimateSession;
-            private readonly double noSwapsPerMinute;
-            private readonly long numberOfArkFetchers;
-            private readonly long numberOfBursting;
-            private readonly long numberOfConnected;
-            private readonly long numberOfDisabled;
-            private readonly long numberOfDisconnected;
-            private readonly long numberOfListening;
-            private readonly long numberOfListenOnly;
-            private readonly long numberOfNeverConnected;
-            private readonly long numberOfNotConnected;
-            private readonly double numberOfRemotePeerLocationsSeenInSwaps;
-            private readonly long numberOfRoutingBackedOff;
-            private readonly long numberOfSeedClients;
-            private readonly long numberOfSeedServers;
-            private readonly long numberOfSimpleConnected;
-            private readonly long numberOfTooNew;
-            private readonly long numberOfTooOld;
-            private readonly long numberOfTransferringRequestSenders;
-            private readonly NumberWithRoutingBackoffReasonsType numberWithRoutingBackoffReasons;
-            private readonly long opennetSizeEstimateSession;
-            private readonly long overallAccesses;
-            private readonly long overallKeys;
-            private readonly long overallSize;
-            private readonly double percentCachedStoreHitsOfAccesses;
-            private readonly double percentOverallKeysOfMax;
-            private readonly double percentStoreHitsOfAccesses;
-            private readonly double pInstantReject;
-            private readonly double recentInputRate;
-            private readonly double recentOutputRate;
-            private readonly double routingMissDistance;
-            private readonly long runningThreadCount;
-            private readonly long startedSwaps;
-            private readonly DateTime startupTime;
-            private readonly long storeAccesses;
-            private readonly long storeHits;
-            private readonly long storeKeys;
-            private readonly long storeMisses;
-            private readonly long storeSize;
-            private readonly double swaps;
-            private readonly double swapsPerMinute;
-            private readonly double swapsPerNoSwaps;
-            private readonly long swapsRejectedAlreadyLocked;
-            private readonly long swapsRejectedNowhereToGo;
-            private readonly long swapsRejectedRateLimit;
-            private readonly long swapsRejectedRecognizedID;
-            private readonly long totalInputBytes;
-            private readonly long totalInputRate;
-            private readonly long totalOutputBytes;
-            private readonly long totalOutputRate;
-            private readonly long totalPayloadOutputBytes;
-            private readonly long totalPayloadOutputPercent;
-            private readonly long totalPayloadOutputRate;
-            private readonly long uptimeSeconds;
-            private readonly long usedJavaMemory;
+            readonly long allocatedJavaMemory;
+            readonly long availableCPUs;
+            readonly double averagePingTime;
+            readonly double avgConnectedPeersPerNode;
+            readonly double avgStoreAccessRate;
+            readonly double backedOffPercent;
+            readonly double bwlimitDelayTime;
+            readonly long cacheAccesses;
+            readonly long cachedKeys;
+            readonly long cachedSize;
+            readonly long cachedStoreHits;
+            readonly long cachedStoreMisses;
+            readonly long freeJavaMemory;
+            readonly bool isUsingWrapper;
+            readonly double locationChangePerMinute;
+            readonly double locationChangePerSession;
+            readonly double locationChangePerSwap;
+            readonly long maximumJavaMemory;
+            readonly long maxOverallKeys;
+            readonly long maxOverallSize;
+            readonly long networkSizeEstimate24HourRecent;
+            readonly long networkSizeEstimate48HourRecent;
+            readonly long networkSizeEstimateSession;
+            readonly double noSwapsPerMinute;
+            readonly long numberOfArkFetchers;
+            readonly long numberOfBursting;
+            readonly long numberOfConnected;
+            readonly long numberOfDisabled;
+            readonly long numberOfDisconnected;
+            readonly long numberOfListening;
+            readonly long numberOfListenOnly;
+            readonly long numberOfNeverConnected;
+            readonly long numberOfNotConnected;
+            readonly double numberOfRemotePeerLocationsSeenInSwaps;
+            readonly long numberOfRoutingBackedOff;
+            readonly long numberOfSeedClients;
+            readonly long numberOfSeedServers;
+            readonly long numberOfSimpleConnected;
+            readonly long numberOfTooNew;
+            readonly long numberOfTooOld;
+            readonly long numberOfTransferringRequestSenders;
+            readonly NumberWithRoutingBackoffReasonsType numberWithRoutingBackoffReasons;
+            readonly long opennetSizeEstimateSession;
+            readonly long overallAccesses;
+            readonly long overallKeys;
+            readonly long overallSize;
+            readonly double percentCachedStoreHitsOfAccesses;
+            readonly double percentOverallKeysOfMax;
+            readonly double percentStoreHitsOfAccesses;
+            readonly double pInstantReject;
+            readonly double recentInputRate;
+            readonly double recentOutputRate;
+            readonly double routingMissDistance;
+            readonly long runningThreadCount;
+            readonly long startedSwaps;
+            readonly DateTime startupTime;
+            readonly long storeAccesses;
+            readonly long storeHits;
+            readonly long storeKeys;
+            readonly long storeMisses;
+            readonly long storeSize;
+            readonly double swaps;
+            readonly double swapsPerMinute;
+            readonly double swapsPerNoSwaps;
+            readonly long swapsRejectedAlreadyLocked;
+            readonly long swapsRejectedNowhereToGo;
+            readonly long swapsRejectedRateLimit;
+            readonly long swapsRejectedRecognizedID;
+            readonly long totalInputBytes;
+            readonly long totalInputRate;
+            readonly long totalOutputBytes;
+            readonly long totalOutputRate;
+            readonly long totalPayloadOutputBytes;
+            readonly long totalPayloadOutputPercent;
+            readonly long totalPayloadOutputRate;
+            readonly long uptimeSeconds;
+            readonly long usedJavaMemory;
 
             internal VolatileType(dynamic @volatile)
             {
@@ -869,11 +869,11 @@ namespace FCP2.EventArgs
             public class NumberWithRoutingBackoffReasonsType
             {
 
-                private readonly int insertTimeoutNoFinalAck;
-                private readonly int transferFailedInsert;
-                private readonly int turtledTransfer;
-                private readonly int forwardRejectedOverload;
-                private readonly int transferFailedRequest;
+                readonly int insertTimeoutNoFinalAck;
+                readonly int transferFailedInsert;
+                readonly int turtledTransfer;
+                readonly int forwardRejectedOverload;
+                readonly int transferFailedRequest;
 
                 internal NumberWithRoutingBackoffReasonsType(dynamic numberWithRoutingBackoffReasons)
                 {

@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,25 +16,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using System;
-using FCP2.Protocol;
 
-namespace FCP2.EventArgs
+namespace FCP2
 {
 
     public class PersistentPutEventArgs : System.EventArgs
     {
-        private readonly string clientToken;
-        private readonly long dataLength;
-        private readonly string filename;
-        private readonly bool global;
-        private readonly long maxRetries;
-        private readonly MetadataType metadata;
-        private readonly PriorityClassEnum priorityClass;
-        private readonly string targetFilename;
-        private readonly UploadFromEnum uploadFrom;
-        private readonly string uri;
-        private readonly VerbosityEnum verbosity;
+        readonly string clientToken;
+        readonly long dataLength;
+        readonly string filename;
+        readonly bool global;
+        readonly long maxRetries;
+        readonly MetadataType metadata;
+        readonly PriorityClassEnum priorityClass;
+        readonly string targetFilename;
+        readonly UploadFromEnum uploadFrom;
+        readonly string uri;
+        readonly VerbosityEnum verbosity;
 
         /// <summary>
         /// PersistentPutEventArgs Constructor
@@ -122,7 +120,7 @@ namespace FCP2.EventArgs
 
         public class MetadataType
         {
-            private readonly string contentType;
+            readonly string contentType;
 
             internal MetadataType(dynamic metadata)
             {

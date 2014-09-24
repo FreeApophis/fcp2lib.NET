@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -17,24 +17,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-using FCP2.Protocol;
 
-namespace FCP2.EventArgs
+namespace FCP2
 {
 
     public class NodeHelloEventArgs : System.EventArgs
     {
-        private readonly long build;
-        private readonly string compressionCodecs;
-        private readonly string connectionIdentifier;
-        private readonly long extBuild;
-        private readonly long extRevision;
-        private readonly string fcpVersion;
-        private readonly string node;
-        private readonly string nodeLanguage;
-        private readonly string revision;
-        private readonly bool testnet;
-        private readonly string version;
+        readonly long build;
+        readonly string compressionCodecs;
+        readonly string connectionIdentifier;
+        readonly long extBuild;
+        readonly long extRevision;
+        readonly string fcpVersion;
+        readonly string node;
+        readonly string nodeLanguage;
+        readonly string revision;
+        readonly bool testnet;
+        readonly string version;
 
         /// <summary>
         /// NodeHelloEventArgs Constructor

@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,15 +21,29 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace FCP2.Protocol
+namespace FCP2
 {
     class DynamicReturnValue : DynamicObject
     {
-        private readonly static Dictionary<Type, ConversionDelegate> TypeTable = new Dictionary<Type, ConversionDelegate>();
+        static readonly Dictionary<Type, ConversionDelegate> TypeTable = new Dictionary<Type, ConversionDelegate>();
+        readonly string dynamicString;
 
-        private static void Init()
+        private delegate object ConversionDelegate(string original,ref bool successfull);
+
+        bool lastConversionSuccessfull;
+
+        public bool LastConversionSucessfull
         {
-            if (TypeTable.Count != 0) return;
+            get
+            {
+                return lastConversionSuccessfull;
+            }
+        }
+
+        static void Init()
+        {
+            if (TypeTable.Count != 0)
+                return;
 
             TypeTable.Add(typeof(bool), ConvertToBool);
             TypeTable.Add(typeof(string), ConvertToString);
@@ -52,19 +66,6 @@ namespace FCP2.Protocol
         public bool Exists()
         {
             return dynamicString != null;
-        }
-
-        private delegate object ConversionDelegate(string original, ref bool successfull);
-
-        private readonly string dynamicString;
-        private bool lastConversionSuccessfull;
-
-        public bool LastConversionSucessfull
-        {
-            get
-            {
-                return lastConversionSuccessfull;
-            }
         }
 
         public DynamicReturnValue(string value)
@@ -90,13 +91,13 @@ namespace FCP2.Protocol
             return false;
         }
 
-        private static object ConvertToString(string original, ref bool success)
+        static object ConvertToString(string original, ref bool success)
         {
             success = true;
             return original;
         }
 
-        private static object ConvertToBool(string original, ref bool success)
+        static object ConvertToBool(string original, ref bool success)
         {
             bool boolResult;
             if (bool.TryParse(original, out boolResult))
@@ -108,7 +109,7 @@ namespace FCP2.Protocol
             return false;
         }
 
-        private static object ConvertToInt(string original, ref bool success)
+        static object ConvertToInt(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -120,7 +121,7 @@ namespace FCP2.Protocol
             return 0;
         }
 
-        private static object ConvertToLong(string original, ref bool success)
+        static object ConvertToLong(string original, ref bool success)
         {
             long longResult;
             if (long.TryParse(original, out longResult))
@@ -133,7 +134,7 @@ namespace FCP2.Protocol
         }
 
 
-        private static object ConvertToDecimal(string original, ref bool success)
+        static object ConvertToDecimal(string original, ref bool success)
         {
             decimal decimalResult;
             if (decimal.TryParse(original, out decimalResult))
@@ -145,7 +146,7 @@ namespace FCP2.Protocol
             return 0.0m;
         }
 
-        private static object ConvertToFloat(string original, ref bool success)
+        static object ConvertToFloat(string original, ref bool success)
         {
             float floatResult;
             if (float.TryParse(original, out floatResult))
@@ -157,7 +158,7 @@ namespace FCP2.Protocol
             return 0.0f;
         }
 
-        private static object ConvertToDouble(string original, ref bool success)
+        static object ConvertToDouble(string original, ref bool success)
         {
             double doubleResult;
             if (double.TryParse(original, out doubleResult))
@@ -169,7 +170,7 @@ namespace FCP2.Protocol
             return 0.0;
         }
 
-        private static object ConvertToDateTime(string original, ref bool success)
+        static object ConvertToDateTime(string original, ref bool success)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             long afterEpoch;
@@ -190,7 +191,7 @@ namespace FCP2.Protocol
             return DateTime.MinValue;
         }
 
-        private static object ConvertToPeerNoteTypeEnum(string original, ref bool success)
+        static object ConvertToPeerNoteTypeEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -210,7 +211,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToPersistenceEnum(string original, ref bool success)
+        static object ConvertToPersistenceEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -230,7 +231,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToVerbosityEnum(string original, ref bool success)
+        static object ConvertToVerbosityEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -250,7 +251,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToPriorityClassEnum(string original, ref bool success)
+        static object ConvertToPriorityClassEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -270,7 +271,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToReturnTypeEnum(string original, ref bool success)
+        static object ConvertToReturnTypeEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -290,7 +291,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToUploadFromEnum(string original, ref bool success)
+        static object ConvertToUploadFromEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -310,7 +311,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToUrlTypeEnum(string original, ref bool success)
+        static object ConvertToUrlTypeEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))
@@ -330,7 +331,7 @@ namespace FCP2.Protocol
             return null;
         }
 
-        private static object ConvertToOfficialSourceTypeEnum(string original, ref bool success)
+        static object ConvertToOfficialSourceTypeEnum(string original, ref bool success)
         {
             int intResult;
             if (int.TryParse(original, out intResult))

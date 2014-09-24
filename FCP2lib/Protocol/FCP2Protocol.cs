@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using FCP2.EventArgs;
+using FCP2;
 
-namespace FCP2.Protocol
+namespace FCP2
 {
     /// <summary>
     /// FCP 2.0 Protocol implementation according to following RFC:
@@ -37,11 +37,11 @@ namespace FCP2.Protocol
     public class FCP2Protocol
     {
         #region Private declarations
-        private readonly IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9481);
-        private readonly TcpClient client = new TcpClient();
+        readonly IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9481);
+        readonly TcpClient client = new TcpClient();
         private TextReader fnread;
         private TextWriter fnwrite;
-        private readonly bool isMultiThreaded;
+        readonly bool isMultiThreaded;
 
         public string ClientName { get; private set; }
         private const string FCPVersion = "2.0";

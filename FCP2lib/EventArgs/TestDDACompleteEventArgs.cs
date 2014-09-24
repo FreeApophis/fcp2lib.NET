@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using FCP2.Protocol;
-
-namespace FCP2.EventArgs
+namespace FCP2
 {
 
 
     public class TestDDACompleteEventArgs : System.EventArgs
     {
 
-        private readonly string directory;
-        private readonly bool readDirectoryAllowed;
-        private readonly bool writeDirectoryAllowed;
+        readonly string directory;
+        readonly bool readDirectoryAllowed;
+        readonly bool writeDirectoryAllowed;
 
         /// <summary>
         /// TestDDACompleteEventArgs Constructor

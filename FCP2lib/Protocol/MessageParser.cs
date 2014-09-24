@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,26 +22,27 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 
-namespace FCP2.Protocol
+namespace FCP2
 {
     /// <summary>
     /// Description of Class1.
     /// </summary>
     public class MessageParser : DynamicObject
     {
-        private readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
+        readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
 
-#if DEBUG
-        private readonly Dictionary<string, long> debugcount = new Dictionary<string, long>();
-#endif
+        #if DEBUG
+        readonly Dictionary<string, long> debugcount = new Dictionary<string, long>();
+        #endif
 
-        private readonly bool dataAvailable;
+        readonly bool dataAvailable;
 
         public bool DataAvailable
         {
             get { return dataAvailable; }
         }
 
+        /// <exception cref="T:System.NotImplementedException"></exception>
         public MessageParser(TextReader reader)
         {
             string line;
@@ -86,14 +87,7 @@ namespace FCP2.Protocol
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var temp = SafeGet(binder.Name);
-            if (temp != null)
-            {
-                result = new DynamicReturnValue(temp);
-            }
-            else
-            {
-                result = new MessageParserSubElement(this, binder.Name);
-            }
+            result = temp != null ? new DynamicReturnValue(temp) : new MessageParserSubElement(this, binder.Name);
             return true;
         }
 
@@ -106,7 +100,7 @@ namespace FCP2.Protocol
             yield break;
         }
 
-#if DEBUG
+        #if DEBUG
         public void PrintAccessCount()
         {
             bool allaccessed = true;
@@ -129,7 +123,7 @@ namespace FCP2.Protocol
             }
             Console.ForegroundColor = ConsoleColor.Gray;
         }
-#endif
+        #endif
 
     }
 }

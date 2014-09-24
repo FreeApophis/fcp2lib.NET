@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2010 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,29 +16,29 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 using System;
 using System.Net;
-using FCP2.Protocol;
 
-namespace FCP2.EventArgs
+namespace FCP2
 {
 
     public class PeerEventArgs : System.EventArgs
     {
-        private readonly ArkType ark;
-        private readonly AuthType auth;
-        private readonly DsaGroupType dsaGroup;
-        private readonly DsaPubKeyType dsaPubKey;
-        private readonly string identity;
-        private readonly string lastGoodVersion;
-        private readonly double location;
-        private readonly MetadataType metadata;
-        private readonly string myName;
-        private readonly bool opennet;
-        private readonly PhysicalType physical;
-        private readonly bool testnet;
-        private readonly string version;
-        private readonly VolatileType @volatile;
+        readonly ArkType ark;
+        readonly AuthType auth;
+        readonly DsaGroupType dsaGroup;
+        readonly DsaPubKeyType dsaPubKey;
+        readonly string identity;
+        readonly string lastGoodVersion;
+        readonly double location;
+        readonly MetadataType metadata;
+        readonly string myName;
+        readonly bool opennet;
+        readonly PhysicalType physical;
+        readonly bool testnet;
+        readonly string version;
+        readonly VolatileType @volatile;
 
         /// <summary>
         /// PeerEventArgs Constructor
@@ -144,8 +144,8 @@ namespace FCP2.EventArgs
 
         public class ArkType
         {
-            private readonly long number;
-            private readonly string pubURI;
+            readonly long number;
+            readonly string pubURI;
 
             internal ArkType(dynamic parsed)
             {
@@ -170,7 +170,7 @@ namespace FCP2.EventArgs
 
         public class AuthType
         {
-            private readonly long negTypes;
+            readonly long negTypes;
 
             internal AuthType(dynamic parsed)
             {
@@ -189,9 +189,9 @@ namespace FCP2.EventArgs
 
         public class DsaGroupType
         {
-            private readonly string g;
-            private readonly string p;
-            private readonly string q;
+            readonly string g;
+            readonly string p;
+            readonly string q;
 
             internal DsaGroupType(dynamic parsed)
             {
@@ -222,7 +222,7 @@ namespace FCP2.EventArgs
 
         public class DsaPubKeyType
         {
-            private readonly string y;
+            readonly string y;
 
             internal DsaPubKeyType(dynamic parsed)
             {
@@ -241,13 +241,13 @@ namespace FCP2.EventArgs
 
         public class MetadataType
         {
-            private readonly DetectedType detected;
-            private readonly long hadRoutableConnectionCount;
-            private readonly long routableConnectionCheckCount;
-            private readonly DateTime timeLastConnected;
-            private readonly DateTime timeLastReceivedPacket;
-            private readonly DateTime timeLastRoutable;
-            private readonly DateTime timeLastSuccess;
+            readonly DetectedType detected;
+            readonly long hadRoutableConnectionCount;
+            readonly long routableConnectionCheckCount;
+            readonly DateTime timeLastConnected;
+            readonly DateTime timeLastReceivedPacket;
+            readonly DateTime timeLastRoutable;
+            readonly DateTime timeLastSuccess;
 
             internal MetadataType(dynamic parsed)
             {
@@ -299,7 +299,7 @@ namespace FCP2.EventArgs
 
             public class DetectedType
             {
-                private readonly IPEndPoint udp;
+                readonly IPEndPoint udp;
 
                 internal DetectedType(dynamic parsed)
                 {
@@ -323,7 +323,7 @@ namespace FCP2.EventArgs
 
         public class PhysicalType
         {
-            private readonly IPEndPoint udp;
+            readonly IPEndPoint udp;
 
             internal PhysicalType(dynamic parsed)
             {
@@ -344,16 +344,16 @@ namespace FCP2.EventArgs
 
         public class VolatileType
         {
-            private readonly double averagePing;
-            private readonly string lastRoutingBackoffReason;
-            private readonly double overloadProbability;
-            private readonly double percentTimeRoutableConnection;
-            private readonly long routingBackoff;
-            private readonly long routingBackoffLength;
-            private readonly double routingBackoffPercent;
-            private readonly string status;
-            private readonly long totalBytesIn;
-            private readonly long totalBytesOut;
+            readonly double averagePing;
+            readonly string lastRoutingBackoffReason;
+            readonly double overloadProbability;
+            readonly double percentTimeRoutableConnection;
+            readonly long routingBackoff;
+            readonly long routingBackoffLength;
+            readonly double routingBackoffPercent;
+            readonly string status;
+            readonly long totalBytesIn;
+            readonly long totalBytesOut;
 
             internal VolatileType(dynamic parsed)
             {
