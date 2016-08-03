@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,18 +19,20 @@
 
 using System;
 using System.IO;
+using FCP2.Protocol;
 
-namespace FCP2
+namespace FCP2.EventArgs
 {
 
     public class AllDataEventArgs : System.EventArgs
     {
-        readonly DateTime completionTime;
-        Stream data;
-        readonly long datalength;
 
-        readonly string identifier;
-        readonly DateTime startupTime;
+        public string Identifier { get; }
+        public long Datalength { get; }
+        public DateTime StartupTime { get; }
+        public DateTime CompletionTime { get; }
+
+        Stream _data;
 
         /// <summary>
         /// AllDataEventArgs Constructor
@@ -46,36 +48,17 @@ namespace FCP2
             if (!parsed.DataAvailable)
                 throw new NotSupportedException("AllDataEvent without Data");
 
-            this.data = data;
-            identifier = parsed.Identifier;
-            datalength = parsed.DataLength;
-            startupTime = parsed.StartupTime;
-            completionTime = parsed.CompletionTime;
+            _data = data;
+            Identifier = parsed.Identifier;
+            Datalength = parsed.DataLength;
+            StartupTime = parsed.StartupTime;
+            CompletionTime = parsed.CompletionTime;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
         }
 
-        public string Identifier
-        {
-            get { return identifier; }
-        }
-
-        public long Datalength
-        {
-            get { return datalength; }
-        }
-
-        public DateTime StartupTime
-        {
-            get { return startupTime; }
-        }
-
-        public DateTime CompletionTime
-        {
-            get { return completionTime; }
-        }
 
         /// <summary>
         /// This Method only gets the Datastream once, the Datastream is cleared 
@@ -86,8 +69,8 @@ namespace FCP2
         /// </summary>
         public Stream GetStream()
         {
-            var temp = data;
-            data = null;
+            var temp = _data;
+            _data = null;
             return temp;
         }
     }

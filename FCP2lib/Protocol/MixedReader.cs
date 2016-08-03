@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 using System.IO;
 using System.Text;
 
-namespace FCP2
+namespace FCP2.Protocol
 {
     /// <summary>
     /// Minimalistic StreamReader Implementation which makes it possible to read binary data aswell.
@@ -35,12 +35,12 @@ namespace FCP2
     /// </summary>
     public class MixedReader : TextReader
     {
-        readonly byte[] buffer = new byte[1024];
-        readonly Stream stream;
+        readonly byte[] _buffer = new byte[1024];
+        readonly Stream _stream;
 
         public MixedReader(Stream stream)
         {
-            this.stream = stream;
+            _stream = stream;
         }
 
         public override string ReadLine()
@@ -52,7 +52,7 @@ namespace FCP2
             bool end = false;
             while (!end)
             {
-                long cur = stream.ReadByte();
+                long cur = _stream.ReadByte();
                 switch (cur)
                 {
                     case -1:
@@ -62,12 +62,12 @@ namespace FCP2
                         end = true;
                         break;
                     default:
-                        buffer[i] = (byte)cur;
+                        _buffer[i] = (byte)cur;
                         break;
                 }
                 ++i;
             }
-            return enc.GetString(buffer, 0, i - 1);
+            return enc.GetString(_buffer, 0, i - 1);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,34 +20,27 @@
 using System;
 using System.Dynamic;
 
-namespace FCP2
+namespace FCP2.Protocol
 {
     public class MessageParserSubElement : DynamicObject
     {
-        readonly MessageParser parentParser;
-        readonly string name;
+        readonly MessageParser _parentParser;
+        readonly string _name;
 
-        public bool DataAvailable
-        {
-            get { return parentParser.DataAvailable; }
-        }
-
-        public bool Exists()
-        {
-            return parentParser.SafeGet(name) != null;
-        }
+        public bool DataAvailable => _parentParser.DataAvailable;
+        public bool Exists() => _parentParser.SafeGet(_name) != null;
 
         public MessageParserSubElement(MessageParser messageParser, string element)
         {
-            parentParser = messageParser;
-            name = element;
+            _parentParser = messageParser;
+            _name = element;
 
         }
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
 #if DEBUG
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("keyword '" + name + "' not found! (Type: " + binder.Type + ")");
+            Console.WriteLine("keyword '" + _name + "' not found! (Type: " + binder.Type + ")");
             Console.ForegroundColor = ConsoleColor.Gray;
 #endif
             result = GetDefault(binder.Type);
@@ -70,15 +63,15 @@ namespace FCP2
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var element = name + "." + binder.Name;
-            var temp = parentParser.SafeGet(element);
+            var element = _name + "." + binder.Name;
+            var temp = _parentParser.SafeGet(element);
             if (temp != null)
             {
                 result = new DynamicReturnValue(temp);
             }
             else
             {
-                result = new MessageParserSubElement(parentParser, element);
+                result = new MessageParserSubElement(_parentParser, element);
             }
             return true;
         }

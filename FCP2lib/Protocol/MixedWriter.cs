@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace FCP2
+namespace FCP2.Protocol
 {
     /// <summary>
     /// Minimalistic StreamWriter Implementation which makes it possible to write binary data aswell.
@@ -36,21 +36,16 @@ namespace FCP2
     /// </summary>
     public class MixedWriter : TextWriter
     {
-        readonly byte[] buffer = new byte[1024];
-        readonly Stream stream;
+        readonly byte[] _buffer = new byte[1024];
+        readonly Stream _stream;
 
         public MixedWriter(Stream stream)
         {
-            this.stream = stream;
+            _stream = stream;
         }
 
-        public override Encoding Encoding
-        {
-            get
-            {
-                return Encoding.UTF8;
-            }
-        }
+        public override Encoding Encoding => Encoding.UTF8;
+        public override void Flush() => _stream.Flush();
 
         public override void WriteLine(string value)
         {
@@ -61,13 +56,9 @@ namespace FCP2
 #endif
             value = value + "\n";
             var enc = new UTF8Encoding();
-            int numbytes = enc.GetBytes(value, 0, value.Length, buffer, 0);
-            stream.Write(buffer, 0, numbytes);
+            int numbytes = enc.GetBytes(value, 0, value.Length, _buffer, 0);
+            _stream.Write(_buffer, 0, numbytes);
         }
 
-        public override void Flush()
-        {
-            stream.Flush();
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,104 +17,41 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FCP2
+using FCP2.Protocol;
+
+namespace FCP2.EventArgs
 {
 
     public class CompatibilityModeEventArgs : System.EventArgs
     {
-        readonly string identifier;
-        readonly string global;
-        readonly string min;
-        readonly string minNumber;
-        readonly string max;
-        readonly string maxNumber;
-        readonly string splitfileCryptoKey;
-        readonly string dontCompress;
-        readonly string definitive;
+        public string Identifier { get; }
+        public string Global { get; }
+        public string Min { get; }
+        public string MinNumber { get; }
+        public string Max { get; }
+        public string MaxNumber { get; }
+        public string SplitfileCryptoKey { get; }
+        public string DontCompress { get; }
+        public string Definitive { get; }
 
         internal CompatibilityModeEventArgs(dynamic parsed)
         {
 #if DEBUG
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
-            identifier = parsed.Identifier;
-            global = parsed.Global;
-            min = parsed.Min;
-            minNumber = parsed.MinNumber;
-            max = parsed.Max;
-            maxNumber = parsed.MaxNumber;
-            splitfileCryptoKey = parsed.SplitfileCryptoKey;
-            dontCompress = parsed.DontCompress;
-            definitive = parsed.Definitive;
+            Identifier = parsed.Identifier;
+            Global = parsed.Global;
+            Min = parsed.Min;
+            MinNumber = parsed.MinNumber;
+            Max = parsed.Max;
+            MaxNumber = parsed.MaxNumber;
+            SplitfileCryptoKey = parsed.SplitfileCryptoKey;
+            DontCompress = parsed.DontCompress;
+            Definitive = parsed.Definitive;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-        }
-
-        public string Identifier
-        {
-            get
-            {
-                return identifier;
-            }
-        }
-
-        public string Global
-        {
-            get
-            {
-                return global;
-            }
-        }
-        public string Min
-        {
-            get
-            {
-                return min;
-            }
-        }
-        public string MinNumber
-        {
-            get
-            {
-                return minNumber;
-            }
-        }
-        public string Max
-        {
-            get
-            {
-                return max;
-            }
-        }
-        public string MaxNumber
-        {
-            get
-            {
-                return maxNumber;
-            }
-        }
-        public string SplitfileCryptoKey
-        {
-            get
-            {
-                return splitfileCryptoKey;
-            }
-        }
-        public string DontCompress
-        {
-            get
-            {
-                return dontCompress;
-            }
-        }
-        public string Definitive
-        {
-            get
-            {
-                return definitive;
-            }
         }
     }
 }

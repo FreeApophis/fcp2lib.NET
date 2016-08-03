@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,21 +17,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FCP2
+using FCP2.Protocol;
+
+namespace FCP2.EventArgs
 {
 
     public class PersistentGetEventArgs : System.EventArgs
     {
-        readonly string clientToken;
-        readonly string filename;
-        readonly bool global;
-        readonly long maxRetries;
-        readonly PersistenceEnum persistenceType;
-        readonly PriorityClassEnum priorityClass;
-        readonly ReturnTypeEnum returnType;
-        readonly string tempFilename;
-        readonly string uri;
-        readonly VerbosityEnum verbosity;
+        public string URI { get; }
+        public VerbosityEnum Verbosity { get; }
+        public ReturnTypeEnum ReturnType { get; }
+        public string Filename { get; }
+        public string TempFilename { get; }
+        public string ClientToken { get; }
+        public PriorityClassEnum PriorityClass { get; }
+        public PersistenceEnum PersistenceType { get; }
+        public bool Global { get; }
+        public long MaxRetries { get; }
 
         /// <summary>
         /// PersistentGetEventArgs Constructor
@@ -43,70 +45,20 @@ namespace FCP2
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            uri = parsed.URI;
-            verbosity = parsed.Verbosity;
-            returnType = parsed.ReturnType;
-            filename = parsed.Filename;
-            tempFilename = parsed.TempFilename;
-            clientToken = parsed.ClientToken;
-            priorityClass = parsed.PriorityClass;
-            persistenceType = parsed.PersistenceType;
-            global = parsed.Global;
-            maxRetries = parsed.MaxRetries;
+            URI = parsed.URI;
+            Verbosity = parsed.Verbosity;
+            ReturnType = parsed.ReturnType;
+            Filename = parsed.Filename;
+            TempFilename = parsed.TempFilename;
+            ClientToken = parsed.ClientToken;
+            PriorityClass = parsed.PriorityClass;
+            PersistenceType = parsed.PersistenceType;
+            Global = parsed.Global;
+            MaxRetries = parsed.MaxRetries;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-        }
-
-        public string URI
-        {
-            get { return uri; }
-        }
-
-        public VerbosityEnum Verbosity
-        {
-            get { return verbosity; }
-        }
-
-        public ReturnTypeEnum ReturnType
-        {
-            get { return returnType; }
-        }
-
-        public string Filename
-        {
-            get { return filename; }
-        }
-
-        public string TempFilename
-        {
-            get { return tempFilename; }
-        }
-
-        public string ClientToken
-        {
-            get { return clientToken; }
-        }
-
-        public PriorityClassEnum PriorityClass
-        {
-            get { return priorityClass; }
-        }
-
-        public PersistenceEnum PersistenceType
-        {
-            get { return persistenceType; }
-        }
-
-        public bool Global
-        {
-            get { return global; }
-        }
-
-        public long MaxRetries
-        {
-            get { return maxRetries; }
         }
     }
 }

@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FCP2
-{
+using FCP2.Protocol;
 
+namespace FCP2.EventArgs
+{
     public class SimpleProgressEventArgs : System.EventArgs
     {
-        readonly long failed;
-        readonly long fatallyFailed;
-        readonly bool finalizedTotal;
-        readonly string identifier;
-        readonly long required;
-        readonly long succeeded;
-        readonly long total;
+        public long Total { get; }
+        public long Required { get; }
+        public long Failed { get; }
+        public long FatallyFailed { get; }
+        public long Succeeded { get; }
+        public bool FinalizedTotal { get; }
+        public string Identifier { get; }
 
         /// <summary>
         /// SimpleProgressEventArgs Constructor
@@ -40,52 +41,17 @@ namespace FCP2
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            total = parsed.Total;
-            required = parsed.Required;
-            failed = parsed.Failed;
-            fatallyFailed = parsed.FatallyFailed;
-            succeeded = parsed.Succeeded;
-            finalizedTotal = parsed.FinalizedTotal;
-            identifier = parsed.Identifier;
+            Total = parsed.Total;
+            Required = parsed.Required;
+            Failed = parsed.Failed;
+            FatallyFailed = parsed.FatallyFailed;
+            Succeeded = parsed.Succeeded;
+            FinalizedTotal = parsed.FinalizedTotal;
+            Identifier = parsed.Identifier;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-        }
-
-        public long Total
-        {
-            get { return total; }
-        }
-
-        public long Required
-        {
-            get { return required; }
-        }
-
-        public long Failed
-        {
-            get { return failed; }
-        }
-
-        public long FatallyFailed
-        {
-            get { return fatallyFailed; }
-        }
-
-        public long Succeeded
-        {
-            get { return succeeded; }
-        }
-
-        public bool FinalizedTotal
-        {
-            get { return finalizedTotal; }
-        }
-
-        public string Identifier
-        {
-            get { return identifier; }
         }
     }
 }

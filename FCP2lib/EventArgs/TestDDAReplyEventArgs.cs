@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,14 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FCP2
+using FCP2.Protocol;
+
+namespace FCP2.EventArgs
 {
     public class TestDDAReplyEventArgs : System.EventArgs
     {
-        readonly string contentToWrite;
-        readonly string directory;
-        readonly string readFilename;
-        readonly string writeFilename;
+        public string Directory { get; }
+        public string ReadFilename { get; }
+        public string WriteFilename { get; }
+        public string ContentToWrite { get; }
 
         /// <summary>
         /// TestDDAReplyEventArgs Constructor
@@ -36,34 +38,14 @@ namespace FCP2
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            directory = parsed.Directory;
-            readFilename = parsed.ReadFilename;
-            writeFilename = parsed.WriteFilename;
-            contentToWrite = parsed.ContentToWrite;
+            Directory = parsed.Directory;
+            ReadFilename = parsed.ReadFilename;
+            WriteFilename = parsed.WriteFilename;
+            ContentToWrite = parsed.ContentToWrite;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-        }
-
-        public string Directory
-        {
-            get { return directory; }
-        }
-
-        public string ReadFilename
-        {
-            get { return readFilename; }
-        }
-
-        public string WriteFilename
-        {
-            get { return writeFilename; }
-        }
-
-        public string ContentToWrite
-        {
-            get { return contentToWrite; }
         }
     }
 }

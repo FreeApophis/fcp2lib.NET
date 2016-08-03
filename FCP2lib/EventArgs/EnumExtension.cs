@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,8 +18,9 @@
  */
 
 using System;
+using FCP2.Protocol;
 
-namespace FCP2
+namespace FCP2.EventArgs
 {
 
     public static class EnumExtension
@@ -40,7 +41,7 @@ namespace FCP2
                 case PersistenceEnum.Forever:
                     return "forever";
                 default:
-                    throw new ArgumentOutOfRangeException("persistenceEnum");
+                    throw new ArgumentOutOfRangeException(nameof(persistenceEnum));
             }
         }
 
@@ -55,7 +56,7 @@ namespace FCP2
                 case ReturnTypeEnum.None:
                     return "none";
                 default:
-                    throw new ArgumentOutOfRangeException("returnTypeEnum");
+                    throw new ArgumentOutOfRangeException(nameof(returnTypeEnum));
             }
         }
 
@@ -70,7 +71,7 @@ namespace FCP2
                 case UploadFromEnum.Redirect:
                     return "redirect";
                 default:
-                    throw new ArgumentOutOfRangeException("uploadFromEnum");
+                    throw new ArgumentOutOfRangeException(nameof(uploadFromEnum));
             }
         }
 
@@ -83,7 +84,7 @@ namespace FCP2
                 case OfficialSourceTypeEnum.Https:
                     return "https";
                 default:
-                    throw new ArgumentOutOfRangeException("officialSourceType");
+                    throw new ArgumentOutOfRangeException(nameof(officialSourceType));
             }
         }
 
@@ -100,7 +101,7 @@ namespace FCP2
                 case UrlTypeEnum.Url:
                     return "url";
                 default:
-                    throw new ArgumentOutOfRangeException("urlType");
+                    throw new ArgumentOutOfRangeException(nameof(urlType));
             }
         }
 

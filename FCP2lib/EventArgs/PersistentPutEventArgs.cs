@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,22 +17,24 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace FCP2
+using FCP2.Protocol;
+
+namespace FCP2.EventArgs
 {
 
     public class PersistentPutEventArgs : System.EventArgs
     {
-        readonly string clientToken;
-        readonly long dataLength;
-        readonly string filename;
-        readonly bool global;
-        readonly long maxRetries;
-        readonly MetadataType metadata;
-        readonly PriorityClassEnum priorityClass;
-        readonly string targetFilename;
-        readonly UploadFromEnum uploadFrom;
-        readonly string uri;
-        readonly VerbosityEnum verbosity;
+        public string URI { get; }
+        public VerbosityEnum Verbosity { get; }
+        public PriorityClassEnum PriorityClass { get; }
+        public UploadFromEnum UploadFrom { get; }
+        public string Filename { get; }
+        public string TargetFilename { get; }
+        public MetadataType Metadata { get; }
+        public string ClientToken { get; }
+        public bool Global { get; }
+        public long DataLength { get; }
+        public long MaxRetries { get; }
 
         /// <summary>
         /// PersistentPutEventArgs Constructor
@@ -44,92 +46,32 @@ namespace FCP2
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            uri = parsed.URI;
-            verbosity = parsed.Verbosity;
-            priorityClass = parsed.PriorityClass;
-            uploadFrom =parsed.UploadFrom;
-            filename = parsed.Filename;
-            targetFilename = parsed.TargetFilename;
-            metadata = new MetadataType(parsed.Metadata);
-            clientToken = parsed.ClientToken;
-            global = parsed.Global;
-            dataLength = parsed.DataLength;
-            maxRetries = parsed.MaxRetries;
+            URI = parsed.URI;
+            Verbosity = parsed.Verbosity;
+            PriorityClass = parsed.PriorityClass;
+            UploadFrom =parsed.UploadFrom;
+            Filename = parsed.Filename;
+            TargetFilename = parsed.TargetFilename;
+            Metadata = new MetadataType(parsed.Metadata);
+            ClientToken = parsed.ClientToken;
+            Global = parsed.Global;
+            DataLength = parsed.DataLength;
+            MaxRetries = parsed.MaxRetries;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
         }
 
-        public string URI
-        {
-            get { return uri; }
-        }
-
-        public VerbosityEnum Verbosity
-        {
-            get { return verbosity; }
-        }
-
-        public PriorityClassEnum PriorityClass
-        {
-            get { return priorityClass; }
-        }
-
-        public UploadFromEnum UploadFrom
-        {
-            get { return uploadFrom; }
-        }
-
-        public string Filename
-        {
-            get { return filename; }
-        }
-
-        public string TargetFilename
-        {
-            get { return targetFilename; }
-        }
-
-        public MetadataType Metadata
-        {
-            get { return metadata; }
-        }
-
-        public string ClientToken
-        {
-            get { return clientToken; }
-        }
-
-        public bool Global
-        {
-            get { return global; }
-        }
-
-        public long DataLength
-        {
-            get { return dataLength; }
-        }
-
-        public long MaxRetries
-        {
-            get { return maxRetries; }
-        }
-
         #region Nested type: MetadataType
 
         public class MetadataType
         {
-            readonly string contentType;
+            public string ContentType { get; }
 
             internal MetadataType(dynamic metadata)
             {
-                contentType = metadata.ContentType;
-            }
-
-            public string ContentType
-            {
-                get { return contentType; }
+                ContentType = metadata.ContentType;
             }
         }
 

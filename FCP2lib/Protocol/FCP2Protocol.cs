@@ -1,7 +1,7 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -26,28 +26,109 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using FCP2;
+using FCP2.EventArgs;
 
-namespace FCP2
+namespace FCP2.Protocol
 {
     /// <summary>
     /// FCP 2.0 Protocol implementation according to following RFC:
     /// http://wiki.freenetproject.org/FreenetFCPSpec2Point0
     /// </summary>
-    public class FCP2Protocol
+    public class FCP2Protocol : IDisposable
     {
         #region Private declarations
-        readonly IPEndPoint ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9481);
-        readonly TcpClient client = new TcpClient();
-        private TextReader fnread;
-        private TextWriter fnwrite;
-        readonly bool isMultiThreaded;
 
-        public string ClientName { get; private set; }
+        internal static readonly IPEndPoint StandardFCP2Endpoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 9481);
+
+        private readonly IPEndPoint _ep;
+        private readonly TcpClient _client = new TcpClient();
+        private TextReader _fnread;
+        private TextWriter _fnwrite;
+        readonly bool isMultiThreaded = false;
+
+        public string ClientName { get; }
         private const string FCPVersion = "2.0";
         #endregion
 
-        public const string EndMessage = "EndMessage";
+        #region Private Methods
+        /// <summary>
+        /// Connects and sends a ClientHello
+        /// </summary>
+        /// <returns>returns false if we are already connected</returns>
+        private bool ConnectIfNeeded()
+        {
+            lock (_client)
+            {
+                if (_client.Connected)
+                {
+                    return false;
+                }
+
+                _client.Connect(_ep);
+
+                _fnread = new MixedReader(_client.GetStream());
+                _fnwrite = new MixedWriter(_client.GetStream());
+
+                _parserThread = new Thread(MessageParser);
+                _parserThread.Start();
+
+                RealClientHello(ClientName, FCPVersion);
+            }
+
+            return true;
+
+        }
+
+
+        private void Write(string value) => _fnwrite.WriteLine(value);
+
+        private void Write(string key, bool value) => _fnwrite.WriteLine($"{key}={value}");
+        private void Write(string key, long value) => _fnwrite.WriteLine($"{key}={value}");
+
+        private void Write(string key, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _fnwrite.WriteLine($"{key}={value}");
+            }
+        }
+
+        private void Write<T>(string key, T? value) where T : struct
+        {
+            if (value.HasValue)
+            {
+                _fnwrite.WriteLine($"{key}={value.Value}");
+            }
+        }
+
+        internal void EndMessage()
+        {
+            _fnwrite.WriteLine(nameof(EndMessage));
+            _fnwrite.Flush();
+        }
+
+
+        /// <summary>
+        /// This must be the first message from the client on any given connection.
+        /// The node will respond with a NodeHello Event.
+        /// </summary>
+        /// <param name="name">A name to uniquely identify the client to the node. This is
+        /// used for persistence, so a client can see the same local queue if it disconnects
+        /// and then reconnects. If a connection is attempted with the same name as an existing
+        /// connection, you will get an error</param>
+        /// <param name="expectedVersion">The version of FCP to expect. In this case it will always
+        /// be 2.0, but in the future clients may want to check if the node supports later versions.
+        /// We do not do anything with ExpectedVersion yet, but it may be verified in the future.</param>
+        private void RealClientHello(string name, string expectedVersion)
+        {
+            /* this will be called automatically on every Connection start */
+            Write("ClientHello");
+            Write("Name", name);
+            Write("ExpectedVersion", expectedVersion);
+
+            EndMessage();
+        }
+        #endregion
 
 #if DEBUG
         public static void ArgsDebug(System.EventArgs args, MessageParser parsed)
@@ -57,7 +138,7 @@ namespace FCP2
             Console.ForegroundColor = ConsoleColor.Cyan;
             foreach (var kvp in parsed)
             {
-                Console.WriteLine(kvp.Key + "=" + kvp.Value);
+                Console.WriteLine(kvp.Key + "", kvp.Value);
             }
             Console.ForegroundColor = ConsoleColor.Gray;
         }
@@ -114,6 +195,7 @@ namespace FCP2
         public event EventHandler<PluginInfoEventArgs> PluginInfoEvent;
         public event EventHandler<PluginRemovedEventArgs> PluginRemovedEvent;
         public event EventHandler<FCPPluginReplyEventArgs> FCPPluginReplyEvent;
+        public event EventHandler<GeneratedMetadataEventArgs> GeneratedMetadataEvent;
         #endregion
 
         #region EventInvocation
@@ -137,10 +219,7 @@ namespace FCP2
         /// <param name="e"></param>
         protected virtual void OnAllDataEvent(AllDataEventArgs e)
         {
-            if (AllDataEvent != null)
-            {
-                AllDataEvent(this, e);
-            }
+            AllDataEvent?.Invoke(this, e);
 
             Stream data;
 
@@ -156,7 +235,8 @@ namespace FCP2
         }
         #endregion
 
-        private Thread parserThread;
+        private Thread _parserThread;
+
         /// <summary>
         /// 
         /// </summary>
@@ -167,13 +247,10 @@ namespace FCP2
         /// connection, you will get an error</param>
         public FCP2Protocol(IPEndPoint nodeAdress, string clientName)
         {
-            if (nodeAdress != null)
-            {
-                ep = nodeAdress;
-            }
-            this.ClientName = clientName;
-            this.isMultiThreaded = isMultiThreaded;
+            _ep = nodeAdress ?? StandardFCP2Endpoint;
+            ClientName = clientName;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -183,35 +260,8 @@ namespace FCP2
         /// connection, you will get an error</param>
         public FCP2Protocol(string clientName)
         {
-            this.ClientName = clientName;
-        }
-
-        /// <summary>
-        /// Connects and sends a ClientHello
-        /// </summary>
-        /// <returns>returns false if we are already connected</returns>
-        private bool ConnectIfNeeded()
-        {
-            lock (client)
-            {
-                if (client.Connected)
-                {
-                    return false;
-                }
-
-                client.Connect(ep);
-
-                fnread = new MixedReader(client.GetStream());
-                fnwrite = new MixedWriter(client.GetStream());
-
-                parserThread = new Thread(MessageParser);
-                parserThread.Start();
-
-                RealClientHello(ClientName, FCPVersion);
-            }
-
-            return true;
-
+            ClientName = clientName;
+            _ep = StandardFCP2Endpoint;
         }
 
         /// <summary>
@@ -219,182 +269,170 @@ namespace FCP2
         /// </summary>
         public void Disconnect()
         {
-            if (!client.Connected) return;
+            if (!_client.Connected) return;
             RealDisconnect();
-            client.GetStream().Close();
-            client.Close();
+            _client.GetStream().Close();
+            _client.Close();
         }
 
 
         #region Parser
+
         private void MessageParser()
         {
             string line;
-            while ((line = fnread.ReadLine()) != null)
+            while ((line = _fnread.ReadLine()) != null)
             {
-                switch (line)
-                {
-                    case "NodeHello":
-                        DispatchEvent(this, NodeHelloEvent, new NodeHelloEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "CloseConnectionDuplicateClientName":
-                        DispatchEvent(this, CloseConnectionDuplicateClientNameEvent, new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "Peer":
-                        DispatchEvent(this, PeerEvent, new PeerEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PeerNote":
-                        DispatchEvent(this, PeerNoteEvent, new PeerNoteEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "EndListPeers":
-                        DispatchEvent(this, EndListPeersEvent, new EndListPeersEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "EndListPeerNotes":
-                        DispatchEvent(this, EndListPeerNotesEvent, new EndListPeerNotesEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PeerRemoved":
-                        DispatchEvent(this, PeerRemovedEvent, new PeerRemovedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "NodeData":
-                        DispatchEvent(this, NodeDataEvent, new NodeDataEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "ConfigData":
-                        DispatchEvent(this, ConfigDataEvent, new ConfigDataEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "TestDDAReply":
-                        DispatchEvent(this, TestDDAReplyEvent, new TestDDAReplyEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "TestDDAComplete":
-                        DispatchEvent(this, TestDDACompleteEvent, new TestDDACompleteEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "SSKKeypair":
-                        DispatchEvent(this, SSKKeypairEvent, new SSKKeypairEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PersistentGet":
-                        DispatchEvent(this, PersistentGetEvent, new PersistentGetEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PersistentPut":
-                        DispatchEvent(this, PersistentPutEvent, new PersistentPutEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PersistentPutDir":
-                        DispatchEvent(this, PersistentPutDirEvent, new PersistentPutDirEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "URIGenerated":
-                        DispatchEvent(this, URIGeneratedEvent, new URIGeneratedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PutSuccessful":
-                        DispatchEvent(this, PutSuccessfulEvent, new PutSuccessfulEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PutFetchable":
-                        DispatchEvent(this, PutFetchableEvent, new PutFetchableEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "DataFound":
-                        DispatchEvent(this, DataFoundEvent, new DataFoundEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "AllData":
-                        OnAllDataEvent(new AllDataEventArgs(new MessageParser(fnread), client.GetStream()));
-                        break;
-                    case "StartedCompression":
-                        DispatchEvent(this, StartedCompressionEvent, new StartedCompressionEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "FinishedCompression":
-                        DispatchEvent(this, FinishedCompressionEvent, new FinishedCompressionEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "SimpleProgress":
-                        DispatchEvent(this, SimpleProgressEvent, new SimpleProgressEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "ExpectedHashes":
-                        DispatchEvent(this, ExpectedHashesEvent, new ExpectedHashesEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "ExpectedMIME":
-                        DispatchEvent(this, ExpectedMimeEvent, new ExpectedMimeEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "ExpectedDataLength":
-                        DispatchEvent(this, ExpectedDataLengthEvent, new ExpectedDataLengthEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "CompatibilityMode":
-                        DispatchEvent(this, CompatibilityModeEvent, new CompatibilityModeEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "EndListPersistentRequests":
-                        DispatchEvent(this, EndListPersistentRequestsEvent, new EndListPersistentRequestsEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PersistentRequestRemoved":
-                        DispatchEvent(this, PersistentRequestRemovedEvent, new PersistentRequestRemovedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PersistentRequestModified":
-                        DispatchEvent(this, PersistentRequestModifiedEvent, new PersistentRequestModifiedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "SendingToNetwork":
-                        DispatchEvent(this, SendingToNetworkEvent, new SendingToNetworkEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "EnterFiniteCooldown":
-                        DispatchEvent(this, EnterFiniteCooldownEvent, new EnterFiniteCooldownEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PutFailed":
-                        DispatchEvent(this, PutFailedEvent, new PutFailedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "GetFailed":
-                        DispatchEvent(this, GetFailedEvent, new GetFailedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "ProtocolError":
-                        DispatchEvent(this, ProtocolErrorEvent, new ProtocolErrorEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "IdentifierCollision":
-                        DispatchEvent(this, IdentifierCollisionEvent, new IdentifierCollisionEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "UnknownNodeIdentifier":
-                        DispatchEvent(this, UnknownNodeIdentifierEvent, new UnknownNodeIdentifierEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "UnknownPeerNoteType":
-                        DispatchEvent(this, UnknownPeerNoteTypeEvent, new UnknownPeerNoteTypeEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "SubscribedUSK":
-                        DispatchEvent(this, SubscribedUSKEvent, new SubscribedUSKEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "SubscribedUSKUpdate":
-                        DispatchEvent(this, SubscribedUSKUpdateEvent, new SubscribedUSKUpdateEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PluginInfo":
-                        DispatchEvent(this, PluginInfoEvent, new PluginInfoEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "PluginRemoved":
-                        DispatchEvent(this, PluginRemovedEvent, new PluginRemovedEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "FCPPluginReply":
-                        DispatchEvent(this, FCPPluginReplyEvent, new FCPPluginReplyEventArgs(new MessageParser(fnread)));
-                        break;
-                    case "":
-                        /* ignore empty line */
-                        break;
-                    default:
-                        throw new ArgumentException("unknown message from freenet node");
-                }
+                CreateEvent(line);
+            }
+        }
+
+        private void CreateEvent(string line)
+        {
+            switch (line)
+            {
+                case "NodeHello":
+                    DispatchEvent(this, NodeHelloEvent, new NodeHelloEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "CloseConnectionDuplicateClientName":
+                    DispatchEvent(this, CloseConnectionDuplicateClientNameEvent,
+                        new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "Peer":
+                    DispatchEvent(this, PeerEvent, new PeerEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PeerNote":
+                    DispatchEvent(this, PeerNoteEvent, new PeerNoteEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "EndListPeers":
+                    DispatchEvent(this, EndListPeersEvent, new EndListPeersEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "EndListPeerNotes":
+                    DispatchEvent(this, EndListPeerNotesEvent, new EndListPeerNotesEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PeerRemoved":
+                    DispatchEvent(this, PeerRemovedEvent, new PeerRemovedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "NodeData":
+                    DispatchEvent(this, NodeDataEvent, new NodeDataEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "ConfigData":
+                    DispatchEvent(this, ConfigDataEvent, new ConfigDataEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "TestDDAReply":
+                    DispatchEvent(this, TestDDAReplyEvent, new TestDDAReplyEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "TestDDAComplete":
+                    DispatchEvent(this, TestDDACompleteEvent, new TestDDACompleteEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "SSKKeypair":
+                    DispatchEvent(this, SSKKeypairEvent, new SSKKeypairEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PersistentGet":
+                    DispatchEvent(this, PersistentGetEvent, new PersistentGetEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PersistentPut":
+                    DispatchEvent(this, PersistentPutEvent, new PersistentPutEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PersistentPutDir":
+                    DispatchEvent(this, PersistentPutDirEvent, new PersistentPutDirEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "URIGenerated":
+                    DispatchEvent(this, URIGeneratedEvent, new URIGeneratedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PutSuccessful":
+                    DispatchEvent(this, PutSuccessfulEvent, new PutSuccessfulEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PutFetchable":
+                    DispatchEvent(this, PutFetchableEvent, new PutFetchableEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "DataFound":
+                    DispatchEvent(this, DataFoundEvent, new DataFoundEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "AllData":
+                    OnAllDataEvent(new AllDataEventArgs(new MessageParser(_fnread), _client.GetStream()));
+                    break;
+                case "StartedCompression":
+                    DispatchEvent(this, StartedCompressionEvent, new StartedCompressionEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "FinishedCompression":
+                    DispatchEvent(this, FinishedCompressionEvent, new FinishedCompressionEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "SimpleProgress":
+                    DispatchEvent(this, SimpleProgressEvent, new SimpleProgressEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "ExpectedHashes":
+                    DispatchEvent(this, ExpectedHashesEvent, new ExpectedHashesEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "ExpectedMIME":
+                    DispatchEvent(this, ExpectedMimeEvent, new ExpectedMimeEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "ExpectedDataLength":
+                    DispatchEvent(this, ExpectedDataLengthEvent, new ExpectedDataLengthEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "CompatibilityMode":
+                    DispatchEvent(this, CompatibilityModeEvent, new CompatibilityModeEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "EndListPersistentRequests":
+                    DispatchEvent(this, EndListPersistentRequestsEvent, new EndListPersistentRequestsEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PersistentRequestRemoved":
+                    DispatchEvent(this, PersistentRequestRemovedEvent, new PersistentRequestRemovedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PersistentRequestModified":
+                    DispatchEvent(this, PersistentRequestModifiedEvent, new PersistentRequestModifiedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "SendingToNetwork":
+                    DispatchEvent(this, SendingToNetworkEvent, new SendingToNetworkEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "EnterFiniteCooldown":
+                    DispatchEvent(this, EnterFiniteCooldownEvent, new EnterFiniteCooldownEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PutFailed":
+                    DispatchEvent(this, PutFailedEvent, new PutFailedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "GetFailed":
+                    DispatchEvent(this, GetFailedEvent, new GetFailedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "ProtocolError":
+                    DispatchEvent(this, ProtocolErrorEvent, new ProtocolErrorEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "IdentifierCollision":
+                    DispatchEvent(this, IdentifierCollisionEvent, new IdentifierCollisionEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "UnknownNodeIdentifier":
+                    DispatchEvent(this, UnknownNodeIdentifierEvent, new UnknownNodeIdentifierEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "UnknownPeerNoteType":
+                    DispatchEvent(this, UnknownPeerNoteTypeEvent, new UnknownPeerNoteTypeEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "SubscribedUSK":
+                    DispatchEvent(this, SubscribedUSKEvent, new SubscribedUSKEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "SubscribedUSKUpdate":
+                    DispatchEvent(this, SubscribedUSKUpdateEvent, new SubscribedUSKUpdateEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PluginInfo":
+                    DispatchEvent(this, PluginInfoEvent, new PluginInfoEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "PluginRemoved":
+                    DispatchEvent(this, PluginRemovedEvent, new PluginRemovedEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "FCPPluginReply":
+                    DispatchEvent(this, FCPPluginReplyEvent, new FCPPluginReplyEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "GeneratedMetadata":
+                    DispatchEvent(this, GeneratedMetadataEvent, new GeneratedMetadataEventArgs(new MessageParser(_fnread)));
+                    break;
+                case "":
+                    /* ignore empty line */
+                    break;
+                default:
+                    throw new ArgumentException("unknown message from freenet node");
             }
         }
 
         #endregion
-
-        /// <summary>
-        /// This must be the first message from the client on any given connection.
-        /// The node will respond with a NodeHello Event.
-        /// </summary>
-        /// <param name="name">A name to uniquely identify the client to the node. This is
-        /// used for persistence, so a client can see the same local queue if it disconnects
-        /// and then reconnects. If a connection is attempted with the same name as an existing
-        /// connection, you will get an error</param>
-        /// <param name="expectedVersion">The version of FCP to expect. In this case it will always
-        /// be 2.0, but in the future clients may want to check if the node supports later versions.
-        /// We do not do anything with ExpectedVersion yet, but it may be verified in the future.</param>
-        private void RealClientHello(string name, string expectedVersion)
-        {
-            /* this will be called automatically on every Connection start */
-
-            fnwrite.WriteLine("ClientHello");
-            fnwrite.WriteLine("Name=" + name);
-            fnwrite.WriteLine("ExpectedVersion=" + expectedVersion);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
-        }
 
         #region public interface
         /// <summary>
@@ -419,14 +457,13 @@ namespace FCP2
         public void ListPeer(string nodeIdentifier, bool? withMetadata = null, bool? withVolatile = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ListPeer");
-            fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
-            if (withMetadata != null)
-                fnwrite.WriteLine("WithMetadata=true" + withMetadata.Value);
-            if (withVolatile != null)
-                fnwrite.WriteLine("WithVolatile=" + withVolatile.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ListPeer");
+            Write("NodeIdentifier", nodeIdentifier);
+            Write("WithMetadata", withMetadata);
+            Write("WithVolatile", withVolatile);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -438,15 +475,13 @@ namespace FCP2
         public void ListPeers(string identifier = null, bool? withMetadata = null, bool? withVolatile = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ListPeers");
-            if (!String.IsNullOrEmpty(identifier))
-                fnwrite.WriteLine("Identifier=" + identifier);
-            if (withMetadata != null)
-                fnwrite.WriteLine("WithMetadata=true" + withMetadata.Value);
-            if (withVolatile != null)
-                fnwrite.WriteLine("WithVolatile=" + withVolatile.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ListPeers");
+            Write("Identifier", identifier);
+            Write("WithMetadata", withMetadata);
+            Write("WithVolatile", withVolatile);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -456,10 +491,11 @@ namespace FCP2
         public void ListPeerNotes(string nodeIdentifier)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ListPeerNotes");
-            fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ListPeerNotes");
+            Write("NodeIdentifier", nodeIdentifier);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -474,10 +510,11 @@ namespace FCP2
         public void AddPeer(FileInfo file)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("AddPeer");
-            fnwrite.WriteLine("File=" + file.FullName);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("AddPeer");
+            Write("File", file.FullName);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -492,10 +529,11 @@ namespace FCP2
         public void AddPeer(Uri uri)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("AddPeer");
-            fnwrite.WriteLine("URL=" + uri.AbsoluteUri);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("AddPeer");
+            Write("URL", uri.AbsoluteUri);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -510,10 +548,11 @@ namespace FCP2
         public void AddPeer(string nodeRef)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("AddPeer");
-            fnwrite.WriteLine(nodeRef);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("AddPeer");
+            Write(nodeRef);
+
+            EndMessage();
         }
 
 
@@ -527,16 +566,14 @@ namespace FCP2
         public void ModifyPeer(string nodeIdentifier, bool? allowLocalAdresses = null, bool? isDisabled = null, bool? isListenOnly = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ModifyPeer");
-            fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
-            if (allowLocalAdresses != null)
-                fnwrite.WriteLine("AllowLocalAdresses=" + allowLocalAdresses.Value);
-            if (isDisabled != null)
-                fnwrite.WriteLine("IsDisabled=" + isDisabled.Value);
-            if (isListenOnly != null)
-                fnwrite.WriteLine("IsListenOnly=" + isListenOnly.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ModifyPeer");
+            Write("NodeIdentifier", nodeIdentifier);
+            Write("AllowLocalAdresses", allowLocalAdresses);
+            Write("IsDisabled", isDisabled);
+            Write("IsListenOnly", isListenOnly);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -548,12 +585,13 @@ namespace FCP2
         public void ModifyPeerNote(string nodeIdentifier, string noteText, PeerNoteTypeEnum peerNoteType)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ModifyPeer");
-            fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
-            fnwrite.WriteLine("NoteText=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(noteText)));
-            fnwrite.WriteLine("PeerNoteType=" + ((long)peerNoteType));
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ModifyPeer");
+            Write("NodeIdentifier", nodeIdentifier);
+            Write("NoteText", Convert.ToBase64String(Encoding.UTF8.GetBytes(noteText)));
+            Write("PeerNoteType", (long)peerNoteType);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -563,10 +601,11 @@ namespace FCP2
         public void RemovePeer(string nodeIdentifier)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("RemovePeer");
-            fnwrite.WriteLine("NodeIdentifier=" + nodeIdentifier);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("RemovePeer");
+            Write("NodeIdentifier", nodeIdentifier);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -578,15 +617,13 @@ namespace FCP2
         public void GetNode(bool? giveOpennetRef = null, bool? withPrivate = null, bool? withVolatile = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("GetNode");
-            if (giveOpennetRef != null)
-                fnwrite.WriteLine("GiveOpennetRef=" + giveOpennetRef.Value);
-            if (withPrivate != null)
-                fnwrite.WriteLine("WithPrivate=" + withPrivate.Value);
-            if (withVolatile != null)
-                fnwrite.WriteLine("WithVolatile=" + withVolatile.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("GetNode");
+            Write("GiveOpennetRef", giveOpennetRef);
+            Write("WithPrivate", withPrivate);
+            Write("WithVolatile", withVolatile);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -603,27 +640,19 @@ namespace FCP2
         public void GetConfig(bool? withCurrent = null, bool? withDefaults = null, bool? withSortOrder = null, bool? withExpertFlag = null,
                               bool? withForceWriteFlag = null, bool? withShortDescription = null, bool? withLongDescription = null, bool? withDataTypes = null)
         {
-
             ConnectIfNeeded();
-            fnwrite.WriteLine("GetConfig");
-            if (withCurrent != null)
-                fnwrite.WriteLine("WithCurrent=" + withCurrent.Value);
-            if (withDefaults != null)
-                fnwrite.WriteLine("WithDefaults=" + withDefaults.Value);
-            if (withSortOrder != null)
-                fnwrite.WriteLine("WithSortOrder=" + withSortOrder.Value);
-            if (withExpertFlag != null)
-                fnwrite.WriteLine("WithExpertFlag=" + withExpertFlag.Value);
-            if (withForceWriteFlag != null)
-                fnwrite.WriteLine("WithForceWriteFlag=" + withForceWriteFlag.Value);
-            if (withShortDescription != null)
-                fnwrite.WriteLine("WithShortDescription=" + withShortDescription.Value);
-            if (withLongDescription != null)
-                fnwrite.WriteLine("WithLongDescription=" + withLongDescription.Value);
-            if (withDataTypes != null)
-                fnwrite.WriteLine("WithDataTypes=" + withDataTypes.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("GetConfig");
+            Write("WithCurrent", withCurrent);
+            Write("WithDefaults", withDefaults);
+            Write("WithSortOrder", withSortOrder);
+            Write("WithExpertFlag", withExpertFlag);
+            Write("WithForceWriteFlag", withForceWriteFlag);
+            Write("WithShortDescription", withShortDescription);
+            Write("WithLongDescription", withLongDescription);
+            Write("WithDataTypes", withDataTypes);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -636,7 +665,7 @@ namespace FCP2
         /// <example>
         /// Set: (logger.interval=30MINUTE)
         /// <code>
-        /// Dictionary&ltstring, string&gt; dict = new Dictionary&ltstring, string&gt;();
+        /// Dictionary&lt;string, string&gt; dict = new Dictionary&lt;string, string&gt;();
         /// dict.Add("logger.interval", "30MINUTE");
         /// fcpclient.ModifyConfig(dict);
         ///</code></example>
@@ -650,13 +679,12 @@ namespace FCP2
                 return;
             }
 
-            fnwrite.WriteLine("ModifyConfig");
+            Write("ModifyConfig");
             foreach (var field in fieldset)
             {
-                fnwrite.WriteLine(field.Key + "=" + field.Value);
+                Write(field.Key, field.Value);
             }
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -673,14 +701,13 @@ namespace FCP2
         public void TestDDARequest(string directory, bool? wantReadDirectory = null, bool? wantWriteDirectory = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("TestDDARequest");
-            fnwrite.WriteLine("Directory=" + directory);
-            if (wantReadDirectory != null)
-                fnwrite.WriteLine("WantReadDirectory=" + wantReadDirectory.Value);
-            if (wantWriteDirectory != null)
-                fnwrite.WriteLine("WantWriteDirectory=" + wantWriteDirectory.Value);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("TestDDARequest");
+            Write("Directory", directory);
+            Write("WantReadDirectory", wantReadDirectory);
+            Write("WantWriteDirectory", wantWriteDirectory);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -695,11 +722,12 @@ namespace FCP2
         public void TestDDAResponse(string directory, string readContent)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("TestDDAResponse");
-            fnwrite.WriteLine("Directory=" + directory);
-            fnwrite.WriteLine("ReadContent=" + readContent);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("TestDDAResponse");
+            Write("Directory", directory);
+            Write("ReadContent", readContent);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -711,10 +739,11 @@ namespace FCP2
         public void GenerateSSK(string identifier)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("GenerateSSK");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("GenerateSSK");
+            Write("Identifier", identifier);
+
+            EndMessage();
         }
 
 
@@ -747,49 +776,37 @@ namespace FCP2
                                     bool? dontCompress = null, string clientToken = null, PersistenceEnum? persistence = null, string targetFilename = null,
                                     bool? earlyEncode = null, string fileHash = null, bool? binaryBlob = null)
         {
-
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientPut");
-            fnwrite.WriteLine("URI=" + uri);
-            if (!String.IsNullOrEmpty(metadataContentType))
-                fnwrite.WriteLine("Metadata.ContentType=" + metadataContentType);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxRetries != null)
-                fnwrite.WriteLine("maxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            if (getCHKOnly != null)
-                fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (dontCompress != null)
-                fnwrite.WriteLine("DontCompress=" + dontCompress.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (persistence != null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (!String.IsNullOrEmpty(targetFilename))
-                fnwrite.WriteLine("TargetFilename=" + targetFilename);
-            if (earlyEncode != null)
-                fnwrite.WriteLine("EarlyEncode=" + earlyEncode.Value);
-            if (!String.IsNullOrEmpty(fileHash))
-                fnwrite.WriteLine("Filehash=" + fileHash);
-            if (binaryBlob != null)
-                fnwrite.WriteLine("binaryBlob=" + binaryBlob.Value);
-            fnwrite.WriteLine("UploadFrom=Direct");
-            fnwrite.WriteLine("DataLength=" + data.Length);
-            fnwrite.WriteLine(EndMessage);
+
+            Write("ClientPut");
+            Write("URI", uri);
+            Write("Metadata.ContentType", metadataContentType);
+            Write("Identifier", identifier);
+            Write("Verbosity", (long)verbosity.Value);
+            Write("maxRetries", maxRetries.Value);
+            Write("PriorityClass", (long)priorityClass.Value);
+            Write("GetCHKOnly", getCHKOnly);
+            Write("Global", global);
+            Write("DontCompress", dontCompress);
+            Write("ClientToken", clientToken);
+            Write("Persistence", persistence);
+            Write("TargetFilename", targetFilename);
+            Write("EarlyEncode", earlyEncode);
+            Write("Filehash", fileHash);
+            Write("binaryBlob", binaryBlob);
+            Write("UploadFrom", "Direct");
+            Write("DataLength", data.Length);
+
+            EndMessage();
 
             // *** stream file ***
             var buffer = new byte[1024];
             int readbytes;
             while ((readbytes = data.Read(buffer, 0, buffer.Length)) != 0)
             {
-                client.GetStream().Write(buffer, 0, readbytes);
+                _client.GetStream().Write(buffer, 0, readbytes);
             }
-            client.GetStream().Flush();
+            _client.GetStream().Flush();
         }
 
         /// <summary>
@@ -820,41 +837,28 @@ namespace FCP2
                                   bool? dontCompress = null, string clientToken = null, PersistenceEnum? persistence = null, string targetFilename = null,
                                   bool? earlyEncode = null, string fileHash = null, bool? binaryBlob = null)
         {
-
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientPut");
-            fnwrite.WriteLine("URI=" + uri);
-            if (!String.IsNullOrEmpty(metadataContentType))
-                fnwrite.WriteLine("Metadata.ContentType=" + metadataContentType);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxRetries != null)
-                fnwrite.WriteLine("maxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            if (getCHKOnly != null)
-                fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (dontCompress != null)
-                fnwrite.WriteLine("DontCompress=" + dontCompress.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (persistence != null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (!String.IsNullOrEmpty(targetFilename))
-                fnwrite.WriteLine("TargetFilename=" + targetFilename);
-            if (earlyEncode != null)
-                fnwrite.WriteLine("EarlyEncode=" + earlyEncode.Value);
-            if (!String.IsNullOrEmpty(fileHash))
-                fnwrite.WriteLine("Filehash=" + fileHash);
-            if (binaryBlob != null)
-                fnwrite.WriteLine("binaryBlob=" + binaryBlob.Value);
-            fnwrite.WriteLine("UploadFrom=disk");
-            fnwrite.WriteLine("Filename=" + file.FullName);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ClientPut");
+            Write("URI", uri);
+            Write("Metadata.ContentType", metadataContentType);
+            Write("Identifier", identifier);
+            Write("Verbosity", (long)verbosity.Value);
+            Write("maxRetries", maxRetries);
+            Write("PriorityClass", (long)priorityClass.Value);
+            Write("GetCHKOnly", getCHKOnly);
+            Write("Global", global);
+            Write("DontCompress", dontCompress);
+            Write("ClientToken", clientToken);
+            Write("Persistence", persistence);
+            Write("TargetFilename", targetFilename);
+            Write("EarlyEncode", earlyEncode);
+            Write("Filehash", fileHash);
+            Write("binaryBlob", binaryBlob);
+            Write("UploadFrom", "disk");
+            Write("Filename", file.FullName);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -886,41 +890,28 @@ namespace FCP2
                                       PersistenceEnum? persistence = null, string targetFilename = null, bool? earlyEncode = null,
                                       string fileHash = null, bool? binaryBlob = null)
         {
-
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientPut");
-            fnwrite.WriteLine("URI=" + uri);
-            if (!String.IsNullOrEmpty(metadataContentType))
-                fnwrite.WriteLine("Metadata.ContentType=" + metadataContentType);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxRetries != null)
-                fnwrite.WriteLine("MaxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            if (getCHKOnly != null)
-                fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (dontCompress != null)
-                fnwrite.WriteLine("DontCompress=" + dontCompress.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (persistence != null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (!String.IsNullOrEmpty(targetFilename))
-                fnwrite.WriteLine("TargetFilename=" + targetFilename);
-            if (earlyEncode != null)
-                fnwrite.WriteLine("EarlyEncode=" + earlyEncode.Value);
-            if (!String.IsNullOrEmpty(fileHash))
-                fnwrite.WriteLine("Filehash=" + fileHash);
-            if (binaryBlob != null)
-                fnwrite.WriteLine("binaryBlob=" + binaryBlob.Value);
-            fnwrite.WriteLine("UploadFrom=redirect");
-            fnwrite.WriteLine("TargetURI=" + targetURI);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ClientPut");
+            Write("URI", uri);
+            Write("Metadata.ContentType", metadataContentType);
+            Write("Identifier", identifier);
+            Write("Verbosity", ((long)verbosity.Value));
+            Write("MaxRetries", maxRetries);
+            Write("PriorityClass", ((long)priorityClass.Value));
+            Write("GetCHKOnly", getCHKOnly);
+            Write("Global", global);
+            Write("DontCompress", dontCompress);
+            Write("ClientToken", clientToken);
+            Write("Persistence", persistence);
+            Write("TargetFilename", targetFilename);
+            Write("EarlyEncode", earlyEncode);
+            Write("Filehash", fileHash);
+            Write("binaryBlob", binaryBlob);
+            Write("UploadFrom", "redirect");
+            Write("TargetURI", targetURI);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -944,33 +935,24 @@ namespace FCP2
                                      PriorityClassEnum? priorityClass = null, bool? getCHKOnly = null, bool? dontCompress = null,
                                         string clientToken = null, PersistenceEnum? persistence = null, bool? global = null)
         {
-
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientPutDiskDir");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxRetries != null)
-                fnwrite.WriteLine("MaxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            fnwrite.WriteLine("URI=" + uri);
-            if (getCHKOnly != null)
-                fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value);
-            if (dontCompress != null)
-                fnwrite.WriteLine("DontCompress=" + dontCompress.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (persistence != null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (!String.IsNullOrEmpty(defaultName))
-                fnwrite.WriteLine("DefaultName=" + defaultName);
-            fnwrite.WriteLine("Filename=" + filename);
-            fnwrite.WriteLine("AllowUnreadableFiles=" + allowUnreadableFiles);
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            Write("ClientPutDiskDir");
+            Write("Identifier", identifier);
+            Write("Verbosity", (long?)verbosity);
+            Write("MaxRetries", maxRetries);
+            Write("PriorityClass", (long?)priorityClass);
+            Write("URI", uri);
+            Write("GetCHKOnly", getCHKOnly);
+            Write("DontCompress", dontCompress);
+            Write("ClientToken", clientToken);
+            Write("Persistence", persistence);
+            Write("Global", global);
+            Write("DefaultName", defaultName);
+            Write("Filename", filename);
+            Write("AllowUnreadableFiles", allowUnreadableFiles);
+
+            EndMessage();
         }
 
         /// <summary>
@@ -996,63 +978,53 @@ namespace FCP2
                                         string defaultName = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientPutComplexDir");
-            fnwrite.WriteLine("URI=" + uri);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxRetries != null)
-                fnwrite.WriteLine("MaxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
-            if (getCHKOnly != null)
-                fnwrite.WriteLine("GetCHKOnly=" + getCHKOnly.Value);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (dontCompress != null)
-                fnwrite.WriteLine("DontCompress=" + dontCompress.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (persistence != null)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (!String.IsNullOrEmpty(targetFilename))
-                fnwrite.WriteLine("TargetFilename=" + targetFilename);
-            if (earlyEncode != null)
-                fnwrite.WriteLine("EarlyEncode=" + earlyEncode.Value);
-            if (!String.IsNullOrEmpty(defaultName))
-                fnwrite.WriteLine("DefaultName=" + defaultName);
+
+            Write("ClientPutComplexDir");
+            Write("URI", uri);
+            Write("Identifier", identifier);
+
+            Write("Verbosity", ((long?)verbosity));
+            Write("MaxRetries", maxRetries);
+            Write("PriorityClass", ((long?)priorityClass));
+            Write("GetCHKOnly", getCHKOnly);
+            Write("Global", global);
+            Write("DontCompress", dontCompress);
+            Write("ClientToken", clientToken);
+            Write("Persistence", persistence);
+            Write("TargetFilename", targetFilename);
+            Write("EarlyEncode", earlyEncode);
+            Write("DefaultName", defaultName);
+
             long counter = 0;
-            foreach (InsertItem file in filelist)
+            foreach (var file in filelist)
             {
-                fnwrite.WriteLine("Files." + counter + ".Name=" + file.Name);
-                if (file is DataItem)
+                Write("Files." + counter + ".Name", file.Name);
+                var dataItem = file as DataItem;
+                if (dataItem != null)
                 {
-                    var item = (DataItem)file;
-                    fnwrite.WriteLine("Files." + counter + ".UploadFrom=Direct");
-                    fnwrite.WriteLine("Files." + counter + ".DataLength=" + item.Data.Length);
-                    if (!String.IsNullOrEmpty(item.ContentType))
-                        fnwrite.WriteLine("Files." + counter + ".Metadata.ContentType=" + item.ContentType);
+                    Write("Files." + counter + ".UploadFrom", "Direct");
+                    Write("Files." + counter + ".DataLength", dataItem.Data.Length);
+                    Write("Files." + counter + ".Metadata.ContentType", dataItem.ContentType);
                 }
-                if (file is FileItem)
+                var fileItem = file as FileItem;
+                if (fileItem != null)
                 {
-                    var item = (FileItem)file;
-                    fnwrite.WriteLine("Files." + counter + ".UploadFrom=disk");
-                    fnwrite.WriteLine("Files." + counter + ".Filename=" + item.Filename);
-                    if (!String.IsNullOrEmpty(item.ContentType))
-                        fnwrite.WriteLine("Files." + counter + ".Metadata.ContentType=" + item.ContentType);
+                    Write("Files." + counter + ".UploadFrom=disk");
+                    Write("Files." + counter + ".Filename", fileItem.Filename);
+                    Write("Files." + counter + ".Metadata.ContentType", fileItem.ContentType);
 
                 }
-                if (file is RedirectItem)
+                var redirectItem = file as RedirectItem;
+                if (redirectItem != null)
                 {
-                    var item = (RedirectItem)file;
-                    fnwrite.WriteLine("Files." + counter + ".UploadFrom=redirect");
-                    fnwrite.WriteLine("Files." + counter + ".TargetURI=" + item.TargetURI);
+                    Write("Files." + counter + ".UploadFrom", "redirect");
+                    Write("Files." + counter + ".TargetURI", redirectItem.TargetURI);
 
                 }
                 counter++;
             }
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            EndMessage();
 
             /* this appending is very experimental since there is no example in the documentation
              * I think all the data from Direct files are concatenated directly in the same order
@@ -1063,15 +1035,15 @@ namespace FCP2
 
             var buffer = new byte[1024];
 
-            foreach (DataItem file in filelist.OfType<DataItem>())
+            foreach (var file in filelist.OfType<DataItem>())
             {
                 int readbytes;
                 while ((readbytes = (file).Data.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    client.GetStream().Write(buffer, 0, readbytes);
+                    _client.GetStream().Write(buffer, 0, readbytes);
                 }
             }
-            client.GetStream().Flush();
+            _client.GetStream().Flush();
         }
 
         /// <summary>
@@ -1105,48 +1077,38 @@ namespace FCP2
                               string allowedMimeTypes = null, ReturnTypeEnum? returnType = null, string filename = null, string tempFilename = null)
         {
             ConnectIfNeeded();
-            fnwrite.WriteLine("ClientGet");
-            if (ignoreDS != null)
-                fnwrite.WriteLine("IgnoreDS=" + ignoreDS.Value);
-            if (dsonly != null)
-                fnwrite.WriteLine("DSonly=" + dsonly.Value);
-            fnwrite.WriteLine("URI=" + uri);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (verbosity != null)
-                fnwrite.WriteLine("Verbosity=" + ((long)verbosity.Value));
-            if (maxSize != null)
-                fnwrite.WriteLine("MaxSize=" + maxSize.Value);
-            if (maxTempSize != null)
-                fnwrite.WriteLine("MaxTempSize=" + maxTempSize.Value);
-            if (maxRetries != null)
-                fnwrite.WriteLine("MaxRetries=" + maxRetries.Value);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass.Value));
+
+            Write("ClientGet");
+            Write("IgnoreDS", ignoreDS.Value);
+            Write("DSonly", dsonly.Value);
+            Write("URI", uri);
+            Write("Identifier", identifier);
+            Write("Verbosity", ((long)verbosity.Value));
+            Write("MaxSize", maxSize.Value);
+            Write("MaxTempSize", maxTempSize.Value);
+            Write("MaxRetries", maxRetries.Value);
+            Write("PriorityClass", ((long)priorityClass.Value));
             if (global.HasValue && global.Value && persistence.HasValue && persistence.Value == PersistenceEnum.Connection)
+            {
                 throw new FormatException("Error, global request must be persistent");
-            if (persistence.HasValue)
-                fnwrite.WriteLine("Persistence=" + persistence.Value);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (global.HasValue)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (binaryBlob != null)
-                fnwrite.WriteLine("BinaryBlob=" + binaryBlob.Value);
-            if (!String.IsNullOrEmpty(allowedMimeTypes))
-                fnwrite.WriteLine("AllowedMIMETypes=" + allowedMimeTypes);
+            }
+            Write("Persistence", persistence);
+            Write("ClientToken", clientToken);
+            Write("Global", global.Value);
+            Write("BinaryBlob", binaryBlob.Value);
+            Write("AllowedMIMETypes", allowedMimeTypes);
 
             if (returnType != null)
             {
-                fnwrite.WriteLine("ReturnType=" + returnType.Value);
+                Write("ReturnType", returnType);
                 if (returnType == ReturnTypeEnum.Disk)
                 {
-                    fnwrite.WriteLine("Filename=" + filename);
-                    if (!String.IsNullOrEmpty(tempFilename))
-                        fnwrite.WriteLine("TempFileName=" + tempFilename);
+                    Write("Filename", filename);
+                    Write("TempFileName", tempFilename);
                 }
             }
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            EndMessage();
         }
 
         /// <summary>
@@ -1161,18 +1123,17 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("LoadPlugin");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine("PluginURL=" + pluginUrl);
+            Write("LoadPlugin");
+            Write("Identifier", identifier);
+            Write("PluginURL", pluginUrl);
             if (urlType.HasValue)
-                fnwrite.WriteLine("URLType=" + urlType.Value.ToProtocolString());
+                Write("URLType", urlType.Value.ToProtocolString());
             if (store.HasValue)
-                fnwrite.WriteLine("Store=" + store.Value.ToProtocolString());
+                Write("Store", store.Value.ToProtocolString());
             if (officialSource.HasValue)
-                fnwrite.WriteLine("Source=" + officialSource.Value.ToProtocolString());
+                Write("Source", officialSource.Value.ToProtocolString());
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1185,14 +1146,13 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("ReloadPlugin");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine("PluginName=" + pluginName);
+            Write("ReloadPlugin");
+            Write("Identifier", identifier);
+            Write("PluginName", pluginName);
             if (purge.HasValue)
-                fnwrite.WriteLine("Purge=" + purge.Value.ToProtocolString());
+                Write("Purge", purge.Value.ToProtocolString());
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1205,14 +1165,13 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("RemovePlugin");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine("PluginName=" + pluginName);
+            Write("RemovePlugin");
+            Write("Identifier", identifier);
+            Write("PluginName", pluginName);
             if (purge.HasValue)
-                fnwrite.WriteLine("Purge=" + purge.Value.ToProtocolString());
+                Write("Purge", purge.Value.ToProtocolString());
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1225,15 +1184,12 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("GetPluginInfo");
-            fnwrite.WriteLine("PluginName=" + pluginName);
-            if (!String.IsNullOrEmpty(identifier))
-                fnwrite.WriteLine("Identifier=" + identifier);
-            if (detailed != null)
-                fnwrite.WriteLine("Detailed=" + detailed.Value);
+            Write("GetPluginInfo");
+            Write("PluginName", pluginName);
+            Write("Identifier", identifier);
+            Write("Detailed", detailed);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1253,23 +1209,23 @@ namespace FCP2
         public void FCPPluginMessage(string pluginName, Dictionary<string, string> pluginParams, string identifier = null, Stream data = null)
         {
             ConnectIfNeeded();
+
             if (pluginParams == null)
             {
                 pluginParams = new Dictionary<string, string>();
             }
 
-            fnwrite.WriteLine("FCPPluginMessage");
-            fnwrite.WriteLine("PluginName=" + pluginName);
-            if (!String.IsNullOrEmpty(identifier))
-                fnwrite.WriteLine("Identifier=" + identifier);
+            Write("FCPPluginMessage");
+            Write("PluginName", pluginName);
+            Write("Identifier", identifier);
             if (data != null)
-                fnwrite.WriteLine("DataLength=" + data.Length);
+                Write("DataLength", data.Length);
             foreach (var param in pluginParams)
             {
-                fnwrite.WriteLine(param.Key + "=" + param.Value);
+                Write(param.Key + "", param.Value);
             }
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+
+            EndMessage();
 
             // *** stream binary data if any ***
             if (data != null)
@@ -1278,10 +1234,10 @@ namespace FCP2
                 int readbytes;
                 while ((readbytes = data.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    client.GetStream().Write(buffer, 0, readbytes);
+                    _client.GetStream().Write(buffer, 0, readbytes);
                 }
             }
-            client.GetStream().Flush();
+            _client.GetStream().Flush();
         }
 
         /// <summary>
@@ -1294,14 +1250,12 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("SubscribeUSK");
-            fnwrite.WriteLine("URI=" + uri);
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (dontPoll != null)
-                fnwrite.WriteLine("DontPoll=" + dontPoll.Value);
+            Write("SubscribeUSK");
+            Write("URI", uri);
+            Write("Identifier", identifier);
+            Write("DontPoll", dontPoll);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1312,11 +1266,10 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("SubscribeUSK");
-            fnwrite.WriteLine("Identifier=" + identifier);
+            Write("SubscribeUSK");
+            Write("Identifier", identifier);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1328,12 +1281,11 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("WatchGlobal");
-            fnwrite.WriteLine("Enabled=" + enabled);
-            fnwrite.WriteLine("VerbosityMask=" + ((long)verbosityMask));
+            Write("WatchGlobal");
+            Write("Enabled", enabled);
+            Write("VerbosityMask", ((long)verbosityMask));
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1349,15 +1301,12 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("GetRequestStatus");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            if (global != null)
-                fnwrite.WriteLine("Global=" + global.Value);
-            if (onlyData != null)
-                fnwrite.WriteLine("OnlyData=" + onlyData.Value);
+            Write("GetRequestStatus");
+            Write("Identifier", identifier);
+            Write("Global", global);
+            Write("OnlyData", onlyData);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1371,10 +1320,9 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("ListPersistentRequests");
-            fnwrite.WriteLine(EndMessage);
+            Write("ListPersistentRequests");
 
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1386,12 +1334,11 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("RemoveRequest");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine("Global=" + global);
+            Write("RemoveRequest");
+            Write("Identifier", identifier);
+            Write("Global", global);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1410,16 +1357,13 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("ModifyPersistentRequest");
-            fnwrite.WriteLine("Identifier=" + identifier);
-            fnwrite.WriteLine("Global=" + global);
-            if (!String.IsNullOrEmpty(clientToken))
-                fnwrite.WriteLine("ClientToken=" + clientToken);
-            if (priorityClass != null)
-                fnwrite.WriteLine("PriorityClass=" + ((long)priorityClass));
+            Write("ModifyPersistentRequest");
+            Write("Identifier", identifier);
+            Write("Global", global);
+            Write("ClientToken", clientToken);
+            Write("PriorityClass", (long?)priorityClass);
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1429,10 +1373,9 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("Shutdown");
+            Write("Shutdown");
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
 
         /// <summary>
@@ -1441,9 +1384,9 @@ namespace FCP2
         /// </summary>
         private void RealDisconnect()
         {
-            fnwrite.WriteLine("Disconnect");
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            Write("Disconnect");
+
+            EndMessage();
         }
 
         /// <summary>
@@ -1453,11 +1396,16 @@ namespace FCP2
         {
             ConnectIfNeeded();
 
-            fnwrite.WriteLine("Void");
+            Write("Void");
 
-            fnwrite.WriteLine(EndMessage);
-            fnwrite.Flush();
+            EndMessage();
         }
         #endregion
+
+        public void Dispose()
+        {
+            _fnread.Dispose();
+            _fnwrite.Dispose();
+        }
     }
 }

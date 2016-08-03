@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,38 +22,33 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 
-namespace FCP2
+namespace FCP2.Protocol
 {
     /// <summary>
     /// Description of Class1.
     /// </summary>
     public class MessageParser : DynamicObject
     {
-        readonly Dictionary<string, string> parameters = new Dictionary<string, string>();
+        readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
 
-        #if DEBUG
-        readonly Dictionary<string, long> debugcount = new Dictionary<string, long>();
-        #endif
+#if DEBUG
+        readonly Dictionary<string, long> _debugCount = new Dictionary<string, long>();
+#endif
 
-        readonly bool dataAvailable;
-
-        public bool DataAvailable
-        {
-            get { return dataAvailable; }
-        }
+        public bool DataAvailable { get; }
 
         /// <exception cref="T:System.NotImplementedException"></exception>
         public MessageParser(TextReader reader)
         {
             string line;
-            while ((line = reader.ReadLine()) != FCP2Protocol.EndMessage)
+            while ((line = reader.ReadLine()) != nameof(FCP2Protocol.EndMessage))
             {
                 int pos;
                 if (line == "End")
                     throw new NotImplementedException("NoEnd");
                 if (line == "Data")
                 {
-                    dataAvailable = true;
+                    DataAvailable = true;
                     break;
                 }
                 if ((pos = line.IndexOf('=')) == -1)
@@ -62,9 +57,9 @@ namespace FCP2
                 }
                 var key = line.Substring(0, pos);
                 var val = line.Substring(pos + 1);
-                parameters.Add(key, val);
+                _parameters.Add(key, val);
 #if DEBUG
-                debugcount.Add(line.Substring(0, pos), 0);
+                _debugCount.Add(line.Substring(0, pos), 0);
 #endif
             }
         }
@@ -74,12 +69,12 @@ namespace FCP2
         /// </summary>
         internal string SafeGet(string keyword)
         {
-            if (parameters.ContainsKey(keyword))
+            if (_parameters.ContainsKey(keyword))
             {
 #if DEBUG
-                debugcount[keyword]++;
+                _debugCount[keyword]++;
 #endif
-                return parameters[keyword];
+                return _parameters[keyword];
             }
             return null;
         }
@@ -87,29 +82,28 @@ namespace FCP2
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var temp = SafeGet(binder.Name);
-            result = temp != null ? new DynamicReturnValue(temp) : new MessageParserSubElement(this, binder.Name);
+            result = temp != null
+                ? (object) new DynamicReturnValue(temp)
+                : new MessageParserSubElement(this, binder.Name);
+
             return true;
         }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-            foreach (var kvp in parameters)
-            {
-                yield return kvp;
-            }
-            yield break;
+            return ((IEnumerable<KeyValuePair<string, string>>) _parameters).GetEnumerator();
         }
 
-        #if DEBUG
+#if DEBUG
         public void PrintAccessCount()
         {
             bool allaccessed = true;
-            foreach (string key in debugcount.Keys)
+            foreach (string key in _debugCount.Keys)
             {
-                Console.ForegroundColor = debugcount[key] == 0 ? ConsoleColor.Yellow : ConsoleColor.Green;
-                Console.WriteLine("[" + debugcount[key] + "] " + key + " (" + parameters[key] + ")");
+                Console.ForegroundColor = _debugCount[key] == 0 ? ConsoleColor.Yellow : ConsoleColor.Green;
+                Console.WriteLine("[" + _debugCount[key] + "] " + key + " (" + _parameters[key] + ")");
 
-                allaccessed = allaccessed && (debugcount[key] != 0);
+                allaccessed = allaccessed && (_debugCount[key] != 0);
             }
             if (allaccessed)
             {
@@ -123,7 +117,7 @@ namespace FCP2
             }
             Console.ForegroundColor = ConsoleColor.Gray;
         }
-        #endif
+#endif
 
     }
 }

@@ -1,7 +1,7 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
  * 
- *  Copyright (c) 2009-2014 Thomas Bruderer <apophis@apophis.ch>
+ *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,17 +18,18 @@
  */
 
 using System;
+using FCP2.Protocol;
 
-namespace FCP2
+namespace FCP2.EventArgs
 {
 
     public class PutSuccessfulEventArgs : System.EventArgs
     {
-        readonly DateTime completionTime;
-        readonly bool global;
-        readonly string identifier;
-        readonly DateTime startupTime;
-        readonly string uri;
+        public bool Global { get; }
+        public string Identifier { get; }
+        public DateTime StartupTime { get; }
+        public DateTime CompletionTime { get; }
+        public string URI { get; }
 
         /// <summary>
         /// PutSuccessfulEventArgs Constructor
@@ -40,40 +41,15 @@ namespace FCP2
             FCP2Protocol.ArgsDebug(this, parsed);
 #endif
 
-            global = parsed.Global;
-            identifier = parsed.Identifier;
-            startupTime = parsed.StartupTime;
-            completionTime = parsed.CompletionTime;
-            uri = parsed.URI;
+            Global = parsed.Global;
+            Identifier = parsed.Identifier;
+            StartupTime = parsed.StartupTime;
+            CompletionTime = parsed.CompletionTime;
+            URI = parsed.URI;
 
 #if DEBUG
             parsed.PrintAccessCount();
 #endif
-        }
-
-        public bool Global
-        {
-            get { return global; }
-        }
-
-        public string Identifier
-        {
-            get { return identifier; }
-        }
-
-        public DateTime StartupTime
-        {
-            get { return startupTime; }
-        }
-
-        public DateTime CompletionTime
-        {
-            get { return completionTime; }
-        }
-
-        public string URI
-        {
-            get { return uri; }
         }
     }
 }
