@@ -8,11 +8,11 @@ It is written in C# and tries to parse all FCP message-types of the Freenet node
 * Event Driven Design : Each Message gets a certain Event in the Library
 * Simple and Complex Methods: There is always a Method with only the Mandatory Parameters, and one with all.
 * Complete Implementation of the FCP 2.0 Protocol
-* Completely Tpyed access to all the Variables in the messages.
-* Completly Non-Blocking Design
-* Fully dynamic core (easyily extensible to new messages)
-* Uses C# 3.5 features 
+* Completely Typed access to all the Variables in the messages.
+* Completely Non-Blocking Design
+* Fully dynamic core (easily extensible to new messages)
+* Implemented with C# 5.0
 
 ## License
 
-GNU General Public License 3.0 
+GNU General Public License 3.0 (Other licenses negotiable)
