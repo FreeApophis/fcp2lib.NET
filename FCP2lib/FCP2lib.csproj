@@ -186,7 +186,6 @@
     <Compile Include="Protocol\FCP2Upload.cs" />
     <Compile Include="EventArgs\GeneratedMetadataEventArgs.cs" />
     <Compile Include="Protocol\InsertItem.cs" />
-    <Compile Include="Protocol\MessageEventFactory.cs" />
     <Compile Include="Protocol\MessageParser.cs" />
     <Compile Include="Protocol\FCP2Protocol.cs" />
     <Compile Include="Protocol\MessageParserSubElement.cs" />

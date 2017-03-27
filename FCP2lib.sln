@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2lib", "FCP2lib\FCP2lib.csproj", "{28E64D9F-6020-40DD-9BC5-88510DF32D1B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2example", "FCP2example\FCP2example.csproj", "{E590600F-3A42-4134-A2DB-D258BEC5BDAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,18 +25,6 @@ Global
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|x86.ActiveCfg = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Debug|x86.Build.0 = Debug|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|x86.ActiveCfg = Release|Any CPU
-		{E590600F-3A42-4134-A2DB-D258BEC5BDAF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
