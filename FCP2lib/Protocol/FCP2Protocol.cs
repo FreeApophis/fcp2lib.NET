@@ -1079,24 +1079,24 @@ namespace FCP2.Protocol
             ConnectIfNeeded();
 
             Write("ClientGet");
-            Write("IgnoreDS", ignoreDS.Value);
-            Write("DSonly", dsonly.Value);
+            if (ignoreDS.HasValue) Write("IgnoreDS", ignoreDS.Value);
+            if (dsonly.HasValue) Write("DSonly", dsonly.Value);
             Write("URI", uri);
             Write("Identifier", identifier);
-            Write("Verbosity", ((long)verbosity.Value));
-            Write("MaxSize", maxSize.Value);
-            Write("MaxTempSize", maxTempSize.Value);
-            Write("MaxRetries", maxRetries.Value);
-            Write("PriorityClass", ((long)priorityClass.Value));
+            if (verbosity.HasValue) Write("Verbosity", ((long)verbosity.Value));
+            if (maxSize.HasValue) Write("MaxSize", maxSize.Value);
+            if (maxTempSize.HasValue) Write("MaxTempSize", maxTempSize.Value);
+            if (maxRetries.HasValue) Write("MaxRetries", maxRetries.Value);
+            if (priorityClass.HasValue) Write("PriorityClass", ((long)priorityClass.Value));
             if (global.HasValue && global.Value && persistence.HasValue && persistence.Value == PersistenceEnum.Connection)
             {
                 throw new FormatException("Error, global request must be persistent");
             }
-            Write("Persistence", persistence);
-            Write("ClientToken", clientToken);
-            Write("Global", global.Value);
-            Write("BinaryBlob", binaryBlob.Value);
-            Write("AllowedMIMETypes", allowedMimeTypes);
+            if (persistence.HasValue) Write("Persistence", persistence);
+            if (clientToken != null) Write("ClientToken", clientToken);
+            if (global.HasValue) Write("Global", global.Value);
+            if (binaryBlob.HasValue) Write("BinaryBlob", binaryBlob.Value);
+            if (allowedMimeTypes != null) Write("AllowedMIMETypes", allowedMimeTypes);
 
             if (returnType != null)
             {
