@@ -36,7 +36,12 @@ namespace FCP2.Protocol
         bool _lastConversionSuccessfull;
         public bool LastConversionSucessfull => _lastConversionSuccessfull;
 
-        static void Init()
+        public bool Exists()
+        {
+            return _dynamicString != null;
+        }
+
+        static DynamicReturnValue()
         {
             Contract.Requires(TypeTable.Count != 0);
 
@@ -58,11 +63,6 @@ namespace FCP2.Protocol
             TypeTable.Add(typeof(OfficialSourceTypeEnum), ConvertToOfficialSourceTypeEnum);
         }
 
-        public bool Exists()
-        {
-            return _dynamicString != null;
-        }
-
         public DynamicReturnValue(string value)
         {
             _dynamicString = value;
@@ -70,8 +70,6 @@ namespace FCP2.Protocol
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            Init();
-
             ConversionDelegate conversion;
             if (TypeTable.TryGetValue(binder.ReturnType, out conversion))
             {
