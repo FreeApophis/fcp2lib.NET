@@ -8,8 +8,8 @@ namespace FCP2.Protocol
         public FCP2Key Key { get; }
         public FileInfo File { get; }
 
-        private long _currentBlocks;
-        private long _totalBlocks;
+        //private long _currentBlocks;
+        //private long _totalBlocks;
 
         internal FCP2Download(FCP2Key key, FileInfo file)
         {

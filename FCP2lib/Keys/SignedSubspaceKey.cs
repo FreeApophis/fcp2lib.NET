@@ -6,8 +6,8 @@ namespace FCP2.Keys
     {
         internal const string KeyPrefix = "SSK@";
 
-        private readonly string _privateKey;
-        private readonly string _publicKey;
+        //private readonly string _privateKey;
+        //private readonly string _publicKey;
         private readonly string _containerItem;
 
         internal SignedSubspaceKey(string key)
