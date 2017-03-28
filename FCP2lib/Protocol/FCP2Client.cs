@@ -7,25 +7,27 @@ namespace FCP2.Protocol
 {
     public class FCP2Client : IDisposable
     {
-        public FCP2Protocol FCP2Protocol { get; }
+        private readonly FCP2Protocol fcp2Protocol;
+
+        public FCP2Protocol FCP2Protocol => fcp2Protocol;
 
         public bool IsConnected => false;
 
         public FCP2Client(IPEndPoint nodeAdress, string clientName)
         {
-            FCP2Protocol = new FCP2Protocol(nodeAdress, clientName);
+            fcp2Protocol = new FCP2Protocol(nodeAdress, clientName);
 
-            FCP2Protocol.NodeHelloEvent += FCP2Protocol_NodeHelloEvent;
+            fcp2Protocol.NodeHelloEvent += FCP2Protocol_NodeHelloEvent;
         }
 
         private void FCP2Protocol_NodeHelloEvent(object sender, EventArgs.NodeHelloEventArgs e)
         {
-            
+
         }
 
         public FCP2Client(string clientName)
         {
-            FCP2Protocol = new FCP2Protocol(FCP2Protocol.StandardFCP2Endpoint, clientName);
+            fcp2Protocol = new FCP2Protocol(FCP2Protocol.StandardFCP2Endpoint, clientName);
         }
 
         public FCP2Download Download(FCP2Key key)
@@ -35,12 +37,25 @@ namespace FCP2.Protocol
 
         public FCP2Upload Upload(FCP2Key key, FileInfo file)
         {
-            return  new FCP2Upload();
+            return new FCP2Upload();
         }
 
         public void Dispose()
         {
-            FCP2Protocol.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool _disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    fcp2Protocol.Dispose();
+                }
+            }
         }
     }
 }

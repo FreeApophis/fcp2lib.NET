@@ -1418,10 +1418,26 @@ namespace FCP2.Protocol
         }
         #endregion
 
+
         public void Dispose()
         {
-            _fnread.Dispose();
-            _fnwrite.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool _disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _fnread.Dispose();
+                    _fnwrite.Dispose();
+                    _client.Dispose();
+                }
+                _disposed = true;
+            }
         }
     }
 }
