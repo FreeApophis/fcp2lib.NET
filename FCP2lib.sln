@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2lib", "FCP2lib\FCP2lib.csproj", "{28E64D9F-6020-40DD-9BC5-88510DF32D1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2Tests", "FCP2Tests\FCP2Tests.csproj", "{006784EA-7773-4A19-8D7D-4A759443B899}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,18 @@ Global
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{28E64D9F-6020-40DD-9BC5-88510DF32D1B}.Release|x86.ActiveCfg = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Debug|x86.Build.0 = Debug|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|x86.ActiveCfg = Release|Any CPU
+		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
