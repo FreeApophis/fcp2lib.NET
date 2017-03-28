@@ -80,10 +80,26 @@ namespace FCP2.Protocol
         }
 
 
-        private void Write(string value) => _fnwrite.WriteLine(value);
+        private void Write(string value)
+        {
+            _fnwrite.WriteLine(value);
+        }
 
-        private void Write(string key, bool value) => _fnwrite.WriteLine($"{key}={value}");
-        private void Write(string key, long value) => _fnwrite.WriteLine($"{key}={value}");
+        private void Write(string key, bool? value)
+        {
+            if (value.HasValue)
+            {
+                _fnwrite.WriteLine($"{key}={value}");
+            }
+        }
+
+        private void Write(string key, long? value)
+        {
+            if (value.HasValue)
+            {
+                _fnwrite.WriteLine($"{key}={value}");
+            }
+        }
 
         private void Write(string key, string value)
         {
@@ -1079,23 +1095,23 @@ namespace FCP2.Protocol
             ConnectIfNeeded();
 
             Write("ClientGet");
-            Write("IgnoreDS", ignoreDS.Value);
-            Write("DSonly", dsonly.Value);
+            Write("IgnoreDS", ignoreDS);
+            Write("DSonly", dsonly);
             Write("URI", uri);
             Write("Identifier", identifier);
-            Write("Verbosity", ((long)verbosity.Value));
-            Write("MaxSize", maxSize.Value);
-            Write("MaxTempSize", maxTempSize.Value);
-            Write("MaxRetries", maxRetries.Value);
-            Write("PriorityClass", ((long)priorityClass.Value));
+            Write("Verbosity", ((long?)verbosity));
+            Write("MaxSize", maxSize);
+            Write("MaxTempSize", maxTempSize);
+            Write("MaxRetries", maxRetries);
+            Write("PriorityClass", ((long?)priorityClass));
             if (global.HasValue && global.Value && persistence.HasValue && persistence.Value == PersistenceEnum.Connection)
             {
                 throw new FormatException("Error, global request must be persistent");
             }
             Write("Persistence", persistence);
             Write("ClientToken", clientToken);
-            Write("Global", global.Value);
-            Write("BinaryBlob", binaryBlob.Value);
+            Write("Global", global);
+            Write("BinaryBlob", binaryBlob);
             Write("AllowedMIMETypes", allowedMimeTypes);
 
             if (returnType != null)
