@@ -285,10 +285,16 @@ namespace FCP2.Protocol
         /// </summary>
         public void Disconnect()
         {
-            if (!_client.Connected) return;
-            RealDisconnect();
-            _client.GetStream().Close();
-            _client.Close();
+            lock (_client)
+            {
+                if (!_client.Connected) return;
+                RealDisconnect();
+
+                _client.GetStream().Close();
+                _client.Close();
+
+                _parserThread.Join(); // wait till the Parser Thread has ended...
+            }
         }
 
 
@@ -296,10 +302,17 @@ namespace FCP2.Protocol
 
         private void MessageParser()
         {
-            string line;
-            while ((line = _fnread.ReadLine()) != null)
+            try
             {
-                CreateEvent(line);
+                string line;
+                while ((line = _fnread.ReadLine()) != null)
+                {
+                    CreateEvent(line);
+                }
+            }
+            catch (IOException)
+            {
+                // Disconnected/Closed... We probably should emit an Event...
             }
         }
 
@@ -1106,7 +1119,7 @@ namespace FCP2.Protocol
             Write("PriorityClass", ((long?)priorityClass));
             if (global.HasValue && global.Value && persistence.HasValue && persistence.Value == PersistenceEnum.Connection)
             {
-                throw new FormatException("Error, global request must be persistent");
+                throw new ArgumentException("Error, global request must be persistent");
             }
             Write("Persistence", persistence);
             Write("ClientToken", clientToken);
