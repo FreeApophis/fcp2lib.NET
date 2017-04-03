@@ -310,7 +310,7 @@ namespace FCP2.Protocol
                     CreateEvent(line);
                 }
             }
-            catch (IOException)
+            catch (Exception exeption)
             {
                 // Disconnected/Closed... We probably should emit an Event...
             }

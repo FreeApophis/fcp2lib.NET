@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2lib", "FCP2lib\FCP2lib.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2Tests", "FCP2Tests\FCP2Tests.csproj", "{006784EA-7773-4A19-8D7D-4A759443B899}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageLoader", "ImageLoader\ImageLoader.csproj", "{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,18 @@ Global
 		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|x86.ActiveCfg = Release|Any CPU
 		{006784EA-7773-4A19-8D7D-4A759443B899}.Release|x86.Build.0 = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{06F2D52D-C107-4B31-B3F1-EA480BEC0CE9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
