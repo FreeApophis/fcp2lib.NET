@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fcp2lib.NET", "fcp2lib.NET\fcp2lib.NET.csproj", "{FBC0DFE4-C24C-4B86-BB2E-7429C97C3D79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FCP2lib.Test", "FCP2lib.Test\FCP2lib.Test.csproj", "{675EB615-2AC6-4E1A-A02D-74EB0B2D6E25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBC0DFE4-C24C-4B86-BB2E-7429C97C3D79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBC0DFE4-C24C-4B86-BB2E-7429C97C3D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBC0DFE4-C24C-4B86-BB2E-7429C97C3D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBC0DFE4-C24C-4B86-BB2E-7429C97C3D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{675EB615-2AC6-4E1A-A02D-74EB0B2D6E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{675EB615-2AC6-4E1A-A02D-74EB0B2D6E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{675EB615-2AC6-4E1A-A02D-74EB0B2D6E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{675EB615-2AC6-4E1A-A02D-74EB0B2D6E25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE64BC7D-F6D6-4673-B895-DC388691FA00}
+	EndGlobalSection
+EndGlobal
