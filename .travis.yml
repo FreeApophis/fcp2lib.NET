@@ -1,0 +1,9 @@
+language: csharp
+solution: ArithmeticParser.sln
+mono: none
+dotnet: 2.1.502
+script:
+ - dotnet restore
+ - dotnet test .\ArithmeticParser.Test\ArithmeticParser.Test.csproj
+install:
+ - nuget restore ArithmeticParser.sln

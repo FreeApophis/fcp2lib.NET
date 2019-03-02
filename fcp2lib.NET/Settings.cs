@@ -1,4 +1,4 @@
-﻿namespace FCP2.Properties
+﻿namespace FCP2
 {
 
 

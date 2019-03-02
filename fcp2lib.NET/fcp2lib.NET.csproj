@@ -3,6 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>FCP2</RootNamespace>
+    <Authors>Thomas Bruderer</Authors>
+    <Company>apophis.ch</Company>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+    <Description>This is a complete implementation of the FCP2 (Freenet Client Protocol 2.0) specification for the access of Freenet-nodes with any .NET Language.</Description>
+    <Product>fcp2lib.NET</Product>
+    <PackageProjectUrl>https://github.com/FreeApophis/fcp2lib.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FreeApophis/fcp2lib.NET</RepositoryUrl>
+    <PackageTags>freenet fcp2</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
