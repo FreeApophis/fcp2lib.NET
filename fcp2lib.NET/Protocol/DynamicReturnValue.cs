@@ -31,10 +31,10 @@ namespace FCP2.Protocol
 
         public bool Test { get; } = true;
 
-        private delegate object ConversionDelegate(string original, out bool successfull);
+        private delegate object ConversionDelegate(string original, out bool successful);
 
-        bool _lastConversionSuccessfull;
-        public bool LastConversionSucessfull => _lastConversionSuccessfull;
+        bool _lastConversionSuccessful;
+        public bool LastConversionSuccessful => _lastConversionSuccessful;
 
         public bool Exists()
         {
@@ -73,7 +73,7 @@ namespace FCP2.Protocol
             ConversionDelegate conversion;
             if (TypeTable.TryGetValue(binder.ReturnType, out conversion))
             {
-                result = conversion(_dynamicString, out _lastConversionSuccessfull);
+                result = conversion(_dynamicString, out _lastConversionSuccessful);
                 return true;
             }
 

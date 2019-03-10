@@ -1,6 +1,6 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ namespace FCP2.Protocol
         {
             var temp = SafeGet(binder.Name);
             result = temp != null
-                ? (object) new DynamicReturnValue(temp)
+                ? (object)new DynamicReturnValue(temp)
                 : new MessageParserSubElement(this, binder.Name);
 
             return true;
@@ -91,21 +91,21 @@ namespace FCP2.Protocol
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-            return ((IEnumerable<KeyValuePair<string, string>>) _parameters).GetEnumerator();
+            return ((IEnumerable<KeyValuePair<string, string>>)_parameters).GetEnumerator();
         }
 
 #if DEBUG
         public void PrintAccessCount()
         {
-            bool allaccessed = true;
+            bool allAccessed = true;
             foreach (string key in _debugCount.Keys)
             {
                 Console.ForegroundColor = _debugCount[key] == 0 ? ConsoleColor.Yellow : ConsoleColor.Green;
                 Console.WriteLine("[" + _debugCount[key] + "] " + key + " (" + _parameters[key] + ")");
 
-                allaccessed = allaccessed && (_debugCount[key] != 0);
+                allAccessed = allAccessed && (_debugCount[key] != 0);
             }
-            if (allaccessed)
+            if (allAccessed)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("All fields have been accessed");

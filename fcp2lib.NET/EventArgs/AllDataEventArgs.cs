@@ -1,6 +1,6 @@
 /*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -61,11 +61,11 @@ namespace FCP2.EventArgs
 
 
         /// <summary>
-        /// This Method only gets the Datastream once, the Datastream is cleared 
+        /// This Method only gets the data stream once, the data stream is cleared
         /// after that and the method will get null back!
         /// To make sure only one consumer tries to read from the stream!
-        /// 
-        /// Your Handler is NOT allowed to finish before you have completly read the Data!
+        ///
+        /// Your Handler is NOT allowed to finish before you have completely read the Data!
         /// </summary>
         public Stream GetStream()
         {

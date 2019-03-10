@@ -589,16 +589,16 @@ namespace FCP2.Protocol
         /// This message modifies settings for a given peer of your Freenet node.
         /// </summary>
         /// <param name="nodeIdentifier">The node name, identity or IP:port pair of the peer to be modified.</param>
-        /// <param name="allowLocalAdresses">If set, the peer identified by the given NodeIdentifier is set allowLocalAddresses or not accordingly.</param>
+        /// <param name="allowLocalAddresses">If set, the peer identified by the given NodeIdentifier is set allowLocalAddresses or not accordingly.</param>
         /// <param name="isDisabled">If set, the peer identified by the given NodeIdentifier is enabled or disabled accordingly.</param>
         /// <param name="isListenOnly">If set, the peer identified by the given NodeIdentifier is set ListenOnly or not accordingly.</param>
-        public void ModifyPeer(string nodeIdentifier, bool? allowLocalAdresses = null, bool? isDisabled = null, bool? isListenOnly = null)
+        public void ModifyPeer(string nodeIdentifier, bool? allowLocalAddresses = null, bool? isDisabled = null, bool? isListenOnly = null)
         {
             ConnectIfNeeded();
 
             Write("ModifyPeer");
             Write("NodeIdentifier", nodeIdentifier);
-            Write("AllowLocalAdresses", allowLocalAdresses);
+            Write("AllowLocalAdresses", allowLocalAddresses);
             Write("IsDisabled", isDisabled);
             Write("IsListenOnly", isListenOnly);
 
@@ -688,7 +688,7 @@ namespace FCP2.Protocol
         /// This message modifies configuration settings of your Freenet node.
         /// </summary>
         /// <param name="fieldset">The configuration fieldset path (KEYs) and value (VALUEs) to be modified.
-        /// The Dictionary has the paths as keys and the values as values, dont include the '=' character.
+        /// The Dictionary has the paths as keys and the values as values, don't include the '=' character.
         /// Example:
         ///</param>
         /// <example>

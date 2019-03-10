@@ -13,9 +13,9 @@ namespace FCP2.Protocol
 
         public bool IsConnected => false;
 
-        public FCP2Client(IPEndPoint nodeAdress, string clientName)
+        public FCP2Client(IPEndPoint nodeAddress, string clientName)
         {
-            fcp2Protocol = new FCP2Protocol(nodeAdress, clientName);
+            fcp2Protocol = new FCP2Protocol(nodeAddress, clientName);
 
             fcp2Protocol.NodeHelloEvent += FCP2Protocol_NodeHelloEvent;
         }

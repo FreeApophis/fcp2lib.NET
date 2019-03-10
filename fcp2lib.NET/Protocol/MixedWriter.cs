@@ -1,6 +1,6 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -24,14 +24,14 @@ using System.Text;
 namespace FCP2.Protocol
 {
     /// <summary>
-    /// Minimalistic StreamWriter Implementation which makes it possible to write binary data aswell.
-    /// 
+    /// Minimalistic StreamWriter Implementation which makes it possible to write binary data as well.
+    ///
     /// Its a shame that the StreamWriter has no option to use it unbuffered!
-    /// 
+    ///
     /// Only the minimalistic Functions are implemented, and probably not very fast, but it supports fully UTF8
-    /// 
+    ///
     /// Its fixed as a UTF8 Writer, cannot write Lines longer than 1023 Bytes and Newline is only unix-style \n
-    /// 
+    ///
     /// Only WriteLine(string) and Flush() are implemented
     /// </summary>
     public class MixedWriter : TextWriter
