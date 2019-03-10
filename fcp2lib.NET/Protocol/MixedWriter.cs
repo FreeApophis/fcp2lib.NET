@@ -1,5 +1,5 @@
 ﻿/*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
  *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
@@ -56,8 +56,8 @@ namespace FCP2.Protocol
 #endif
             value = value + "\n";
             var enc = new UTF8Encoding();
-            int numbytes = enc.GetBytes(value, 0, value.Length, _buffer, 0);
-            _stream.Write(_buffer, 0, numbytes);
+            int bytes = enc.GetBytes(value, 0, value.Length, _buffer, 0);
+            _stream.Write(_buffer, 0, bytes);
         }
 
     }

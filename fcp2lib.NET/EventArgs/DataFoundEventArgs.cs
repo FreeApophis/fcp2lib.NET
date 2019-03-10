@@ -1,6 +1,6 @@
 /*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ namespace FCP2.EventArgs
     {
         public bool Global { get; }
         public string Identifier { get; }
-        public long Datalength { get; }
+        public long DataLength { get; }
         public string ContentType { get; }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace FCP2.EventArgs
 #endif
 
             ContentType = parsed.Metadata.ContentType;
-            Datalength = parsed.DataLength;
+            DataLength = parsed.DataLength;
             Global = parsed.Global;
             Identifier = parsed.Identifier;
 

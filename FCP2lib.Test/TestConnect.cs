@@ -67,14 +67,14 @@ namespace FCP2.Test
             Assert.NotNull(_allData);
             Assert.NotNull(_dataFound);
 
-            Assert.Equal(testSize, _dataFound.Datalength);
+            Assert.Equal(testSize, _dataFound.DataLength);
             Assert.Equal(testIdentifier, _dataFound.Identifier);
             Assert.False(_dataFound.Global);
             Assert.Equal(testContentType, _dataFound.ContentType);
 
             Assert.True(_allData.StartupTime <= _allData.CompletionTime);
 
-            Assert.Equal(testSize, _allData.Datalength);
+            Assert.Equal(testSize, _allData.DataLength);
             Assert.Equal(testIdentifier, _allData.Identifier);
             Assert.Equal(testData, _testData.ToString());
 
@@ -92,7 +92,7 @@ namespace FCP2.Test
             var stream = e.GetStream();
             var buffer = new byte[1024];
 
-            var bytesToRead = e.Datalength;
+            var bytesToRead = e.DataLength;
             while (bytesToRead > 0)
             {
                 var bytesRead = stream.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));

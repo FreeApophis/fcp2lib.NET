@@ -1,5 +1,5 @@
 /*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
  *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *

@@ -7,17 +7,17 @@ namespace FCP2.Protocol
 {
     public class FCP2Client : IDisposable
     {
-        private readonly FCP2Protocol fcp2Protocol;
+        private readonly FCP2Protocol _fcp2Protocol;
 
-        public FCP2Protocol FCP2Protocol => fcp2Protocol;
+        public FCP2Protocol FCP2Protocol => _fcp2Protocol;
 
         public bool IsConnected => false;
 
         public FCP2Client(IPEndPoint nodeAddress, string clientName)
         {
-            fcp2Protocol = new FCP2Protocol(nodeAddress, clientName);
+            _fcp2Protocol = new FCP2Protocol(nodeAddress, clientName);
 
-            fcp2Protocol.NodeHelloEvent += FCP2Protocol_NodeHelloEvent;
+            _fcp2Protocol.NodeHelloEvent += FCP2Protocol_NodeHelloEvent;
         }
 
         private void FCP2Protocol_NodeHelloEvent(object sender, EventArgs.NodeHelloEventArgs e)
@@ -27,7 +27,7 @@ namespace FCP2.Protocol
 
         public FCP2Client(string clientName)
         {
-            fcp2Protocol = new FCP2Protocol(FCP2Protocol.StandardFCP2Endpoint, clientName);
+            _fcp2Protocol = new FCP2Protocol(FCP2Protocol.StandardFCP2Endpoint, clientName);
         }
 
         public FCP2Download Download(FCP2Key key)
@@ -53,7 +53,7 @@ namespace FCP2.Protocol
             {
                 if (disposing)
                 {
-                    fcp2Protocol.Dispose();
+                    _fcp2Protocol.Dispose();
                 }
             }
         }

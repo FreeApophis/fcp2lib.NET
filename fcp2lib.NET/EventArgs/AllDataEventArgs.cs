@@ -1,5 +1,5 @@
 /*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
  *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
@@ -28,7 +28,7 @@ namespace FCP2.EventArgs
     {
 
         public string Identifier { get; }
-        public long Datalength { get; }
+        public long DataLength { get; }
         public DateTime StartupTime { get; }
         public DateTime CompletionTime { get; }
 
@@ -50,7 +50,7 @@ namespace FCP2.EventArgs
 
             _data = data;
             Identifier = parsed.Identifier;
-            Datalength = parsed.DataLength;
+            DataLength = parsed.DataLength;
             StartupTime = parsed.StartupTime;
             CompletionTime = parsed.CompletionTime;
 

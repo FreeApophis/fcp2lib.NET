@@ -1,5 +1,5 @@
 ﻿/*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
  *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
@@ -42,8 +42,8 @@ namespace FCP2.Protocol
 
         private readonly IPEndPoint _ep;
         private readonly TcpClient _client = new TcpClient();
-        private TextReader _fnread;
-        private TextWriter _fnwrite;
+        private TextReader _textReader;
+        private TextWriter _textWriter;
         readonly bool isMultiThreaded = false;
 
         public string ClientName { get; }
@@ -66,8 +66,8 @@ namespace FCP2.Protocol
 
                 _client.Connect(_ep);
 
-                _fnread = new MixedReader(_client.GetStream());
-                _fnwrite = new MixedWriter(_client.GetStream());
+                _textReader = new MixedReader(_client.GetStream());
+                _textWriter = new MixedWriter(_client.GetStream());
 
                 _parserThread = new Thread(MessageParser);
                 _parserThread.Start();
@@ -82,14 +82,14 @@ namespace FCP2.Protocol
 
         private void Write(string value)
         {
-            _fnwrite.WriteLine(value);
+            _textWriter.WriteLine(value);
         }
 
         private void Write(string key, bool? value)
         {
             if (value.HasValue)
             {
-                _fnwrite.WriteLine($"{key}={value}");
+                _textWriter.WriteLine($"{key}={value}");
             }
         }
 
@@ -97,7 +97,7 @@ namespace FCP2.Protocol
         {
             if (value.HasValue)
             {
-                _fnwrite.WriteLine($"{key}={value}");
+                _textWriter.WriteLine($"{key}={value}");
             }
         }
 
@@ -105,7 +105,7 @@ namespace FCP2.Protocol
         {
             if (!string.IsNullOrEmpty(value))
             {
-                _fnwrite.WriteLine($"{key}={value}");
+                _textWriter.WriteLine($"{key}={value}");
             }
         }
 
@@ -113,14 +113,14 @@ namespace FCP2.Protocol
         {
             if (value.HasValue)
             {
-                _fnwrite.WriteLine($"{key}={value.Value}");
+                _textWriter.WriteLine($"{key}={value.Value}");
             }
         }
 
         internal void EndMessage()
         {
-            _fnwrite.WriteLine(nameof(EndMessage));
-            _fnwrite.Flush();
+            _textWriter.WriteLine(nameof(EndMessage));
+            _textWriter.Flush();
         }
 
 
@@ -243,7 +243,7 @@ namespace FCP2.Protocol
             if ((data = e.GetStream()) == null) return;
 
             var buffer = new byte[1024];
-            var bytesToRead = e.Datalength;
+            var bytesToRead = e.DataLength;
             while (bytesToRead > 0)
             {
                 bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
@@ -305,7 +305,7 @@ namespace FCP2.Protocol
             try
             {
                 string line;
-                while ((line = _fnread.ReadLine()) != null)
+                while ((line = _textReader.ReadLine()) != null)
                 {
                     CreateEvent(line);
                 }
@@ -321,137 +321,137 @@ namespace FCP2.Protocol
             switch (line)
             {
                 case "NodeHello":
-                    DispatchEvent(this, NodeHelloEvent, new NodeHelloEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, NodeHelloEvent, new NodeHelloEventArgs(new MessageParser(_textReader)));
                     break;
                 case "CloseConnectionDuplicateClientName":
                     DispatchEvent(this, CloseConnectionDuplicateClientNameEvent,
-                        new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(_fnread)));
+                        new CloseConnectionDuplicateClientNameEventArgs(new MessageParser(_textReader)));
                     break;
                 case "Peer":
-                    DispatchEvent(this, PeerEvent, new PeerEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PeerEvent, new PeerEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PeerNote":
-                    DispatchEvent(this, PeerNoteEvent, new PeerNoteEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PeerNoteEvent, new PeerNoteEventArgs(new MessageParser(_textReader)));
                     break;
                 case "EndListPeers":
-                    DispatchEvent(this, EndListPeersEvent, new EndListPeersEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, EndListPeersEvent, new EndListPeersEventArgs(new MessageParser(_textReader)));
                     break;
                 case "EndListPeerNotes":
-                    DispatchEvent(this, EndListPeerNotesEvent, new EndListPeerNotesEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, EndListPeerNotesEvent, new EndListPeerNotesEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PeerRemoved":
-                    DispatchEvent(this, PeerRemovedEvent, new PeerRemovedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PeerRemovedEvent, new PeerRemovedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "NodeData":
-                    DispatchEvent(this, NodeDataEvent, new NodeDataEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, NodeDataEvent, new NodeDataEventArgs(new MessageParser(_textReader)));
                     break;
                 case "ConfigData":
-                    DispatchEvent(this, ConfigDataEvent, new ConfigDataEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, ConfigDataEvent, new ConfigDataEventArgs(new MessageParser(_textReader)));
                     break;
                 case "TestDDAReply":
-                    DispatchEvent(this, TestDDAReplyEvent, new TestDDAReplyEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, TestDDAReplyEvent, new TestDDAReplyEventArgs(new MessageParser(_textReader)));
                     break;
                 case "TestDDAComplete":
-                    DispatchEvent(this, TestDDACompleteEvent, new TestDDACompleteEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, TestDDACompleteEvent, new TestDDACompleteEventArgs(new MessageParser(_textReader)));
                     break;
                 case "SSKKeypair":
-                    DispatchEvent(this, SSKKeypairEvent, new SSKKeypairEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, SSKKeypairEvent, new SSKKeypairEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PersistentGet":
-                    DispatchEvent(this, PersistentGetEvent, new PersistentGetEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PersistentGetEvent, new PersistentGetEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PersistentPut":
-                    DispatchEvent(this, PersistentPutEvent, new PersistentPutEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PersistentPutEvent, new PersistentPutEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PersistentPutDir":
-                    DispatchEvent(this, PersistentPutDirEvent, new PersistentPutDirEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PersistentPutDirEvent, new PersistentPutDirEventArgs(new MessageParser(_textReader)));
                     break;
                 case "URIGenerated":
-                    DispatchEvent(this, URIGeneratedEvent, new URIGeneratedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, URIGeneratedEvent, new URIGeneratedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PutSuccessful":
-                    DispatchEvent(this, PutSuccessfulEvent, new PutSuccessfulEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PutSuccessfulEvent, new PutSuccessfulEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PutFetchable":
-                    DispatchEvent(this, PutFetchableEvent, new PutFetchableEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PutFetchableEvent, new PutFetchableEventArgs(new MessageParser(_textReader)));
                     break;
                 case "DataFound":
-                    DispatchEvent(this, DataFoundEvent, new DataFoundEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, DataFoundEvent, new DataFoundEventArgs(new MessageParser(_textReader)));
                     break;
                 case "AllData":
-                    OnAllDataEvent(new AllDataEventArgs(new MessageParser(_fnread), _client.GetStream()));
+                    OnAllDataEvent(new AllDataEventArgs(new MessageParser(_textReader), _client.GetStream()));
                     break;
                 case "StartedCompression":
-                    DispatchEvent(this, StartedCompressionEvent, new StartedCompressionEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, StartedCompressionEvent, new StartedCompressionEventArgs(new MessageParser(_textReader)));
                     break;
                 case "FinishedCompression":
-                    DispatchEvent(this, FinishedCompressionEvent, new FinishedCompressionEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, FinishedCompressionEvent, new FinishedCompressionEventArgs(new MessageParser(_textReader)));
                     break;
                 case "SimpleProgress":
-                    DispatchEvent(this, SimpleProgressEvent, new SimpleProgressEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, SimpleProgressEvent, new SimpleProgressEventArgs(new MessageParser(_textReader)));
                     break;
                 case "ExpectedHashes":
-                    DispatchEvent(this, ExpectedHashesEvent, new ExpectedHashesEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, ExpectedHashesEvent, new ExpectedHashesEventArgs(new MessageParser(_textReader)));
                     break;
                 case "ExpectedMIME":
-                    DispatchEvent(this, ExpectedMimeEvent, new ExpectedMimeEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, ExpectedMimeEvent, new ExpectedMimeEventArgs(new MessageParser(_textReader)));
                     break;
                 case "ExpectedDataLength":
-                    DispatchEvent(this, ExpectedDataLengthEvent, new ExpectedDataLengthEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, ExpectedDataLengthEvent, new ExpectedDataLengthEventArgs(new MessageParser(_textReader)));
                     break;
                 case "CompatibilityMode":
-                    DispatchEvent(this, CompatibilityModeEvent, new CompatibilityModeEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, CompatibilityModeEvent, new CompatibilityModeEventArgs(new MessageParser(_textReader)));
                     break;
                 case "EndListPersistentRequests":
-                    DispatchEvent(this, EndListPersistentRequestsEvent, new EndListPersistentRequestsEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, EndListPersistentRequestsEvent, new EndListPersistentRequestsEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PersistentRequestRemoved":
-                    DispatchEvent(this, PersistentRequestRemovedEvent, new PersistentRequestRemovedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PersistentRequestRemovedEvent, new PersistentRequestRemovedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PersistentRequestModified":
-                    DispatchEvent(this, PersistentRequestModifiedEvent, new PersistentRequestModifiedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PersistentRequestModifiedEvent, new PersistentRequestModifiedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "SendingToNetwork":
-                    DispatchEvent(this, SendingToNetworkEvent, new SendingToNetworkEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, SendingToNetworkEvent, new SendingToNetworkEventArgs(new MessageParser(_textReader)));
                     break;
                 case "EnterFiniteCooldown":
-                    DispatchEvent(this, EnterFiniteCooldownEvent, new EnterFiniteCooldownEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, EnterFiniteCooldownEvent, new EnterFiniteCooldownEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PutFailed":
-                    DispatchEvent(this, PutFailedEvent, new PutFailedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PutFailedEvent, new PutFailedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "GetFailed":
-                    DispatchEvent(this, GetFailedEvent, new GetFailedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, GetFailedEvent, new GetFailedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "ProtocolError":
-                    DispatchEvent(this, ProtocolErrorEvent, new ProtocolErrorEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, ProtocolErrorEvent, new ProtocolErrorEventArgs(new MessageParser(_textReader)));
                     break;
                 case "IdentifierCollision":
-                    DispatchEvent(this, IdentifierCollisionEvent, new IdentifierCollisionEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, IdentifierCollisionEvent, new IdentifierCollisionEventArgs(new MessageParser(_textReader)));
                     break;
                 case "UnknownNodeIdentifier":
-                    DispatchEvent(this, UnknownNodeIdentifierEvent, new UnknownNodeIdentifierEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, UnknownNodeIdentifierEvent, new UnknownNodeIdentifierEventArgs(new MessageParser(_textReader)));
                     break;
                 case "UnknownPeerNoteType":
-                    DispatchEvent(this, UnknownPeerNoteTypeEvent, new UnknownPeerNoteTypeEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, UnknownPeerNoteTypeEvent, new UnknownPeerNoteTypeEventArgs(new MessageParser(_textReader)));
                     break;
                 case "SubscribedUSK":
-                    DispatchEvent(this, SubscribedUSKEvent, new SubscribedUSKEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, SubscribedUSKEvent, new SubscribedUSKEventArgs(new MessageParser(_textReader)));
                     break;
                 case "SubscribedUSKUpdate":
-                    DispatchEvent(this, SubscribedUSKUpdateEvent, new SubscribedUSKUpdateEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, SubscribedUSKUpdateEvent, new SubscribedUSKUpdateEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PluginInfo":
-                    DispatchEvent(this, PluginInfoEvent, new PluginInfoEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PluginInfoEvent, new PluginInfoEventArgs(new MessageParser(_textReader)));
                     break;
                 case "PluginRemoved":
-                    DispatchEvent(this, PluginRemovedEvent, new PluginRemovedEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, PluginRemovedEvent, new PluginRemovedEventArgs(new MessageParser(_textReader)));
                     break;
                 case "FCPPluginReply":
-                    DispatchEvent(this, FCPPluginReplyEvent, new FCPPluginReplyEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, FCPPluginReplyEvent, new FCPPluginReplyEventArgs(new MessageParser(_textReader)));
                     break;
                 case "GeneratedMetadata":
-                    DispatchEvent(this, GeneratedMetadataEvent, new GeneratedMetadataEventArgs(new MessageParser(_fnread)));
+                    DispatchEvent(this, GeneratedMetadataEvent, new GeneratedMetadataEventArgs(new MessageParser(_textReader)));
                     break;
                 case "":
                     /* ignore empty line */
@@ -760,7 +760,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// It asks the node to generate us an SSK keypair. The response will come back in a SSKKeypair message.
+        /// It asks the node to generate us an SSK key pair. The response will come back in a SSKKeypair message.
         /// </summary>
         /// <param name="identifier">the identifier does not have to be unique. That is, no IdentifierCollision
         /// is send if the identifier collides with the identifier of a get / put request or the identifier of
@@ -784,7 +784,7 @@ namespace FCP2.Protocol
         /// only the filename given, and points to the data just inserted. Thus the provided filename
         /// becomes the last part of the URI, and must be provided when fetching the data. See here for details.
         /// </summary>
-        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specifiy the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
+        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specify the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
         /// <param name="metadataContentType">The MIME type of the data being inserted. For text, if charset is not specified, node should auto-detect it and force the auto-detected version</param>
         /// <param name="identifier"> This is just for client to be able to identify files that have been inserted.</param>
         /// <param name="verbosity">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
@@ -795,7 +795,7 @@ namespace FCP2.Protocol
         /// <param name="dontCompress">Hint to node: don't try to compress the data, it's already compressed</param>
         /// <param name="clientToken">Sent back to client on the PersistentPut if this is a persistent request</param>
         /// <param name="persistence">Whether the insert stays on the queue across new client connections, freenet restarts, or forever (Default: Connection)</param>
-        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable filenames anyway. Empty means no filename.</param>
+        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable file names anyway. Empty means no filename.</param>
         /// <param name="earlyEncode">It signals to the node that it should attempt to encode the whole file immediately and generate the key, and insert the top blocks, as soon as possible, rather than waiting until each layer has been inserted before inserting the layer above it.</param>
         /// <param name="fileHash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
@@ -830,10 +830,10 @@ namespace FCP2.Protocol
 
             // *** stream file ***
             var buffer = new byte[1024];
-            int readbytes;
-            while ((readbytes = data.Read(buffer, 0, buffer.Length)) != 0)
+            int readBytes;
+            while ((readBytes = data.Read(buffer, 0, buffer.Length)) != 0)
             {
-                _client.GetStream().Write(buffer, 0, readbytes);
+                _client.GetStream().Write(buffer, 0, readBytes);
             }
             _client.GetStream().Flush();
         }
@@ -845,7 +845,7 @@ namespace FCP2.Protocol
         /// only the filename given, and points to the data just inserted. Thus the provided filename
         /// becomes the last part of the URI, and must be provided when fetching the data. See here for details.
         /// </summary>
-        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specifiy the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
+        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specify the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
         /// <param name="metadataContentType">The MIME type of the data being inserted. For text, if charset is not specified, node should auto-detect it and force the auto-detected version</param>
         /// <param name="identifier"> This is just for client to be able to identify files that have been inserted.</param>
         /// <param name="verbosity">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
@@ -856,7 +856,7 @@ namespace FCP2.Protocol
         /// <param name="dontCompress">Hint to node: don't try to compress the data, it's already compressed</param>
         /// <param name="clientToken">Sent back to client on the PersistentPut if this is a persistent request</param>
         /// <param name="persistence">Whether the insert stays on the queue across new client connections, freenet restarts, or forever (Default: Connection)</param>
-        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable filenames anyway. Empty means no filename.</param>
+        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable file names anyway. Empty means no filename.</param>
         /// <param name="earlyEncode">It signals to the node that it should attempt to encode the whole file immediately and generate the key, and insert the top blocks, as soon as possible, rather than waiting until each layer has been inserted before inserting the layer above it.</param>
         /// <param name="fileHash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
@@ -897,7 +897,7 @@ namespace FCP2.Protocol
         /// only the filename given, and points to the data just inserted. Thus the provided filename
         /// becomes the last part of the URI, and must be provided when fetching the data. See here for details.
         /// </summary>
-        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specifiy the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
+        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specify the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
         /// <param name="metadataContentType">The MIME type of the data being inserted. For text, if charset is not specified, node should auto-detect it and force the auto-detected version</param>
         /// <param name="identifier"> This is just for client to be able to identify files that have been inserted.</param>
         /// <param name="verbosity">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
@@ -908,7 +908,7 @@ namespace FCP2.Protocol
         /// <param name="dontCompress">Hint to node: don't try to compress the data, it's already compressed</param>
         /// <param name="clientToken">Sent back to client on the PersistentPut if this is a persistent request</param>
         /// <param name="persistence">Whether the insert stays on the queue across new client connections, freenet restarts, or forever (Default: Connection)</param>
-        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable filenames anyway. Empty means no filename.</param>
+        /// <param name="targetFilename">Filename to be appended to a CHK insert. Technically it creates a one-file manifest with this filename pointing to the file being uploaded. Ignored for all types other than CHK, since other types have human-readable file names anyway. Empty means no filename.</param>
         /// <param name="earlyEncode">It signals to the node that it should attempt to encode the whole file immediately and generate the key, and insert the top blocks, as soon as possible, rather than waiting until each layer has been inserted before inserting the layer above it.</param>
         /// <param name="fileHash">This field will allow you to override any TestDDA restriction if you provide a hash of the content which should be inserted. It should be computed like that : Base64Encode(SHA256( NodeHello.identifier + '-' + Identifier + '-' + content)). That setting has been introduced in 1027.</param>
         /// <param name="binaryBlob">If true, insert a binary blob (a collection of keys used in the downloading of a specific key or site). Implies no metadata, no URI.</param>
@@ -950,7 +950,7 @@ namespace FCP2.Protocol
         /// <param name="verbosity">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
         /// <param name="maxRetries">Number of times to retry if the first time doesn't work. -1 means retry forever.</param>
         /// <param name="priorityClass">Priority of the insert (default 2: semi interactive)</param>
-        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specifiy the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
+        /// <param name="uri">The type of key to insert. When inserting an SSK key, you explicitly specify the version number. For a USK key, use a zero and it should automatically use the correct version number. (CHK@, KSK@name, SSK@privateKey/docname-1, USK@privateKey/docname/0/)</param>
         /// <param name="getCHKOnly">If set to true, it won't actually insert the data, just return the key it would generate.If the key is USK, you may want to transform it into a SSK, to prevent the node spending time searching for an unused index.</param>
         /// <param name="dontCompress">Hint to node: don't try to compress the data, it's already compressed</param>
         /// <param name="clientToken">Sent back to client on the PersistentPut if this is a persistent request</param>
@@ -1000,8 +1000,8 @@ namespace FCP2.Protocol
         /// <param name="targetFilename"></param>
         /// <param name="earlyEncode"></param>
         /// <param name="defaultName"></param>
-        /// <param name="filelist"></param>
-        public void ClientPutComplexDir(string uri, string identifier, List<InsertItem> filelist, VerbosityEnum? verbosity = null, long? maxRetries = null,
+        /// <param name="fileList"></param>
+        public void ClientPutComplexDir(string uri, string identifier, List<InsertItem> fileList, VerbosityEnum? verbosity = null, long? maxRetries = null,
                                         PriorityClassEnum? priorityClass = null, bool? getCHKOnly = null, bool? global = null, bool? dontCompress = null,
                                         string clientToken = null, PersistenceEnum? persistence = null, string targetFilename = null, bool? earlyEncode = null,
                                         string defaultName = null)
@@ -1025,31 +1025,27 @@ namespace FCP2.Protocol
             Write("DefaultName", defaultName);
 
             long counter = 0;
-            foreach (var file in filelist)
+            foreach (var file in fileList)
             {
                 Write("Files." + counter + ".Name", file.Name);
-                var dataItem = file as DataItem;
-                if (dataItem != null)
+                switch (file)
                 {
-                    Write("Files." + counter + ".UploadFrom", "Direct");
-                    Write("Files." + counter + ".DataLength", dataItem.Data.Length);
-                    Write("Files." + counter + ".Metadata.ContentType", dataItem.ContentType);
+                    case DataItem dataItem:
+                        Write("Files." + counter + ".UploadFrom", "Direct");
+                        Write("Files." + counter + ".DataLength", dataItem.Data.Length);
+                        Write("Files." + counter + ".Metadata.ContentType", dataItem.ContentType);
+                        break;
+                    case FileItem fileItem:
+                        Write("Files." + counter + ".UploadFrom=disk");
+                        Write("Files." + counter + ".Filename", fileItem.Filename);
+                        Write("Files." + counter + ".Metadata.ContentType", fileItem.ContentType);
+                        break;
+                    case RedirectItem redirectItem:
+                        Write("Files." + counter + ".UploadFrom", "redirect");
+                        Write("Files." + counter + ".TargetURI", redirectItem.TargetURI);
+                        break;
                 }
-                var fileItem = file as FileItem;
-                if (fileItem != null)
-                {
-                    Write("Files." + counter + ".UploadFrom=disk");
-                    Write("Files." + counter + ".Filename", fileItem.Filename);
-                    Write("Files." + counter + ".Metadata.ContentType", fileItem.ContentType);
 
-                }
-                var redirectItem = file as RedirectItem;
-                if (redirectItem != null)
-                {
-                    Write("Files." + counter + ".UploadFrom", "redirect");
-                    Write("Files." + counter + ".TargetURI", redirectItem.TargetURI);
-
-                }
                 counter++;
             }
 
@@ -1057,19 +1053,19 @@ namespace FCP2.Protocol
 
             /* this appending is very experimental since there is no example in the documentation
              * I think all the data from Direct files are concatenated directly in the same order
-             * as in the list above. (TODO: Verfiy expected behaviour)
+             * as in the list above. (TODO: Verify expected behaviour)
              * We flush all DataItems, and ignore obviously everything else.
              * I hope the FN node is parsing multiple files correctly.
              * * * * * * * */
 
             var buffer = new byte[1024];
 
-            foreach (var file in filelist.OfType<DataItem>())
+            foreach (var file in fileList.OfType<DataItem>())
             {
-                int readbytes;
-                while ((readbytes = (file).Data.Read(buffer, 0, buffer.Length)) != 0)
+                int readBytes;
+                while ((readBytes = (file).Data.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    _client.GetStream().Write(buffer, 0, readbytes);
+                    _client.GetStream().Write(buffer, 0, readBytes);
                 }
             }
             _client.GetStream().Flush();
@@ -1078,15 +1074,15 @@ namespace FCP2.Protocol
         /// <summary>
         /// It is used to specify a file to download from Freenet.
         /// </summary>
-        /// <param name="ignoreDS">Do we ignore the datastore? In the old FCP this was called RemoveLocalKey.</param>
-        /// <param name="dsonly">Check only in our local datastore for the file i.e. don't ask other nodes if they have the file. (~= htl 0)</param>
+        /// <param name="ignoreDS">Do we ignore the data store? In the old FCP this was called RemoveLocalKey.</param>
+        /// <param name="dsOnly">Check only in our local data store for the file i.e. don't ask other nodes if they have the file. (~= htl 0)</param>
         /// <param name="uri">The URI of the freenet file you want to download e.g. KSK@sample.txt, CHK@zfwLW...Dvs,AAEC--8/</param>
         /// <param name="identifier">A string to uniquely identify to the client the file you are receiving.</param>
         /// <param name="verbosity">report when complete, SimpleProgress messages, send StartedCompression and FinishedCompression messages (usable as Flag)</param>
         /// <param name="maxSize">Maximum size of returned data in bytes.</param>
         /// <param name="maxTempSize">Maximum size of intermediary data in bytes.</param>
         /// <param name="maxRetries">Number of times the node will automatically retry to get the data. -1 means retry forever, and will use ULPRs to maintain the request efficiently.</param>
-        /// <param name="priorityClass">How to prioritise the download. Default: 4 (Bulk offline splitfile fetches, usually to disk)</param>
+        /// <param name="priorityClass">How to priorities the download. Default: 4 (Bulk offline split file fetches, usually to disk)</param>
         /// <param name="persistence">Whether the download stays on the queue across new client connections, Freenet restarts, or forever</param>
         /// <param name="clientToken">Returned in PersistentGet, a hint to the client, so the client doesn't need to maintain its own state. [FIXME: how does this differ from Identifier?]</param>
         /// <param name="global">Whether the download is visible on the global queue or not.</param>
@@ -1100,7 +1096,7 @@ namespace FCP2.Protocol
         /// disk, you have to do a  TestDDARequest.</param>
         /// <param name="filename">Name and path of the file where the download is to be stored.</param>
         /// <param name="tempFilename">Name and path of a temporary file where the partial download is to be stored.</param>
-        public void ClientGet(string uri, string identifier, bool? ignoreDS = null, bool? dsonly = null,
+        public void ClientGet(string uri, string identifier, bool? ignoreDS = null, bool? dsOnly = null,
                               VerbosityEnum? verbosity = null, long? maxSize = null, long? maxTempSize = null, long? maxRetries = null, PriorityClassEnum? priorityClass = null,
                               PersistenceEnum? persistence = null, string clientToken = null, bool? global = null, bool? binaryBlob = null,
                               string allowedMimeTypes = null, ReturnTypeEnum? returnType = null, string filename = null, string tempFilename = null)
@@ -1109,7 +1105,7 @@ namespace FCP2.Protocol
 
             Write("ClientGet");
             Write("IgnoreDS", ignoreDS);
-            Write("DSonly", dsonly);
+            Write("DSonly", dsOnly);
             Write("URI", uri);
             Write("Identifier", identifier);
             Write("Verbosity", ((long?)verbosity));
@@ -1145,7 +1141,7 @@ namespace FCP2.Protocol
         /// </summary>
         /// <param name="identifier">This is for client to be able to identify responses</param>
         /// <param name="pluginUrl">An URI that point to the plugin location. official:the name of the official plugin file:a local file path freenet: a Freenet URL url:any url that your java vm can deal with</param>
-        /// <param name="urlType">Type of plugin source. (currently autodection does not work if the local file does not exist or type is 'url')</param>
+        /// <param name="urlType">Type of plugin source. (currently auto-detection does not work if the local file does not exist or type is 'url')</param>
         /// <param name="store">If true, the plugin url is written to config.</param>
         /// <param name="officialSource">Means of obtaining an official plugin: freenet or https. "freenet" is strongly recommended and is the default unless the network security level is LOW. "https" may be faster and/or more reliable, but is traceable.</param>
         public void LoadPlugin(string identifier, string pluginUrl, UrlTypeEnum? urlType = null, bool? store = null, OfficialSourceTypeEnum? officialSource = null)
@@ -1204,7 +1200,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// This message asks the Freenet node for the presence of the given pluginname The node will respond with a PluginInfo event.
+        /// This message asks the Freenet node for the presence of the given plugin name The node will respond with a PluginInfo event.
         /// </summary>
         /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
         /// <param name="identifier">This is for client to be able to identify responses</param>
@@ -1222,7 +1218,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// This message is used to send a messege to a plugin. The plugin may or may not respond with a FCPPluginReply message.
+        /// This message is used to send a message to a plugin. The plugin may or may not respond with a FCPPluginReply message.
         /// </summary>
         /// <param name="pluginName">A name to identify the plugin. Must be the same as class name shown on plugins page</param>
         /// <param name="identifier">Not mandatory yet, but you should use it. May the plugin responds in random order or delayed to many calls at once. Depends on plugin implementation.</param>
@@ -1260,10 +1256,10 @@ namespace FCP2.Protocol
             if (data != null)
             {
                 var buffer = new byte[1024];
-                int readbytes;
-                while ((readbytes = data.Read(buffer, 0, buffer.Length)) != 0)
+                int readBytes;
+                while ((readBytes = data.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    _client.GetStream().Write(buffer, 0, readbytes);
+                    _client.GetStream().Write(buffer, 0, readBytes);
                 }
             }
             _client.GetStream().Flush();
@@ -1438,15 +1434,15 @@ namespace FCP2.Protocol
             GC.SuppressFinalize(this);
         }
 
-        private bool _disposed = false;
+        private bool _disposed;
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
                 {
-                    _fnread.Dispose();
-                    _fnwrite.Dispose();
+                    _textReader.Dispose();
+                    _textWriter.Dispose();
                     _client.Dispose();
                 }
                 _disposed = true;

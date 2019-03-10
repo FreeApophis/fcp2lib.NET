@@ -25,16 +25,16 @@ namespace FCP2.Keys
             else
             {
                 _containerItem = parts[1];
-                var subparts = parts[0].Split(',');
+                var subParts = parts[0].Split(',');
                 if (parts.Length != 3)
                 {
                     valid = false;
                 }
                 else
                 {
-                    _dataHash = subparts[0];
-                    _decryptionKey = subparts[0];
-                    _flags = subparts[0];
+                    _dataHash = subParts[0];
+                    _decryptionKey = subParts[0];
+                    _flags = subParts[0];
                 }
             }
 

@@ -1,6 +1,6 @@
 /*
- *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *  The FCP2.0 Library, complete access to freenet's FCP 2.0 Interface
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
@@ -95,28 +95,28 @@ namespace FCP2.EventArgs
             }
         }
 
-        #endregion
+        #endregion Nested type: ArkType
 
         #region Nested type: AuthType
 
         public class AuthType
         {
-            readonly List<long> negTypes = new List<long>();
+            readonly List<long> _negTypes = new List<long>();
 
-            public List<long> NegTypes => negTypes;
+            public List<long> NegTypes => _negTypes;
 
             internal AuthType(dynamic auth)
             {
                 if (auth.negTypes == null) return;
                 foreach (string an in ((string)auth.negTypes).Split(';'))
                 {
-                    negTypes.Add(long.Parse(an));
+                    _negTypes.Add(long.Parse(an));
                 }
             }
 
         }
 
-        #endregion
+        #endregion Nested type: AuthType
 
         #region Nested type: DsaGroupType
 
@@ -134,7 +134,7 @@ namespace FCP2.EventArgs
             }
         }
 
-        #endregion
+        #endregion Nested type: DsaGroupType
 
         #region Nested type: DsaPrivKeyType
 
@@ -148,7 +148,7 @@ namespace FCP2.EventArgs
             }
         }
 
-        #endregion
+        #endregion Nested type: DsaPrivKeyType
 
         #region Nested type: DsaPubKeyType
 
@@ -162,7 +162,7 @@ namespace FCP2.EventArgs
             }
         }
 
-        #endregion
+        #endregion Nested type: DsaPubKeyType
 
         #region Nested type: PhysicalType
 
@@ -177,7 +177,7 @@ namespace FCP2.EventArgs
                     var ip = pu.Split(':');
                     if (ip.Length > 2)
                     {
-                        /* we have an ipv6 adress */
+                        /* we have an ipv6 address */
                         var ipAddress = IPAddress.Parse(pu.Substring(0, pu.Length - 1 - ip[ip.Length - 1].Length));
                         UDP.Add(new IPEndPoint(ipAddress, int.Parse(ip[ip.Length - 1])));
                     }
@@ -190,7 +190,7 @@ namespace FCP2.EventArgs
             }
         }
 
-        #endregion
+        #endregion Nested type: PhysicalType
 
         #region Nested type: VolatileType
 
@@ -379,9 +379,9 @@ namespace FCP2.EventArgs
                 }
             }
 
-            #endregion
+            #endregion Nested type: NumberWithRoutingBackoffReasonsType
         }
 
-        #endregion
+        #endregion Nested type: VolatileType
     }
 }
