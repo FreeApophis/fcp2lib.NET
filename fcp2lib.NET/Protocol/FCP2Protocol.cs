@@ -1,6 +1,6 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *  Copyright (c) 2009 Felipe Barriga Richards
  *
@@ -48,7 +48,7 @@ namespace FCP2.Protocol
 
         public string ClientName { get; }
         private const string FCPVersion = "2.0";
-        #endregion
+        #endregion Private declarations
 
         #region Private Methods
         /// <summary>
@@ -144,7 +144,7 @@ namespace FCP2.Protocol
 
             EndMessage();
         }
-        #endregion
+        #endregion Private Methods
 
 #if DEBUG
         public static void ArgsDebug(System.EventArgs args, MessageParser parsed)
@@ -212,7 +212,7 @@ namespace FCP2.Protocol
         public event EventHandler<PluginRemovedEventArgs> PluginRemovedEvent;
         public event EventHandler<FCPPluginReplyEventArgs> FCPPluginReplyEvent;
         public event EventHandler<GeneratedMetadataEventArgs> GeneratedMetadataEvent;
-        #endregion
+        #endregion Event Handler
 
         #region EventInvocation
         protected void DispatchEvent<T>(object sender, EventHandler<T> handler, T eventArgs) where T : System.EventArgs
@@ -249,26 +249,26 @@ namespace FCP2.Protocol
                 bytesToRead -= data.Read(buffer, 0, (int)Math.Min(bytesToRead, buffer.Length));
             }
         }
-        #endregion
+        #endregion EventInvocation
 
         private Thread _parserThread;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// <param name="nodeAdress"></param>
+        /// <param name="nodeAddress"></param>
         /// <param name="clientName">A name to uniquely identify the client to the node. This is
         /// used for persistence, so a client can see the same local queue if it disconnects
         /// and then reconnects. If a connection is attempted with the same name as an existing
         /// connection, you will get an error</param>
-        public FCP2Protocol(IPEndPoint nodeAdress, string clientName)
+        public FCP2Protocol(IPEndPoint nodeAddress, string clientName)
         {
-            _ep = nodeAdress ?? StandardFCP2Endpoint;
+            _ep = nodeAddress ?? StandardFCP2Endpoint;
             ClientName = clientName;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="clientName">A name to uniquely identify the client to the node. This is
         /// used for persistence, so a client can see the same local queue if it disconnects
@@ -461,7 +461,7 @@ namespace FCP2.Protocol
             }
         }
 
-        #endregion
+        #endregion Parser
 
         #region public interface
         /// <summary>
@@ -719,7 +719,7 @@ namespace FCP2.Protocol
         /// <summary>
         /// This message must be sent before any operation involving DDA is requested. If you don't,
         /// the node will reply with a ProtocolError code 25.The node will respond with a TestDDAReply message.
-        /// 
+        ///
         /// You can send more than one TestDDARequest message for different directories if necessary :
         /// the node handles them per socket, meaning that if you close/reopen the socket you have to re-do it.
         /// Each TestDDARequest message will be obsoleted if a new one is received for the same directory.
@@ -985,7 +985,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="identifier"></param>
@@ -1270,7 +1270,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="identifier"></param>
@@ -1288,7 +1288,7 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="identifier"></param>
         public void UnsubscribeUSK(string identifier)
@@ -1375,7 +1375,7 @@ namespace FCP2.Protocol
         /// the Identifier value. Since 1016: The node will confirm
         /// the modify of the request by sending a PersistentRequestModified to the client that sent the
         /// ModifyPersistentRequest message, and to each client that listens to the global queue
-        /// (if the request is on the global queue). 
+        /// (if the request is on the global queue).
         /// ClientToken and PriorityClass are optional, but at least one of them should be set.
         /// </summary>
         /// <param name="identifier">The unique identifier of the queued insert or download.</param>
@@ -1408,8 +1408,8 @@ namespace FCP2.Protocol
         }
 
         /// <summary>
-        /// Disconnect will immediately disconnect the FCP client from the server. 
-        /// No confirmation message is sent by the node. Disconnect contains no data. 
+        /// Disconnect will immediately disconnect the FCP client from the server.
+        /// No confirmation message is sent by the node. Disconnect contains no data.
         /// </summary>
         private void RealDisconnect()
         {
@@ -1429,7 +1429,7 @@ namespace FCP2.Protocol
 
             EndMessage();
         }
-        #endregion
+        #endregion public interface
 
 
         public void Dispose()
