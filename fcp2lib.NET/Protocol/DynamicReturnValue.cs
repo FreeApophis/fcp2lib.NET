@@ -70,8 +70,7 @@ namespace FCP2.Protocol
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            ConversionDelegate conversion;
-            if (TypeTable.TryGetValue(binder.ReturnType, out conversion))
+            if (TypeTable.TryGetValue(binder.ReturnType, out var conversion))
             {
                 result = conversion(_dynamicString, out _lastConversionSuccessful);
                 return true;
@@ -92,8 +91,7 @@ namespace FCP2.Protocol
 
         static object ConvertToBool(string original, out bool success)
         {
-            bool boolResult;
-            if (bool.TryParse(original, out boolResult))
+            if (bool.TryParse(original, out var boolResult))
             {
                 success = true;
                 return boolResult;
@@ -104,8 +102,7 @@ namespace FCP2.Protocol
 
         static object ConvertToInt(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return intResult;
@@ -116,8 +113,7 @@ namespace FCP2.Protocol
 
         static object ConvertToLong(string original, out bool success)
         {
-            long longResult;
-            if (long.TryParse(original, out longResult))
+            if (long.TryParse(original, out var longResult))
             {
                 success = true;
                 return longResult;
@@ -129,8 +125,7 @@ namespace FCP2.Protocol
 
         static object ConvertToDecimal(string original, out bool success)
         {
-            decimal decimalResult;
-            if (decimal.TryParse(original, out decimalResult))
+            if (decimal.TryParse(original, out var decimalResult))
             {
                 success = true;
                 return decimalResult;
@@ -141,8 +136,7 @@ namespace FCP2.Protocol
 
         static object ConvertToFloat(string original, out bool success)
         {
-            float floatResult;
-            if (float.TryParse(original, out floatResult))
+            if (float.TryParse(original, out var floatResult))
             {
                 success = true;
                 return floatResult;
@@ -153,8 +147,7 @@ namespace FCP2.Protocol
 
         static object ConvertToDouble(string original, out bool success)
         {
-            double doubleResult;
-            if (double.TryParse(original, out doubleResult))
+            if (double.TryParse(original, out var doubleResult))
             {
                 success = true;
                 return doubleResult;
@@ -166,16 +159,14 @@ namespace FCP2.Protocol
         static object ConvertToDateTime(string original, out bool success)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            long afterEpoch;
-            if (long.TryParse(original, out afterEpoch))
+            if (long.TryParse(original, out var afterEpoch))
             {
                 double seconds = afterEpoch / 1000.0;
                 success = true;
                 return epoch.AddSeconds(seconds);
             }
 
-            DateTime dateTimeResult;
-            if (DateTime.TryParse(original, out dateTimeResult))
+            if (DateTime.TryParse(original, out var dateTimeResult))
             {
                 success = true;
                 return dateTimeResult;
@@ -186,15 +177,13 @@ namespace FCP2.Protocol
 
         static object ConvertToPeerNoteTypeEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (PeerNoteTypeEnum)intResult;
             }
 
-            PeerNoteTypeEnum peerNoteTypeEnumResult;
-            if (Enum.TryParse(original, true, out peerNoteTypeEnumResult))
+            if (Enum.TryParse(original, true, out PeerNoteTypeEnum peerNoteTypeEnumResult))
             {
                 success = true;
                 return peerNoteTypeEnumResult;
@@ -206,15 +195,13 @@ namespace FCP2.Protocol
 
         static object ConvertToPersistenceEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (PersistenceEnum)intResult;
             }
 
-            PersistenceEnum persistenceEnumResult;
-            if (Enum.TryParse(original, true, out persistenceEnumResult))
+            if (Enum.TryParse(original, true, out PersistenceEnum persistenceEnumResult))
             {
                 success = true;
                 return persistenceEnumResult;
@@ -226,15 +213,13 @@ namespace FCP2.Protocol
 
         static object ConvertToVerbosityEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (VerbosityEnum)intResult;
             }
 
-            VerbosityEnum verbosityEnumResult;
-            if (Enum.TryParse(original, true, out verbosityEnumResult))
+            if (Enum.TryParse(original, true, out VerbosityEnum verbosityEnumResult))
             {
                 success = true;
                 return verbosityEnumResult;
@@ -246,15 +231,13 @@ namespace FCP2.Protocol
 
         static object ConvertToPriorityClassEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (PriorityClassEnum)intResult;
             }
 
-            PriorityClassEnum priorityClassEnumResult;
-            if (Enum.TryParse(original, true, out priorityClassEnumResult))
+            if (Enum.TryParse(original, true, out PriorityClassEnum priorityClassEnumResult))
             {
                 success = true;
                 return priorityClassEnumResult;
@@ -266,15 +249,13 @@ namespace FCP2.Protocol
 
         static object ConvertToReturnTypeEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (ReturnTypeEnum)intResult;
             }
 
-            ReturnTypeEnum returnTypeEnumResult;
-            if (Enum.TryParse(original, true, out returnTypeEnumResult))
+            if (Enum.TryParse(original, true, out ReturnTypeEnum returnTypeEnumResult))
             {
                 success = true;
                 return returnTypeEnumResult;
@@ -286,15 +267,13 @@ namespace FCP2.Protocol
 
         static object ConvertToUploadFromEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (UploadFromEnum)intResult;
             }
 
-            UploadFromEnum uploadFromEnumResult;
-            if (Enum.TryParse(original, true, out uploadFromEnumResult))
+            if (Enum.TryParse(original, true, out UploadFromEnum uploadFromEnumResult))
             {
                 success = true;
                 return uploadFromEnumResult;
@@ -306,15 +285,13 @@ namespace FCP2.Protocol
 
         static object ConvertToUrlTypeEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (UrlTypeEnum)intResult;
             }
 
-            UrlTypeEnum urlTypeEnumResult;
-            if (Enum.TryParse(original, true, out urlTypeEnumResult))
+            if (Enum.TryParse(original, true, out UrlTypeEnum urlTypeEnumResult))
             {
                 success = true;
                 return urlTypeEnumResult;
@@ -326,15 +303,13 @@ namespace FCP2.Protocol
 
         static object ConvertToOfficialSourceTypeEnum(string original, out bool success)
         {
-            int intResult;
-            if (int.TryParse(original, out intResult))
+            if (int.TryParse(original, out var intResult))
             {
                 success = true;
                 return (OfficialSourceTypeEnum)intResult;
             }
 
-            OfficialSourceTypeEnum officialSourceTypeEnumResult;
-            if (Enum.TryParse(original, true, out officialSourceTypeEnumResult))
+            if (Enum.TryParse(original, true, out OfficialSourceTypeEnum officialSourceTypeEnumResult))
             {
                 success = true;
                 return officialSourceTypeEnumResult;
