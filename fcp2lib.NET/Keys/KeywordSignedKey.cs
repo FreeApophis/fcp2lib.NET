@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
 
 namespace FCP2.Keys
 {
@@ -10,7 +10,7 @@ namespace FCP2.Keys
 
         internal KeywordSignedKey(string key)
         {
-            Contract.Requires(key.StartsWith(KeyPrefix));
+            Debug.Assert(key.StartsWith(KeyPrefix));
 
             _keyword = key.Substring(4);
 
@@ -22,7 +22,7 @@ namespace FCP2.Keys
 
         public override string ToString()
         {
-            Contract.Requires(Valid);
+            Debug.Assert(Valid);
 
             return $"{KeyPrefix}{_keyword}";
         }

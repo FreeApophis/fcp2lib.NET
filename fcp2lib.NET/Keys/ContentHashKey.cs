@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
 
 namespace FCP2.Keys
 {
@@ -16,7 +16,7 @@ namespace FCP2.Keys
             bool valid = true;
 
             key = key.Substring(4);
-            var parts = key.Split(new[] {'/'}, 2);
+            var parts = key.Split(new[] { '/' }, 2);
 
             if (parts.Length < 2)
             {
@@ -45,7 +45,7 @@ namespace FCP2.Keys
 
         public override string ToString()
         {
-            Contract.Requires(Valid);
+            Debug.Assert(Valid);
 
             return $"{KeyPrefix}{_dataHash},{_decryptionKey},{_flags}/{_containerItem}";
         }

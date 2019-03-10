@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
 
 namespace FCP2.Keys
 {
@@ -12,7 +12,7 @@ namespace FCP2.Keys
 
         internal SignedSubspaceKey(string key)
         {
-            Contract.Requires(key.StartsWith(KeyPrefix));
+            Debug.Assert(key.StartsWith(KeyPrefix));
 
             bool valid = true;
 
@@ -26,7 +26,7 @@ namespace FCP2.Keys
             else
             {
                 _containerItem = parts[1];
-                
+
                 // TODO
             }
 
@@ -41,7 +41,7 @@ namespace FCP2.Keys
 
         public override string ToString()
         {
-            Contract.Requires(Valid);
+            Debug.Assert(Valid);
             if (IsInsertUri)
             {
                 return $"{KeyPrefix}";

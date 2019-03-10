@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
 
 namespace FCP2.Keys
 {
@@ -8,7 +8,7 @@ namespace FCP2.Keys
 
         internal UpdateableSubspaceKey(string key)
         {
-            Contract.Requires(key.StartsWith(KeyPrefix));
+            Debug.Assert(key.StartsWith(KeyPrefix));
 
             Valid = false;
         }

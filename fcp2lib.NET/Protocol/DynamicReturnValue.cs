@@ -1,6 +1,6 @@
 ﻿/*
  *  The FCP2.0 Library, complete access to freenets FCP 2.0 Interface
- * 
+ *
  *  Copyright (c) 2009-2016 Thomas Bruderer <apophis@apophis.ch>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using System.Diagnostics;
 using System.Dynamic;
 
 namespace FCP2.Protocol
@@ -43,7 +43,7 @@ namespace FCP2.Protocol
 
         static DynamicReturnValue()
         {
-            Contract.Requires(TypeTable.Count != 0);
+            Debug.Assert(TypeTable.Count != 0);
 
             TypeTable.Add(typeof(bool), ConvertToBool);
             TypeTable.Add(typeof(string), ConvertToString);
