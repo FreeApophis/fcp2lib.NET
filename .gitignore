@@ -3,6 +3,7 @@ bin
 obj
 *.user
 *.suo
+/.vs
 
 # mstest test results
 TestResults
@@ -11,3 +12,4 @@ TestResults
 
 /packages/
 !packages/repositories.config
+
